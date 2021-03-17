@@ -1,0 +1,29 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateJustForQueryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type JustForQuery {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Mutation {
+  createJustForQuery(createJustForQueryInput: CreateJustForQueryInput!): JustForQuery!
+  removeJustForQuery(id: Int!): JustForQuery!
+  updateJustForQuery(updateJustForQueryInput: UpdateJustForQueryInput!): JustForQuery!
+}
+
+type Query {
+  justForQuery(id: Int!): JustForQuery!
+}
+
+input UpdateJustForQueryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}

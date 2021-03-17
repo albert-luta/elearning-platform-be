@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { join } from 'node:path';
 import { ConfigModule } from '@nestjs/config';
+import { MyLoggerModule } from './my-logger/my-logger.module';
+import { join } from 'path';
+import { JustForQueryModule } from './just-for-query/just-for-query.module';
 
 @Module({
 	imports: [
@@ -12,7 +14,9 @@ import { ConfigModule } from '@nestjs/config';
 		ConfigModule.forRoot({
 			isGlobal: true,
 			cache: true
-		})
+		}),
+		MyLoggerModule,
+		JustForQueryModule
 	],
 	controllers: [],
 	providers: []
