@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { join } from 'path';
 import { JustForQueryModule } from './just-for-query/just-for-query.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
 	imports: [
@@ -16,7 +17,8 @@ import { JustForQueryModule } from './just-for-query/just-for-query.module';
 			cache: true
 		}),
 		MyLoggerModule,
-		JustForQueryModule
+		JustForQueryModule,
+		MessageModule
 	],
 	controllers: [],
 	providers: []
