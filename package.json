@@ -23,7 +23,9 @@
 		"prisma:migrate:prod": "npx prisma migrate deploy",
 		"prisma:migrate:dev": "npx prisma migrate dev",
 		"prisma:studio": "npx prisma studio",
-		"pre-commit": "npm run format && npm run lint",
+		"check:format": "prettier --check \"src/**/*.ts\"",
+		"check:lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+		"pre-commit": "npm run check:format && npm run check:lint",
 		"prepare": "husky install"
 	},
 	"dependencies": {
