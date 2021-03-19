@@ -6,6 +6,7 @@ import { MyLoggerService } from './my-logger/my-logger.service';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
+	app.enableCors();
 	app.useLogger(app.get(MyLoggerService));
 	app.useGlobalPipes(new ValidationPipe());
 

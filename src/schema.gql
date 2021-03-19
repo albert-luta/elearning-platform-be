@@ -20,7 +20,6 @@ type Mutation {
 
 type Query {
   justForQuery(id: Int!): JustForQuery!
-  message: String!
 }
 
 input UpdateJustForQueryInput {

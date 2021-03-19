@@ -4,21 +4,22 @@ import { ConfigModule } from '@nestjs/config';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { join } from 'path';
 import { JustForQueryModule } from './just-for-query/just-for-query.module';
-import { MessageModule } from './message/message.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
 	imports: [
 		GraphQLModule.forRoot({
 			autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-			sortSchema: true
+			sortSchema: true,
+			cors: true
 		}),
 		ConfigModule.forRoot({
 			isGlobal: true,
 			cache: true
 		}),
 		MyLoggerModule,
-		JustForQueryModule,
-		MessageModule
+		PrismaModule,
+		JustForQueryModule
 	],
 	controllers: [],
 	providers: []

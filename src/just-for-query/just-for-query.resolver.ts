@@ -3,10 +3,14 @@ import { JustForQueryService } from './just-for-query.service';
 import { JustForQuery } from './entities/just-for-query.entity';
 import { CreateJustForQueryInput } from './dto/create-just-for-query.input';
 import { UpdateJustForQueryInput } from './dto/update-just-for-query.input';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Resolver(() => JustForQuery)
 export class JustForQueryResolver {
-	constructor(private readonly justForQueryService: JustForQueryService) {}
+	constructor(
+		private readonly justForQueryService: JustForQueryService,
+		private prisma: PrismaService
+	) {}
 
 	@Mutation(() => JustForQuery)
 	createJustForQuery(
@@ -18,6 +22,7 @@ export class JustForQueryResolver {
 
 	@Query(() => [JustForQuery], { name: 'justForQuery' })
 	findAll() {
+		console.log(this.prisma);
 		return this.justForQueryService.findAll();
 	}
 
