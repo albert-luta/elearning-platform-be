@@ -1,25 +1,26 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { MyLoggerModule } from './my-logger/my-logger.module';
 import { join } from 'path';
-import { JustForQueryModule } from './just-for-query/just-for-query.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { formatGraphQLError } from './errors/formatGraphQLError';
 
 @Module({
 	imports: [
 		GraphQLModule.forRoot({
 			autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
 			sortSchema: true,
-			cors: true
+			cors: true,
+			formatError: formatGraphQLError,
+			context: ({ req, res }) => ({ req, res })
 		}),
 		ConfigModule.forRoot({
 			isGlobal: true,
 			cache: true
 		}),
-		MyLoggerModule,
 		PrismaModule,
-		JustForQueryModule
+		AuthModule
 	],
 	controllers: [],
 	providers: []

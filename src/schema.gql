@@ -2,28 +2,31 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateJustForQueryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-type JustForQuery {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 type Mutation {
-  createJustForQuery(createJustForQueryInput: CreateJustForQueryInput!): JustForQuery!
-  removeJustForQuery(id: Int!): JustForQuery!
-  updateJustForQuery(updateJustForQueryInput: UpdateJustForQueryInput!): JustForQuery!
+  login(user: LoginUserInput!): User!
+  register(user: RegisterUserInput!): User!
 }
 
 type Query {
-  justForQuery(id: Int!): JustForQuery!
+  me: String!
 }
 
-input UpdateJustForQueryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input RegisterUserInput {
+  email: String!
+  fatherInitial: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+}
+
+type User {
+  email: String!
+  fatherInitial: String!
+  firstName: String!
+  lastName: String!
 }
