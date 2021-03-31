@@ -2,28 +2,53 @@ import { Resolver, Args, Mutation, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { RegisterUserInput } from './dto/register-user.input';
 import { LoginUserInput } from './dto/login-user.input';
-import { User } from './dto/user.object';
-import { MySession, MySessionType } from 'src/decorators/MySession.decorator';
+import {
+	GraphQLRes,
+	GraphQLResType
+} from 'src/decorators/GraphQLRes.decorator';
+import { Authentication } from './dto/authentication.object';
+import {
+	GraphQLReq,
+	GraphQLReqType
+} from 'src/decorators/GraphQLReq.decorator';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Resolver()
 export class AuthResolver {
 	constructor(private readonly authService: AuthService) {}
 
-	@Mutation(() => User)
-	register(@Args('user') user: RegisterUserInput) {
-		return this.authService.register(user);
+	@Mutation(() => Authentication)
+	register(
+		@Args('user') user: RegisterUserInput,
+		@GraphQLRes() res: GraphQLResType
+	) {
+		return this.authService.register(user, res);
 	}
 
-	@Mutation(() => User)
+	@Mutation(() => Authentication)
 	login(
 		@Args('user') user: LoginUserInput,
-		@MySession() session: MySessionType
+		@GraphQLRes() res: GraphQLResType
 	) {
-		return this.authService.login(user, session);
+		return this.authService.login(user, res);
 	}
 
+	@Mutation(() => Authentication, { nullable: true })
+	logout() {
+		throw new UnauthorizedException('logout');
+	}
+
+	@Mutation(() => Authentication)
+	refreshTokens(
+		@GraphQLReq() req: GraphQLReqType,
+		@GraphQLRes() res: GraphQLResType
+	) {
+		return this.authService.refreshTokens(req, res);
+	}
+
+	// TODO: Implement authentication and authorization(role based) guards
 	@Query(() => String)
-	me() {
-		return 'me';
+	testAuth() {
+		return 'testAuth';
 	}
 }

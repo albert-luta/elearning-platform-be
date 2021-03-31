@@ -2,18 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Authentication {
+  accessToken: String!
+}
+
 input LoginUserInput {
   email: String!
   password: String!
 }
 
 type Mutation {
-  login(user: LoginUserInput!): User!
-  register(user: RegisterUserInput!): User!
+  login(user: LoginUserInput!): Authentication!
+  logout: Authentication
+  refreshTokens: Authentication!
+  register(user: RegisterUserInput!): Authentication!
 }
 
 type Query {
-  me: String!
+  testAuth: String!
 }
 
 input RegisterUserInput {
@@ -22,11 +28,4 @@ input RegisterUserInput {
   firstName: String!
   lastName: String!
   password: String!
-}
-
-type User {
-  email: String!
-  fatherInitial: String!
-  firstName: String!
-  lastName: String!
 }
