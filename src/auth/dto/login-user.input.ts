@@ -5,4 +5,4 @@ import { RegisterUserInput } from './register-user.input';
 export class LoginUserInput extends PickType(RegisterUserInput, [
 	'email',
 	'password'
-]) {}
+] as const) {}
