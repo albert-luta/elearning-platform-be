@@ -91,6 +91,6 @@
 		"testEnvironment": "node"
 	},
 	"lint-staged": {
-		"*.js": "eslint --cache --fix"
+		"*.{js,ts}": "eslint --cache --fix"
 	}
 }
