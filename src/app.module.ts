@@ -1,37 +1,33 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ConfigModule } from '@nestjs/config';
-import { join } from 'path';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaGlobalModule } from './global/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
-import { formatGraphQLError } from './exceptions/formatGraphQLError';
-import { APP_FILTER } from '@nestjs/core';
-import { AllExceptionsFilter } from './exceptions/all-exceptions.filter';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AllExceptionsFilter } from './general/error-handling/filters/all-exceptions.filter';
+import { UserModule } from './user/user.module';
+import { JwtGlobalModule } from './global/jwt/jwt.module';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
+import { CompanyModule } from './company/company.module';
+import { ConfigGlobalModule } from './global/config/config.module';
+import { MyGraphQLModule } from './my-graphql/my-graphql.module';
 
 @Module({
 	imports: [
-		GraphQLModule.forRoot({
-			autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-			sortSchema: true,
-			cors: {
-				credentials: true,
-				origin: process.env.FRONTEND_URL
-			},
-			formatError: formatGraphQLError,
-			context: ({ req, res }) => ({ req, res })
-		}),
-		ConfigModule.forRoot({
-			isGlobal: true,
-			cache: true
-		}),
-		PrismaModule,
-		AuthModule
+		MyGraphQLModule,
+		ConfigGlobalModule,
+		PrismaGlobalModule,
+		JwtGlobalModule,
+		AuthModule,
+		UserModule,
+		CompanyModule
 	],
-	controllers: [],
 	providers: [
 		{
 			provide: APP_FILTER,
 			useClass: AllExceptionsFilter
+		},
+		{
+			provide: APP_GUARD,
+			useClass: AuthenticationGuard
 		}
 	]
 })

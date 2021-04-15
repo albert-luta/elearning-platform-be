@@ -8,6 +8,11 @@ generator client {
     provider = "prisma-client-js"
 }
 
+generator nestgraphql {
+    provider = "node node_modules/prisma-nestjs-graphql"
+    output   = "../src/generated/prisma-nestjs-graphql"
+}
+
 // Tables
 model Company {
     id          String        @id @default(cuid())
@@ -21,6 +26,7 @@ model User {
     firstName     String
     lastName      String
     email         String        @unique
+    /// @HideField()
     password      String
     /// First letter of the father's first name
     fatherInitial String        @db.Char(1)

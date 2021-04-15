@@ -1,20 +1,15 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/global/prisma/prisma.service';
 import { RegisterUserInput } from './dto/register-user.input';
 import * as argon2 from 'argon2';
 import { PrismaError } from 'prisma-error-enum';
 import { LoginUserInput } from './dto/login-user.input';
-import { GraphQLResType } from 'src/decorators/GraphQLRes.decorator';
 import { Authentication } from './dto/authentication.object';
-import { TokensService } from './tokens.service';
-import { GraphQLReqType } from 'src/decorators/GraphQLReq.decorator';
-import { MyBadRequestException } from 'src/exceptions/my-bad-request-exception';
-
-interface TokensPayload {
-	user: {
-		id: string;
-	};
-}
+import { TokensService } from './services/tokens.service';
+import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
+import { REFRESH_TOKEN_COOKIE_NAME } from './auth.constants';
+import { TokensPayload } from './auth.types';
+import { ReqType, ResType } from 'src/my-graphql/my-graphql.types';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +26,7 @@ export class AuthService {
 			lastName,
 			password
 		}: RegisterUserInput,
-		res: GraphQLResType
+		res: ResType
 	): Promise<Authentication> {
 		try {
 			const hashedPassword = await argon2.hash(password.trim());
@@ -69,7 +64,7 @@ export class AuthService {
 		}
 	}
 
-	async login(userProvided: LoginUserInput, res: GraphQLResType) {
+	async login(userProvided: LoginUserInput, res: ResType) {
 		const user = await this.prisma.user.findUnique({
 			where: {
 				email: userProvided.email
@@ -98,9 +93,11 @@ export class AuthService {
 		return { accessToken };
 	}
 
-	refreshTokens(req: GraphQLReqType, res: GraphQLResType) {
-		const tokensPayload = this.tokensService.getPayloadFromRefreshToken(
-			req
+	refreshTokens(req: ReqType, res: ResType) {
+		const token = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+		const tokensPayload = this.tokensService.getPayloadFromToken(
+			token,
+			'refresh'
 		);
 		const { accessToken, refreshToken } = this.tokensService.generateTokens(
 			tokensPayload

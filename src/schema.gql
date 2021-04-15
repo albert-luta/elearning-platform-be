@@ -6,6 +6,35 @@ type Authentication {
   accessToken: String!
 }
 
+type Company {
+  companyUser: [CompanyUser!]
+  id: ID!
+  logo: String
+  name: String!
+}
+
+type CompanyUser {
+  company: Company!
+  companyId: String!
+  id: ID!
+  role: CompanyUserRole!
+  user: User!
+  userId: String!
+}
+
+type CompanyUserObject {
+  id: ID!
+  logo: String
+  name: String!
+  role: CompanyUserRole!
+}
+
+enum CompanyUserRole {
+  ADMIN
+  STUDENT
+  TEACHER
+}
+
 input LoginUserInput {
   email: String!
   password: String!
@@ -19,6 +48,7 @@ type Mutation {
 }
 
 type Query {
+  me: UserObject!
   testAuth: String!
 }
 
@@ -28,4 +58,26 @@ input RegisterUserInput {
   firstName: String!
   lastName: String!
   password: String!
+}
+
+type User {
+  companyUser: [CompanyUser!]
+  email: String!
+
+  """First letter of the father's first name"""
+  fatherInitial: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+}
+
+type UserObject {
+  companies: [CompanyUserObject!]!
+  email: String!
+
+  """First letter of the father's first name"""
+  fatherInitial: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
 }

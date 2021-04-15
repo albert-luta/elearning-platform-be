@@ -2,7 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
-import { validationExceptionFactory } from './exceptions/validationExceptionFactory';
+import { validationExceptionFactory } from './general/error-handling/format/validation-exception-factory';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -12,6 +12,6 @@ async function bootstrap() {
 		new ValidationPipe({ exceptionFactory: validationExceptionFactory })
 	);
 
-	await app.listen(8080);
+	await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
