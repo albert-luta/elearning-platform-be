@@ -16,6 +16,5 @@ export class UserResolver {
 	@ResolveField()
 	companies(@Parent() user: UserObject) {
 		return this.userService.getUserCompanies(user.id);
-		console.log(hello);
 	}
 }
