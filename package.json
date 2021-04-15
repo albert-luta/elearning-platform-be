@@ -5,7 +5,6 @@
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "nest build",
-		"format": "prettier --write \"src/**/*.ts\"",
 		"start": "nest start",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
@@ -21,8 +20,6 @@
 		"prisma:migrate:prod": "npx prisma migrate deploy",
 		"prisma:migrate:dev": "npx prisma migrate dev",
 		"prisma:studio": "npx prisma studio",
-		"check:format": "prettier --check \"src/**/*.ts\"",
-		"check:lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
 		"prepare": "husky install"
 	},
 	"dependencies": {
@@ -91,6 +88,7 @@
 		"testEnvironment": "node"
 	},
 	"lint-staged": {
-		"*.{js,ts}": "eslint --cache --fix"
+		"*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+		"*.{ts,tsx}": "tsc --noemit"
 	}
 }
