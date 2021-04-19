@@ -1,6 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { CompanyUserCreateNestedManyWithoutUserInput } from '../company-user/company-user-create-nested-many-without-user.input';
+import { UniversityUserCreateNestedManyWithoutUserInput } from '../university-user/university-user-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateInput {
@@ -16,12 +16,15 @@ export class UserCreateInput {
     @Field(() => String, {nullable:false})
     email!: string;
 
-    @Field(() => String, {nullable:false})
-    password!: string;
+    @Field(() => String, {nullable:true})
+    avatar?: string;
 
     @Field(() => String, {nullable:false})
     fatherInitial!: string;
 
-    @Field(() => CompanyUserCreateNestedManyWithoutUserInput, {nullable:true})
-    companyUser?: CompanyUserCreateNestedManyWithoutUserInput;
+    @Field(() => String, {nullable:false})
+    password!: string;
+
+    @Field(() => UniversityUserCreateNestedManyWithoutUserInput, {nullable:true})
+    universityUsers?: UniversityUserCreateNestedManyWithoutUserInput;
 }

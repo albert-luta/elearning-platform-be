@@ -1,7 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { CompanyUserUpdateManyWithoutUserInput } from '../company-user/company-user-update-many-without-user.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { UniversityUserUpdateManyWithoutUserInput } from '../university-user/university-user-update-many-without-user.input';
 
 @InputType()
 export class UserUpdateInput {
@@ -17,12 +18,15 @@ export class UserUpdateInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     email?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    password?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    avatar?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     fatherInitial?: StringFieldUpdateOperationsInput;
 
-    @Field(() => CompanyUserUpdateManyWithoutUserInput, {nullable:true})
-    companyUser?: CompanyUserUpdateManyWithoutUserInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    password?: StringFieldUpdateOperationsInput;
+
+    @Field(() => UniversityUserUpdateManyWithoutUserInput, {nullable:true})
+    universityUsers?: UniversityUserUpdateManyWithoutUserInput;
 }

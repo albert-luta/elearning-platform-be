@@ -6,7 +6,7 @@ import { AllExceptionsFilter } from './general/error-handling/filters/all-except
 import { UserModule } from './user/user.module';
 import { JwtGlobalModule } from './global/jwt/jwt.module';
 import { AuthenticationGuard } from './auth/guards/authentication.guard';
-import { CompanyModule } from './company/company.module';
+import { UniversityModule } from './university/university.module';
 import { ConfigGlobalModule } from './global/config/config.module';
 import { MyGraphQLModule } from './my-graphql/my-graphql.module';
 
@@ -18,7 +18,7 @@ import { MyGraphQLModule } from './my-graphql/my-graphql.module';
 		JwtGlobalModule,
 		AuthModule,
 		UserModule,
-		CompanyModule
+		UniversityModule
 	],
 	providers: [
 		{

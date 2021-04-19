@@ -18,7 +18,12 @@ export class TokensService {
 		private readonly configService: ConfigService
 	) {}
 
-	generateTokens(payload: TokensPayload) {
+	generateTokens(
+		payload: TokensPayload
+	): {
+		accessToken: string;
+		refreshToken: string;
+	} {
 		const accessToken = this.jwtService.sign(payload, {
 			expiresIn: ACCESS_TOKEN_EXPIRES_IN,
 			secret: this.configService.get<string>('ACCESS_TOKEN_SECRET')
@@ -31,21 +36,24 @@ export class TokensService {
 		return { accessToken, refreshToken };
 	}
 
-	setRefreshTokenCookie(refreshToken: string, res: ResType) {
+	setRefreshTokenCookie(refreshToken: string, res: ResType): void {
 		res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
 			...this.refreshTokenCookieOptions,
 			maxAge: INFINITE_COOKIE_MAX_AGE
 		});
 	}
 
-	clearRefreshTokenCookie(res: ResType) {
+	clearRefreshTokenCookie(res: ResType): void {
 		res.clearCookie(
 			REFRESH_TOKEN_COOKIE_NAME,
 			this.refreshTokenCookieOptions
 		);
 	}
 
-	getPayloadFromToken(token: any, tokenType: 'refresh' | 'access') {
+	getPayloadFromToken(
+		token: string,
+		tokenType: 'refresh' | 'access'
+	): TokensPayload {
 		const tokenEnvKey =
 			tokenType === 'refresh'
 				? 'REFRESH_TOKEN_SECRET'

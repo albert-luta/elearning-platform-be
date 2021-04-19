@@ -41,7 +41,7 @@ export class AuthService {
 			});
 
 			const tokensPayload: TokensPayload = {
-				user: { id: createdUser.id }
+				user: { id: createdUser.id, universities: {} }
 			};
 			const {
 				accessToken,
@@ -64,27 +64,44 @@ export class AuthService {
 		}
 	}
 
-	async login(userProvided: LoginUserInput, res: ResType) {
+	async login(
+		userProvided: LoginUserInput,
+		res: ResType
+	): Promise<Authentication> {
 		const user = await this.prisma.user.findUnique({
 			where: {
 				email: userProvided.email
+			},
+			select: {
+				id: true,
+				password: true
 			}
 		});
+
 		if (user == null) {
 			throw new MyBadRequestException({
 				email: 'There is no user registered with this email'
 			});
 		}
 
-		const hasCorrectPassword = await argon2.verify(
-			user.password,
-			userProvided.password
-		);
-		if (!hasCorrectPassword) {
-			throw new MyBadRequestException({ password: 'Incorrect password' });
+		try {
+			const hasCorrectPassword = await argon2.verify(
+				user.password,
+				userProvided.password
+			);
+			if (!hasCorrectPassword) {
+				throw new MyBadRequestException({
+					password: 'Incorrect password'
+				});
+			}
+		} catch {
+			throw new InternalServerErrorException();
 		}
 
-		const tokensPayload: TokensPayload = { user: { id: user.id } };
+		const universities = await this.getUniversitiesScopes(user.id);
+		const tokensPayload: TokensPayload = {
+			user: { id: user.id, universities }
+		};
 		const { accessToken, refreshToken } = this.tokensService.generateTokens(
 			tokensPayload
 		);
@@ -93,17 +110,65 @@ export class AuthService {
 		return { accessToken };
 	}
 
-	refreshTokens(req: ReqType, res: ResType) {
-		const token = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
-		const tokensPayload = this.tokensService.getPayloadFromToken(
-			token,
+	async refreshTokens(req: ReqType, res: ResType): Promise<Authentication> {
+		const prevToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+		const prevTokensPayload = this.tokensService.getPayloadFromToken(
+			prevToken,
 			'refresh'
 		);
+		const universities = await this.getUniversitiesScopes(
+			prevTokensPayload.user.id
+		);
+		const newTokensPayload: TokensPayload = {
+			...prevTokensPayload,
+			user: {
+				...prevTokensPayload.user,
+				universities
+			}
+		};
 		const { accessToken, refreshToken } = this.tokensService.generateTokens(
-			tokensPayload
+			newTokensPayload
 		);
 
 		this.tokensService.setRefreshTokenCookie(refreshToken, res);
 		return { accessToken };
+	}
+
+	private async getUniversitiesScopes(
+		userId: string
+	): Promise<TokensPayload['user']['universities']> {
+		const universities = await this.prisma.universityUser.findMany({
+			where: {
+				userId
+			},
+			select: {
+				universityId: true,
+				role: {
+					select: {
+						scopes: {
+							select: {
+								name: true
+							}
+						}
+					}
+				}
+			}
+		});
+
+		return universities.reduce(
+			(universitiesAcc, universitiesCurr) => ({
+				...universitiesAcc,
+				[universitiesCurr.universityId]: {
+					scopes: universitiesCurr.role.scopes.reduce(
+						(scopesAcc, scopesCurr) => ({
+							...scopesAcc,
+							[scopesCurr.name]: true
+						}),
+						{}
+					)
+				}
+			}),
+			{}
+		);
 	}
 }

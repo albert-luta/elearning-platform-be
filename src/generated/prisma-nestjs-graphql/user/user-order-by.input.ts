@@ -17,8 +17,11 @@ export class UserOrderByInput {
     email?: SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    password?: SortOrder;
+    avatar?: SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     fatherInitial?: SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    password?: SortOrder;
 }

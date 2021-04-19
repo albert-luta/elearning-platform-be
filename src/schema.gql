@@ -6,33 +6,9 @@ type Authentication {
   accessToken: String!
 }
 
-type Company {
-  companyUser: [CompanyUser!]
-  id: ID!
-  logo: String
-  name: String!
-}
-
-type CompanyUser {
-  company: Company!
-  companyId: String!
-  id: ID!
-  role: CompanyUserRole!
-  user: User!
-  userId: String!
-}
-
-type CompanyUserObject {
-  id: ID!
-  logo: String
-  name: String!
-  role: CompanyUserRole!
-}
-
-enum CompanyUserRole {
-  ADMIN
-  STUDENT
-  TEACHER
+type GroupedByRoleUniversitiesObject {
+  role: String!
+  universities: [UniversityObject!]!
 }
 
 input LoginUserInput {
@@ -49,7 +25,6 @@ type Mutation {
 
 type Query {
   me: UserObject!
-  testAuth: String!
 }
 
 input RegisterUserInput {
@@ -60,8 +35,43 @@ input RegisterUserInput {
   password: String!
 }
 
+type Role {
+  id: ID!
+  name: String!
+  scopes: [Scope!]
+  universityUsers: [UniversityUser!]
+}
+
+type Scope {
+  id: ID!
+  name: String!
+  roles: [Role!]
+}
+
+type University {
+  id: ID!
+  logo: String
+  name: String!
+  universityUsers: [UniversityUser!]
+}
+
+type UniversityObject {
+  id: ID!
+  logo: String
+  name: String!
+}
+
+type UniversityUser {
+  role: Role!
+  roleId: String!
+  university: University!
+  universityId: String!
+  user: User!
+  userId: String!
+}
+
 type User {
-  companyUser: [CompanyUser!]
+  avatar: String
   email: String!
 
   """First letter of the father's first name"""
@@ -69,15 +79,18 @@ type User {
   firstName: String!
   id: ID!
   lastName: String!
+  password: String!
+  universityUsers: [UniversityUser!]
 }
 
 type UserObject {
-  companies: [CompanyUserObject!]!
+  avatar: String
   email: String!
 
   """First letter of the father's first name"""
   fatherInitial: String!
   firstName: String!
+  groupedByRoleUniversities: [GroupedByRoleUniversitiesObject!]!
   id: ID!
   lastName: String!
 }

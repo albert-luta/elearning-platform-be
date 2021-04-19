@@ -16,7 +16,7 @@
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"prisma:generate": "shx rm -rf ./src/generated/prisma-nestjs-graphql && npx prisma generate",
-		"prisma:update": "npx prisma db push --preview-feature",
+		"prisma:update": "npx prisma db push --preview-feature --skip-generate && npm run prisma:generate",
 		"prisma:migrate:prod": "npx prisma migrate deploy",
 		"prisma:migrate:dev": "npx prisma migrate dev",
 		"prisma:studio": "npx prisma studio",

@@ -14,38 +14,50 @@ generator nestgraphql {
 }
 
 // Tables
-model Company {
-    id          String        @id @default(cuid())
-    name        String
-    logo        Bytes?
-    companyUser CompanyUser[]
+model University {
+    id   String  @id @default(cuid())
+    name String
+    logo String?
+
+    universityUsers UniversityUser[]
 }
 
 model User {
-    id            String        @id @default(cuid())
+    id            String  @id @default(cuid())
     firstName     String
     lastName      String
-    email         String        @unique
-    /// @HideField()
-    password      String
+    email         String  @unique
+    avatar        String?
     /// First letter of the father's first name
-    fatherInitial String        @db.Char(1)
-    companyUser   CompanyUser[]
+    fatherInitial String  @db.Char(1)
+    password      String
+
+    universityUsers UniversityUser[]
 }
 
-model CompanyUser {
-    id        String          @id @default(cuid())
-    company   Company         @relation(fields: [companyId], references: [id])
-    companyId String
-    user      User            @relation(fields: [userId], references: [id])
-    userId    String
-    role      CompanyUserRole
+model UniversityUser {
+    universityId String
+    userId       String
+    roleId       String
 
-    @@unique([companyId, userId])
+    university University @relation(fields: [universityId], references: [id])
+    user       User       @relation(fields: [userId], references: [id])
+    role       Role       @relation(fields: [roleId], references: [id])
+
+    @@id([universityId, userId])
 }
 
-enum CompanyUserRole {
-    ADMIN
-    TEACHER
-    STUDENT
+model Role {
+    id   String @id @default(cuid())
+    name String @unique
+
+    scopes          Scope[]
+    universityUsers UniversityUser[]
+}
+
+model Scope {
+    id   String @id @default(cuid())
+    name String @unique
+
+    roles Role[]
 }

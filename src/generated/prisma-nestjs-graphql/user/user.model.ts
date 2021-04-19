@@ -1,8 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { HideField } from '@nestjs/graphql';
-import { CompanyUser } from '../company-user/company-user.model';
+import { UniversityUser } from '../university-user/university-user.model';
 
 @ObjectType()
 export class User {
@@ -18,12 +17,15 @@ export class User {
     @Field(() => String, {nullable:false})
     email!: string;
 
-    @HideField()
-    password!: string;
+    @Field(() => String, {nullable:true})
+    avatar?: string;
 
     @Field(() => String, {nullable:false,description:"First letter of the father's first name"})
     fatherInitial!: string;
 
-    @Field(() => [CompanyUser], {nullable:true})
-    companyUser?: Array<CompanyUser>;
+    @Field(() => String, {nullable:false})
+    password!: string;
+
+    @Field(() => [UniversityUser], {nullable:true})
+    universityUsers?: Array<UniversityUser>;
 }

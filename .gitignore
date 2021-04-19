@@ -39,3 +39,6 @@ lerna-debug.log*
 # Cache
 .cache
 .eslintcache
+
+# Uploads
+/uploads

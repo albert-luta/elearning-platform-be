@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { MyContext } from 'src/my-graphql/my-graphql.types';
+import { REFRESH_TOKEN_COOKIE_NAME } from '../auth.constants';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { TokensService } from '../services/tokens.service';
 
@@ -32,10 +33,6 @@ export class AuthenticationGuard implements CanActivate {
 			ctx
 		).getContext<MyContext>();
 		const headers = graphQLCtx.req.headers;
-		const authorization = headers.authorization;
-		if (authorization == null) {
-			throw new UnauthorizedException('jwt must be provided');
-		}
 
 		// Request comes from playground
 		if (
@@ -45,10 +42,20 @@ export class AuthenticationGuard implements CanActivate {
 					'PORT'
 				)}/graphql`
 		) {
-			graphQLCtx.req.user = {
-				id: authorization
-			};
+			// If it comes from playground we take the data from refresh token
+			const refreshToken =
+				graphQLCtx.req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+			const payload = this.tokensService.getPayloadFromToken(
+				refreshToken,
+				'refresh'
+			);
+			graphQLCtx.req.user = payload.user;
 			return true;
+		}
+
+		const authorization = headers.authorization;
+		if (authorization == null) {
+			throw new UnauthorizedException('jwt must be provided');
 		}
 
 		if (!authorization.startsWith('Bearer ')) {

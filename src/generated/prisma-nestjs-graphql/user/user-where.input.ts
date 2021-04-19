@@ -1,7 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { CompanyUserListRelationFilter } from '../company-user/company-user-list-relation-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { UniversityUserListRelationFilter } from '../university-user/university-user-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -26,12 +27,15 @@ export class UserWhereInput {
     @Field(() => StringFilter, {nullable:true})
     email?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    password?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    avatar?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     fatherInitial?: StringFilter;
 
-    @Field(() => CompanyUserListRelationFilter, {nullable:true})
-    companyUser?: CompanyUserListRelationFilter;
+    @Field(() => StringFilter, {nullable:true})
+    password?: StringFilter;
+
+    @Field(() => UniversityUserListRelationFilter, {nullable:true})
+    universityUsers?: UniversityUserListRelationFilter;
 }
