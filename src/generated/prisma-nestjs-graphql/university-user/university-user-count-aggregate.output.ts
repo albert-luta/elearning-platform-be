@@ -4,14 +4,14 @@ import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class UniversityUserCountAggregate {
-    @Field(() => Int, {nullable:true})
-    universityId?: number;
+    @Field(() => Int, {nullable:false})
+    universityId!: number;
 
-    @Field(() => Int, {nullable:true})
-    userId?: number;
+    @Field(() => Int, {nullable:false})
+    userId!: number;
 
-    @Field(() => Int, {nullable:true})
-    roleId?: number;
+    @Field(() => Int, {nullable:false})
+    roleId!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;
