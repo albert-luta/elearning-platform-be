@@ -10,15 +10,19 @@ import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-
 import { REFRESH_TOKEN_COOKIE_NAME } from './auth.constants';
 import { TokensPayload } from './auth.types';
 import { ReqType, ResType } from 'src/my-graphql/my-graphql.types';
+import { FileUpload } from 'graphql-upload';
+import { FileService } from 'src/global/file/file.service';
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly prisma: PrismaService,
-		private readonly tokensService: TokensService
+		private readonly tokensService: TokensService,
+		private readonly fileService: FileService
 	) {}
 
 	async register(
+		res: ResType,
 		{
 			email,
 			fatherInitial,
@@ -26,7 +30,7 @@ export class AuthService {
 			lastName,
 			password
 		}: RegisterUserInput,
-		res: ResType
+		avatar?: FileUpload
 	): Promise<Authentication> {
 		try {
 			const hashedPassword = await argon2.hash(password.trim());
@@ -39,6 +43,20 @@ export class AuthService {
 					password: hashedPassword
 				}
 			});
+			if (avatar) {
+				const avatarPath = await this.fileService.createUserAvatar(
+					createdUser.id,
+					avatar
+				);
+				await this.prisma.user.update({
+					where: {
+						id: createdUser.id
+					},
+					data: {
+						avatar: avatarPath
+					}
+				});
+			}
 
 			const tokensPayload: TokensPayload = {
 				user: { id: createdUser.id, universities: {} }
@@ -90,11 +108,15 @@ export class AuthService {
 				userProvided.password
 			);
 			if (!hasCorrectPassword) {
+				throw new Error('incorrect password');
+			}
+		} catch (e) {
+			if (e.message === 'incorrect password') {
 				throw new MyBadRequestException({
 					password: 'Incorrect password'
 				});
 			}
-		} catch {
+
 			throw new InternalServerErrorException();
 		}
 

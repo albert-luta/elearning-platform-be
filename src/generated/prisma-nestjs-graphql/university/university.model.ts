@@ -7,10 +7,13 @@ import { UniversityUser } from '../university-user/university-user.model';
 export class University {
     @Field(() => ID, {nullable:false})
     id!: string;
+
     @Field(() => String, {nullable:false})
     name!: string;
+
     @Field(() => String, {nullable:true})
-    logo?: string;
+    logo!: string | null;
+
     @Field(() => [UniversityUser], {nullable:true})
-    universityUsers?: Array<UniversityUser>;
+    universityUsers!: Array<UniversityUser>;
 }

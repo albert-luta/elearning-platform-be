@@ -8,6 +8,7 @@ import { GraphQLReq } from 'src/my-graphql/decorators/graphql-req.decorator';
 import { UnauthorizedException } from '@nestjs/common';
 import { Public } from './decorators/public.decorator';
 import { ReqType, ResType } from 'src/my-graphql/my-graphql.types';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 @Public()
 @Resolver()
@@ -16,10 +17,12 @@ export class AuthResolver {
 
 	@Mutation(() => Authentication)
 	register(
+		@GraphQLRes() res: ResType,
 		@Args('user') user: RegisterUserInput,
-		@GraphQLRes() res: ResType
+		@Args({ name: 'avatar', type: () => GraphQLUpload, nullable: true })
+		avatar?: FileUpload
 	): Promise<Authentication> {
-		return this.authService.register(user, res);
+		return this.authService.register(res, user, avatar);
 	}
 
 	@Mutation(() => Authentication)

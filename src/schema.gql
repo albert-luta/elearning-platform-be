@@ -6,6 +6,10 @@ type Authentication {
   accessToken: String!
 }
 
+input CreateUniversityInput {
+  name: String!
+}
+
 type GroupedByRoleUniversitiesObject {
   role: String!
   universities: [UniversityObject!]!
@@ -17,10 +21,11 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createUniversity(logo: Upload, university: CreateUniversityInput!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
   logout: Authentication
   refreshTokens: Authentication!
-  register(user: RegisterUserInput!): Authentication!
+  register(avatar: Upload, user: RegisterUserInput!): Authentication!
 }
 
 type Query {
@@ -69,6 +74,9 @@ type UniversityUser {
   user: User!
   userId: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   avatar: String

@@ -40,5 +40,6 @@ lerna-debug.log*
 .cache
 .eslintcache
 
-# Uploads
-/uploads
+# Public
+/public/**/*
+!/public/index.html

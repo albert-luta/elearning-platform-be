@@ -9,13 +9,17 @@ import { AuthenticationGuard } from './auth/guards/authentication.guard';
 import { UniversityModule } from './university/university.module';
 import { ConfigGlobalModule } from './global/config/config.module';
 import { MyGraphQLModule } from './my-graphql/my-graphql.module';
+import { FileGlobalModule } from './global/file/file.module';
+import { MyServeStaticModule } from './my-serve-static/my-serve-static.module';
 
 @Module({
 	imports: [
 		MyGraphQLModule,
+		MyServeStaticModule,
 		ConfigGlobalModule,
 		PrismaGlobalModule,
 		JwtGlobalModule,
+		FileGlobalModule,
 		AuthModule,
 		UserModule,
 		UniversityModule

@@ -4,4 +4,4 @@
 /.eslintrc.js
 /src/generated
 /dist
-/uploads
+/public

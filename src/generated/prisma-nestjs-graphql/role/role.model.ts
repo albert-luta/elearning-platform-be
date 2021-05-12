@@ -8,10 +8,13 @@ import { UniversityUser } from '../university-user/university-user.model';
 export class Role {
     @Field(() => ID, {nullable:false})
     id!: string;
+
     @Field(() => String, {nullable:false})
     name!: string;
+
     @Field(() => [Scope], {nullable:true})
-    scopes?: Array<Scope>;
+    scopes!: Array<Scope>;
+
     @Field(() => [UniversityUser], {nullable:true})
-    universityUsers?: Array<UniversityUser>;
+    universityUsers!: Array<UniversityUser>;
 }

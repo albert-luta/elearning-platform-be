@@ -7,8 +7,10 @@ import { Role } from '../role/role.model';
 export class Scope {
     @Field(() => ID, {nullable:false})
     id!: string;
+
     @Field(() => String, {nullable:false})
     name!: string;
+
     @Field(() => [Role], {nullable:true})
-    roles?: Array<Role>;
+    roles!: Array<Role>;
 }

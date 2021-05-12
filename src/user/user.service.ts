@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import {
 	GroupedByRoleUniversitiesResolverReturnType,
@@ -7,7 +8,10 @@ import {
 
 @Injectable()
 export class UserService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly fileService: FileService
+	) {}
 
 	async getUser(id: string): Promise<UserResolverReturnType> {
 		const res = await this.prisma.user.findUnique({
@@ -20,8 +24,12 @@ export class UserService {
 			throw new NotFoundException();
 		}
 
-		const { password, ...user } = res;
-		return user;
+		const { password, avatar, ...rest } = res;
+
+		return {
+			...rest,
+			avatar: avatar && this.fileService.getFileUrl(avatar)
+		};
 	}
 
 	async getUserGroupedByRoleUniversities(

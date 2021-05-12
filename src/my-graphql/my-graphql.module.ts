@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { formatGraphQLError } from './format-graphql-error';
 import { MyContext } from './my-graphql.types';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 @Module({
 	imports: [
@@ -14,8 +15,13 @@ import { MyContext } from './my-graphql.types';
 				origin: process.env.FRONTEND_URL
 			},
 			formatError: formatGraphQLError,
-			context: ({ req, res }): MyContext => ({ req, res })
+			context: ({ req, res }): MyContext => ({ req, res }),
+			uploads: false
 		})
 	]
 })
-export class MyGraphQLModule {}
+export class MyGraphQLModule implements NestModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+	}
+}
