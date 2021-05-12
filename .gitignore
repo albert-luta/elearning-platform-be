@@ -43,3 +43,6 @@ lerna-debug.log*
 # Public
 /public/**/*
 !/public/index.html
+
+# generated files
+/src/generated

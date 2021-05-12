@@ -1,7 +1,6 @@
 # Ignores by default node_modules and files/directories that begins
 # with .(eg. .config, .env)
 
-/.eslintrc.js
 /src/generated
 /dist
 /public
