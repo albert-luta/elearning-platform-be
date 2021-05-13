@@ -16,12 +16,16 @@ export class FileUtilsService {
 	constructor(private readonly configService: ConfigService) {}
 
 	private uploadsDir = p.resolve(
-		p.dirname(p.dirname(require.main?.filename ?? '')),
+		p.dirname(p.dirname(p.dirname(require.main?.filename ?? ''))),
 		PUBLIC_DIR_NAME,
 		UPLOADS_DIR_NAME
 	);
 	private usersDir = p.resolve(this.uploadsDir, USERS_DIR_NAME);
 	private universitiesDir = p.resolve(this.uploadsDir, UNIVERSITIES_DIR_NAME);
+
+	private toUnix(path: string): string {
+		return path.split(p.sep).join(p.posix.sep);
+	}
 
 	getUserDir(userId: string): string {
 		return p.resolve(this.usersDir, userId);
@@ -46,19 +50,17 @@ export class FileUtilsService {
 		return new Promise((res, rej) => {
 			file.createReadStream()
 				.pipe(fs.createWriteStream(absolutePath))
-				.on('finish', () => res(relativePath))
+				.on('finish', () => res(this.toUnix(relativePath)))
 				.on('error', () => rej(new InternalServerErrorException()));
 		});
 	}
 
 	getFileUrl(path: string): string {
-		const correctPath = p
-			.join(UPLOADS_DIR_NAME, path)
-			.split(p.sep)
-			.join(p.posix.sep);
-
 		return encodeURI(
-			`${this.configService.get<string>('BACKEND_URL')}/${correctPath}`
+			`${this.configService.get<string>('BACKEND_URL')}/${p.join(
+				UPLOADS_DIR_NAME,
+				path
+			)}`
 		);
 	}
 }

@@ -5,7 +5,7 @@
 	"scripts": {
 		"prebuild": "npm run prisma:generate && shx rm -rf dist",
 		"build": "nest build",
-		"start": "node dist/main",
+		"start": "node dist/src/main",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

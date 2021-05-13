@@ -54,6 +54,12 @@ export class UserService {
 			groupedUniversities: GroupedByRoleUniversitiesResolverReturnType;
 		}>(
 			(acc, curr) => {
+				const logo = curr.university.logo;
+				const university: typeof curr.university = {
+					...curr.university,
+					logo: logo && this.fileService.getFileUrl(logo)
+				};
+
 				const roleIndex = acc.roles[curr.role.name];
 
 				if (roleIndex == null) {
@@ -66,7 +72,7 @@ export class UserService {
 							...acc.groupedUniversities,
 							{
 								role: curr.role.name,
-								universities: [curr.university]
+								universities: [university]
 							}
 						]
 					};
@@ -75,7 +81,7 @@ export class UserService {
 				const oldGroup = acc.groupedUniversities[roleIndex];
 				const updatedGroup: typeof oldGroup = {
 					role: oldGroup.role,
-					universities: [...oldGroup.universities, curr.university]
+					universities: [...oldGroup.universities, university]
 				};
 
 				return {
