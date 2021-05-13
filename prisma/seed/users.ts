@@ -9,6 +9,6 @@ export const users: RequiredFields<Prisma.UserCreateManyInput, 'id'>[] = [
 		firstName: 'First',
 		lastName: 'Last',
 		password:
-			'$argon2id$v=19$m=4096,t=2,p=1$QWhGN0gwczJhUWFCVG1yUA$oVqLpRU1SamQ2GLhNTjHHNFPmsMxu9PkAnm6CbLmAy8'
+			'$argon2i$v=19$m=4096,t=3,p=1$ie/5oMvgcybXIM9UlD1zdg$f747QByyfh/Ui2Z8UftV0Uu+KPvtl2aPvDfkXPtSFq4'
 	}
 ];
