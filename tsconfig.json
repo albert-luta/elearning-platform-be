@@ -12,7 +12,11 @@
 		"baseUrl": ".",
 		"incremental": true,
 		"strict": true,
-		"strictPropertyInitialization": false
+		"strictPropertyInitialization": false,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
 	},
 	"include": [".eslintrc.js", "**/*.ts"],
 	"exclude": ["dist", "public"]

@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { RegisterUserInput } from './dto/register-user.input';
-import * as argon2 from 'argon2';
+import argon2 from 'argon2';
 import { PrismaError } from 'prisma-error-enum';
 import { LoginUserInput } from './dto/login-user.input';
 import { Authentication } from './dto/authentication.object';

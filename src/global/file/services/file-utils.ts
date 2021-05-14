@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
-import * as p from 'path';
-import * as fs from 'fs';
-import * as fsp from 'fs/promises';
+import p from 'path';
+import fs from 'fs';
+import fsp from 'fs/promises';
 import {
 	PUBLIC_DIR_NAME,
 	UNIVERSITIES_DIR_NAME,

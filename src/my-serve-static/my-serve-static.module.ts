@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import * as p from 'path';
+import p from 'path';
 import { PUBLIC_DIR_NAME } from 'src/global/file/file.constants';
 @Module({
 	imports: [
