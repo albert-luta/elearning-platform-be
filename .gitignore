@@ -1,4 +1,4 @@
-# compiled output
+# Compiled output
 /dist
 /node_modules
 
@@ -40,9 +40,9 @@ lerna-debug.log*
 .cache
 .eslintcache
 
-# Public
-/public/**/*
-!/public/index.html
+# Uploads
+/public/uploads/*
+!/public/uploads/_development
 
-# generated files
+# Generated files
 /src/generated

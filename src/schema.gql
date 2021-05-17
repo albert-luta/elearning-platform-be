@@ -6,6 +6,21 @@ type Authentication {
   accessToken: String!
 }
 
+type College {
+  courses: [Course!]
+  id: ID!
+  name: String!
+  university: University!
+  universityId: String!
+}
+
+type Course {
+  college: College!
+  collegeId: String!
+  id: ID!
+  name: String!
+}
+
 input CreateUniversityInput {
   name: String!
 }
@@ -54,6 +69,7 @@ type Scope {
 }
 
 type University {
+  colleges: [College!]
   id: ID!
   logo: String
   name: String!

@@ -1,39 +1,18 @@
-import { PrismaClient } from '@prisma/client';
-import { roles } from './seed/roles';
-import { scopes } from './seed/scopes';
-import { universities } from './seed/universities';
-import { universitiesUsers } from './seed/universitiesUsers';
-import { users } from './seed/users';
+import { PrismaClient } from '.prisma/client';
+import { seedDev } from './seed.dev';
+import { seedProd } from './seed.prod';
 
 const prisma = new PrismaClient();
 
-const seed = async () => {
-	const rolesPromise = prisma.role.createMany({
-		data: roles
-	});
-	const scopesPromise = prisma.scope.createMany({
-		data: scopes
-	});
-	const usersPromise = prisma.user.createMany({
-		data: users
-	});
-	const universitiesPromise = prisma.university.createMany({
-		data: universities
-	});
+let seed: (prisma: PrismaClient) => Promise<void>;
 
-	await Promise.all([
-		rolesPromise,
-		scopesPromise,
-		usersPromise,
-		universitiesPromise
-	]);
+if (process.env.NODE_ENV === 'production') {
+	seed = seedProd;
+} else {
+	seed = seedDev;
+}
 
-	await prisma.universityUser.createMany({
-		data: universitiesUsers
-	});
-};
-
-seed()
+seed(prisma)
 	.catch((e) => {
 		console.error(e);
 		process.exit(1);

@@ -20,7 +20,7 @@
 		"prisma:db:migrate:prod": "npx prisma migrate deploy",
 		"prisma:db:migrate:dev": "npx prisma migrate dev --skip-generate && npm run prisma:generate",
 		"prisma:db:seed": "npx prisma db seed --preview-feature",
-		"prisma:studio": "npx prisma studio",
+		"prisma:studio": "npx prisma studio --browser none",
 		"prepare": "husky install"
 	},
 	"dependencies": {
