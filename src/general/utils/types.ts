@@ -1,7 +1,7 @@
 /**
  * Pick what fields to become required
  */
-export type RequiredFields<T, K extends keyof T> = Exclude<T, K> &
+export type RequiredFields<T, K extends keyof T> = Omit<T, K> &
 	Required<Pick<T, K>>;
 
 /**

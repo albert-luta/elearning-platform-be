@@ -38,9 +38,7 @@ export class AuthenticationGuard implements CanActivate {
 		if (
 			this.configService.get<string>('NODE_ENV') === 'development' &&
 			headers.referer ===
-				`http://localhost:${this.configService.get<string>(
-					'PORT'
-				)}/graphql`
+				this.configService.get<string>('BACKEND_URL') + '/graphql'
 		) {
 			// If it comes from playground we take the data from refresh token
 			const refreshToken =

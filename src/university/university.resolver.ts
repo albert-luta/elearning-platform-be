@@ -3,6 +3,7 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { User } from 'src/user/decorators/user.decorator';
 import { CreateUniversityInput } from './dto/create-university.input';
+import { UniversityInput } from './dto/university.input';
 import { UniversityObject } from './dto/university.object';
 import { UniversityService } from './university.service';
 import { UniversityReturnType } from './university.types';
@@ -23,5 +24,13 @@ export class UniversityResolver {
 			university,
 			logo
 		);
+	}
+
+	@Mutation(() => UniversityObject)
+	leaveUniversity(
+		@User() user: UserType,
+		@Args('university') university: UniversityInput
+	): Promise<UniversityReturnType> {
+		return this.universityService.leaveUniversity(user.id, university);
 	}
 }
