@@ -1,9 +1,8 @@
 import { Prisma } from '.prisma/client';
-import { RequiredFields } from 'src/general/utils/types';
+import { SeedDev } from './utills';
 
-export const users: RequiredFields<Prisma.UserCreateManyInput, 'id'>[] = [
+export const users: SeedDev<Prisma.UserCreateManyInput>[] = [
 	{
-		id: 'ckoml3l1z00073b6b10afztra',
 		email: 'test@test.com',
 		fatherInitial: 'T',
 		firstName: 'First',

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	InternalServerErrorException
+} from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
 import { UserRole } from 'src/auth/auth.types';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
@@ -79,6 +83,14 @@ export class UniversityService {
 					}
 				}
 			});
+			const enrolledUsers = await this.prisma.universityUser.findMany({
+				where: {
+					universityId: university.id
+				}
+			});
+			if (!enrolledUsers.length) {
+				await this.deleteUniversity(userId, university, true);
+			}
 
 			return university;
 		} catch (e) {
@@ -86,6 +98,67 @@ export class UniversityService {
 				throw new MyBadRequestException({
 					relation: 'User is not enrolled at this university'
 				});
+			}
+
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async deleteUniversity(
+		userId: string,
+		university: UniversityInput,
+		skipAuthCheck = false
+	): Promise<UniversityReturnType> {
+		try {
+			const res = await this.prisma.universityUser.findUnique({
+				where: {
+					universityId_userId: {
+						userId,
+						universityId: university.id
+					}
+				},
+				select: {
+					role: {
+						select: {
+							name: true
+						}
+					}
+				}
+			});
+
+			if (
+				!skipAuthCheck &&
+				(res == null || res.role.name !== UserRole.ADMIN_UNIVERSITY)
+			) {
+				throw new Error('unauthorized');
+			}
+
+			const related = {
+				where: {
+					universityId: university.id
+				}
+			};
+			const universityUsers = this.prisma.universityUser.deleteMany(
+				related
+			);
+			const courses = this.prisma.course.deleteMany(related);
+			const colleges = this.prisma.college.deleteMany(related);
+			const uni = this.prisma.university.delete({
+				where: {
+					id: university.id
+				}
+			});
+			await this.prisma.$transaction([
+				universityUsers,
+				courses,
+				colleges,
+				uni
+			]);
+
+			return university;
+		} catch (e) {
+			if (e.message === 'unauthorized') {
+				throw new ForbiddenException();
 			}
 
 			throw new InternalServerErrorException();

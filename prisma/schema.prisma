@@ -36,6 +36,7 @@ model University {
 
     universityUsers UniversityUser[]
     colleges        College[]
+    courses         Course[]
 }
 
 model College {
@@ -51,11 +52,13 @@ model College {
 }
 
 model Course {
-    id        String @id @default(cuid())
-    collegeId String
-    name      String
+    id           String @id @default(cuid())
+    universityId String
+    collegeId    String
+    name         String
 
-    college College @relation(fields: [collegeId], references: [id])
+    university University @relation(fields: [universityId], references: [id])
+    college    College    @relation(fields: [collegeId], references: [id])
 
     @@unique([collegeId, name])
 }

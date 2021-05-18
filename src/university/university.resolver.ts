@@ -33,4 +33,12 @@ export class UniversityResolver {
 	): Promise<UniversityReturnType> {
 		return this.universityService.leaveUniversity(user.id, university);
 	}
+
+	@Mutation(() => UniversityObject)
+	deleteUniversity(
+		@User() user: UserType,
+		@Args('university') university: UniversityInput
+	): Promise<UniversityReturnType> {
+		return this.universityService.deleteUniversity(user.id, university);
+	}
 }

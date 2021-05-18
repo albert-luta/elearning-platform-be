@@ -19,6 +19,8 @@ type Course {
   collegeId: String!
   id: ID!
   name: String!
+  university: University!
+  universityId: String!
 }
 
 input CreateUniversityInput {
@@ -37,6 +39,7 @@ input LoginUserInput {
 
 type Mutation {
   createUniversity(logo: Upload, university: CreateUniversityInput!): UniversityObject!
+  deleteUniversity(university: UniversityInput!): UniversityObject!
   leaveUniversity(university: UniversityInput!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
   logout: Authentication
@@ -71,6 +74,7 @@ type Scope {
 
 type University {
   colleges: [College!]
+  courses: [Course!]
   id: ID!
   logo: String
   name: String!
