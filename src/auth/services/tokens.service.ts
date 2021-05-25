@@ -85,7 +85,8 @@ export class TokensService {
 	private get refreshTokenCookieOptions(): CookieOptions {
 		return {
 			httpOnly: true,
-			secure: this.configService.get<string>('NODE_ENV') === 'production'
+			secure: this.configService.get<string>('NODE_ENV') === 'production',
+			sameSite: 'none'
 		};
 	}
 }
