@@ -5,6 +5,7 @@ import { User } from 'src/user/decorators/user.decorator';
 import { CreateUniversityInput } from './dto/create-university.input';
 import { UniversityInput } from './dto/university.input';
 import { UniversityObject } from './dto/university.object';
+import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityService } from './university.service';
 import { UniversityReturnType } from './university.types';
 
@@ -24,6 +25,17 @@ export class UniversityResolver {
 			university,
 			logo
 		);
+	}
+
+	@Mutation(() => UniversityObject)
+	updateUniversity(
+		@User() user: UserType,
+		@Args('id') id: string,
+		@Args('data') data: UpdateUniversityInput,
+		@Args({ name: 'logo', type: () => GraphQLUpload, nullable: true })
+		logo?: FileUpload
+	): Promise<UniversityReturnType> {
+		return this.universityService.updateUniversity(user.id, id, data, logo);
 	}
 
 	@Mutation(() => UniversityObject)

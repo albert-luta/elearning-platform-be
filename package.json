@@ -6,6 +6,7 @@
 		"prebuild": "npm run prisma:generate && shx rm -rf dist",
 		"build": "nest build",
 		"start": "node dist/src/main",
+		"prestart:dev": "shx rm -rf dist",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

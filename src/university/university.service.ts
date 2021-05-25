@@ -10,6 +10,7 @@ import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CreateUniversityInput } from './dto/create-university.input';
 import { UniversityInput } from './dto/university.input';
+import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityReturnType } from './university.types';
 
 @Injectable()
@@ -19,10 +20,36 @@ export class UniversityService {
 		private readonly fileService: FileService
 	) {}
 
+	private async isUserAuthorized(
+		userId: string,
+		universityId: string
+	): Promise<boolean> {
+		const res = await this.prisma.universityUser.findUnique({
+			where: {
+				universityId_userId: {
+					userId,
+					universityId
+				}
+			},
+			select: {
+				role: {
+					select: {
+						name: true
+					}
+				}
+			}
+		});
+
+		if (res == null || res.role.name !== UserRole.ADMIN_UNIVERSITY) {
+			return false;
+		}
+		return true;
+	}
+
 	async createUniversity(
 		userId: string,
 		{ name }: CreateUniversityInput,
-		logo?: FileUpload
+		logo: FileUpload | undefined
 	): Promise<UniversityReturnType> {
 		try {
 			const createdUniversity = await this.prisma.university.create({
@@ -44,28 +71,71 @@ export class UniversityService {
 					}
 				}
 			});
-			if (logo) {
-				const logoPath = await this.fileService.createUniversityLogo(
-					createdUniversity.id,
-					logo
-				);
-				await this.prisma.university.update({
-					where: {
-						id: createdUniversity.id
-					},
-					data: {
-						logo: logoPath
-					}
-				});
-			}
+			if (!logo) return createdUniversity;
+
+			const logoPath = await this.fileService.createUniversityLogo(
+				createdUniversity.id,
+				logo
+			);
+			await this.prisma.university.update({
+				where: {
+					id: createdUniversity.id
+				},
+				data: {
+					logo: logoPath
+				}
+			});
 
 			return {
 				...createdUniversity,
-				logo:
-					createdUniversity.logo &&
-					this.fileService.getFileUrl(createdUniversity.logo)
+				logo: this.fileService.getFileUrl(logoPath)
 			};
 		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async updateUniversity(
+		userId: string,
+		universityId: string,
+		data: UpdateUniversityInput,
+		logo: FileUpload | undefined
+	): Promise<UniversityReturnType> {
+		try {
+			const isAuthorized = await this.isUserAuthorized(
+				userId,
+				universityId
+			);
+			if (!isAuthorized) {
+				throw new Error('unauthorized');
+			}
+
+			const university = await this.prisma.university.update({
+				where: {
+					id: universityId
+				},
+				data: {
+					...data,
+					logo:
+						logo &&
+						(await this.fileService.createUniversityLogo(
+							universityId,
+							logo
+						))
+				}
+			});
+
+			return {
+				...university,
+				logo:
+					university.logo &&
+					this.fileService.getFileUrl(university.logo)
+			};
+		} catch (e) {
+			if (e.message === 'unauthorized') {
+				throw new ForbiddenException();
+			}
+
 			throw new InternalServerErrorException();
 		}
 	}
@@ -110,26 +180,11 @@ export class UniversityService {
 		skipAuthCheck = false
 	): Promise<UniversityReturnType> {
 		try {
-			const res = await this.prisma.universityUser.findUnique({
-				where: {
-					universityId_userId: {
-						userId,
-						universityId: university.id
-					}
-				},
-				select: {
-					role: {
-						select: {
-							name: true
-						}
-					}
-				}
-			});
-
-			if (
-				!skipAuthCheck &&
-				(res == null || res.role.name !== UserRole.ADMIN_UNIVERSITY)
-			) {
+			const isAuthorized = await this.isUserAuthorized(
+				userId,
+				university.id
+			);
+			if (!skipAuthCheck && !isAuthorized) {
 				throw new Error('unauthorized');
 			}
 
