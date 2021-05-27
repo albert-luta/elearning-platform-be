@@ -39,8 +39,8 @@ input LoginUserInput {
 
 type Mutation {
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
-  deleteUniversity(university: UniversityInput!): UniversityObject!
-  leaveUniversity(university: UniversityInput!): UniversityObject!
+  deleteUniversity(id: String!): UniversityObject!
+  leaveUniversity(id: String!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
   logout: Authentication
   refreshTokens: Authentication!
@@ -80,12 +80,6 @@ type University {
   logo: String
   name: String!
   universityUsers: [UniversityUser!]
-}
-
-input UniversityInput {
-  id: ID!
-  logo: String
-  name: String!
 }
 
 type UniversityObject {

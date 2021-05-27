@@ -1,7 +1,8 @@
 import {
 	ForbiddenException,
 	Injectable,
-	InternalServerErrorException
+	InternalServerErrorException,
+	NotFoundException
 } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
 import { UserRole } from 'src/auth/auth.types';
@@ -9,7 +10,6 @@ import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CreateUniversityInput } from './dto/create-university.input';
-import { UniversityInput } from './dto/university.input';
 import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityReturnType } from './university.types';
 
@@ -19,6 +19,9 @@ export class UniversityService {
 		private readonly prisma: PrismaService,
 		private readonly fileService: FileService
 	) {}
+
+	private readonly NOT_FOUND = 'NOT_FOUND';
+	private readonly UNAUTHORIZED = 'UNAUTHORIZED';
 
 	private async isUserAuthorized(
 		userId: string,
@@ -107,7 +110,7 @@ export class UniversityService {
 				universityId
 			);
 			if (!isAuthorized) {
-				throw new Error('unauthorized');
+				throw new Error(this.UNAUTHORIZED);
 			}
 
 			const university = await this.prisma.university.update({
@@ -132,7 +135,7 @@ export class UniversityService {
 					this.fileService.getFileUrl(university.logo)
 			};
 		} catch (e) {
-			if (e.message === 'unauthorized') {
+			if (e.message === this.UNAUTHORIZED) {
 				throw new ForbiddenException();
 			}
 
@@ -142,24 +145,33 @@ export class UniversityService {
 
 	async leaveUniversity(
 		userId: string,
-		university: UniversityInput
+		universityId: string
 	): Promise<UniversityReturnType> {
 		try {
+			const university = await this.prisma.university.findUnique({
+				where: {
+					id: universityId
+				}
+			});
+			if (!university) {
+				throw new Error(this.NOT_FOUND);
+			}
+
 			await this.prisma.universityUser.delete({
 				where: {
 					universityId_userId: {
 						userId,
-						universityId: university.id
+						universityId
 					}
 				}
 			});
 			const enrolledUsers = await this.prisma.universityUser.findMany({
 				where: {
-					universityId: university.id
+					universityId
 				}
 			});
 			if (!enrolledUsers.length) {
-				await this.deleteUniversity(userId, university, true);
+				await this.deleteUniversity(userId, universityId, true);
 			}
 
 			return university;
@@ -168,6 +180,8 @@ export class UniversityService {
 				throw new MyBadRequestException({
 					relation: 'User is not enrolled at this university'
 				});
+			} else if (e.message === this.NOT_FOUND) {
+				throw new NotFoundException();
 			}
 
 			throw new InternalServerErrorException();
@@ -176,23 +190,33 @@ export class UniversityService {
 
 	async deleteUniversity(
 		userId: string,
-		university: UniversityInput,
+		universityId: string,
 		skipAuthCheck = false
 	): Promise<UniversityReturnType> {
 		try {
 			const isAuthorized = await this.isUserAuthorized(
 				userId,
-				university.id
+				universityId
 			);
 			if (!skipAuthCheck && !isAuthorized) {
-				throw new Error('unauthorized');
+				throw new Error(this.UNAUTHORIZED);
 			}
 
 			const related = {
 				where: {
-					universityId: university.id
+					universityId
 				}
 			};
+
+			const university = await this.prisma.university.findUnique({
+				where: {
+					id: universityId
+				}
+			});
+			if (!university) {
+				throw new Error(this.NOT_FOUND);
+			}
+
 			const universityUsers = this.prisma.universityUser.deleteMany(
 				related
 			);
@@ -200,7 +224,7 @@ export class UniversityService {
 			const colleges = this.prisma.college.deleteMany(related);
 			const uni = this.prisma.university.delete({
 				where: {
-					id: university.id
+					id: universityId
 				}
 			});
 			await this.prisma.$transaction([
@@ -212,8 +236,10 @@ export class UniversityService {
 
 			return university;
 		} catch (e) {
-			if (e.message === 'unauthorized') {
+			if (e.message === this.UNAUTHORIZED) {
 				throw new ForbiddenException();
+			} else if (e.message === this.NOT_FOUND) {
+				throw new NotFoundException();
 			}
 
 			throw new InternalServerErrorException();

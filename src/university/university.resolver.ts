@@ -3,7 +3,6 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { User } from 'src/user/decorators/user.decorator';
 import { CreateUniversityInput } from './dto/create-university.input';
-import { UniversityInput } from './dto/university.input';
 import { UniversityObject } from './dto/university.object';
 import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityService } from './university.service';
@@ -37,16 +36,16 @@ export class UniversityResolver {
 	@Mutation(() => UniversityObject)
 	leaveUniversity(
 		@User() user: UserType,
-		@Args('university') university: UniversityInput
+		@Args('id') id: string
 	): Promise<UniversityReturnType> {
-		return this.universityService.leaveUniversity(user.id, university);
+		return this.universityService.leaveUniversity(user.id, id);
 	}
 
 	@Mutation(() => UniversityObject)
 	deleteUniversity(
 		@User() user: UserType,
-		@Args('university') university: UniversityInput
+		@Args('id') id: string
 	): Promise<UniversityReturnType> {
-		return this.universityService.deleteUniversity(user.id, university);
+		return this.universityService.deleteUniversity(user.id, id);
 	}
 }
