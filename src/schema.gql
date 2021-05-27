@@ -38,7 +38,7 @@ input LoginUserInput {
 }
 
 type Mutation {
-  createUniversity(logo: Upload, university: CreateUniversityInput!): UniversityObject!
+  createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
   deleteUniversity(university: UniversityInput!): UniversityObject!
   leaveUniversity(university: UniversityInput!): UniversityObject!
   login(user: LoginUserInput!): Authentication!

@@ -16,15 +16,11 @@ export class UniversityResolver {
 	@Mutation(() => UniversityObject)
 	createUniversity(
 		@User() user: UserType,
-		@Args('university') university: CreateUniversityInput,
+		@Args('data') data: CreateUniversityInput,
 		@Args({ name: 'logo', type: () => GraphQLUpload, nullable: true })
 		logo?: FileUpload
 	): Promise<UniversityReturnType> {
-		return this.universityService.createUniversity(
-			user.id,
-			university,
-			logo
-		);
+		return this.universityService.createUniversity(user.id, data, logo);
 	}
 
 	@Mutation(() => UniversityObject)
