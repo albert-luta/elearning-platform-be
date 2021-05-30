@@ -11,6 +11,9 @@ import { ConfigGlobalModule } from './global/config/config.module';
 import { MyGraphQLModule } from './my-graphql/my-graphql.module';
 import { FileGlobalModule } from './global/file/file.module';
 import { MyServeStaticModule } from './my-serve-static/my-serve-static.module';
+import { CollegeModule } from './college/college.module';
+import { AuthorizationGuard } from './auth/guards/authorization.guard';
+import { CourseModule } from './course/course.module';
 
 @Module({
 	imports: [
@@ -22,7 +25,9 @@ import { MyServeStaticModule } from './my-serve-static/my-serve-static.module';
 		FileGlobalModule,
 		AuthModule,
 		UserModule,
-		UniversityModule
+		UniversityModule,
+		CollegeModule,
+		CourseModule
 	],
 	providers: [
 		{
@@ -32,6 +37,10 @@ import { MyServeStaticModule } from './my-serve-static/my-serve-static.module';
 		{
 			provide: APP_GUARD,
 			useClass: AuthenticationGuard
+		},
+		{
+			provide: APP_GUARD,
+			useClass: AuthorizationGuard
 		}
 	]
 })

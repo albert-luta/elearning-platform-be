@@ -1,7 +1,17 @@
 import { Prisma } from '.prisma/client';
 import { UserRole } from '../../../src/auth/auth.types';
 
-const studentScopes: Prisma.ScopeCreateManyInput[] = [];
+const studentScopes: Prisma.ScopeCreateManyInput[] = [
+	{
+		name: 'read:colleges'
+	},
+	{
+		name: 'create:college'
+	},
+	{
+		name: 'update:college'
+	}
+];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [...studentScopes];
 const adminCollegeScopes: Prisma.ScopeCreateManyInput[] = [...teacherScopes];
 const adminUniversityScopes: Prisma.ScopeCreateManyInput[] = [

@@ -14,6 +14,12 @@ type College {
   universityId: String!
 }
 
+type CollegeObject {
+  courses: [CourseObject!]!
+  id: ID!
+  name: String!
+}
+
 type Course {
   college: College!
   collegeId: String!
@@ -21,6 +27,15 @@ type Course {
   name: String!
   university: University!
   universityId: String!
+}
+
+type CourseObject {
+  id: ID!
+  name: String!
+}
+
+input CreateCollegeInput {
+  name: String!
 }
 
 input CreateUniversityInput {
@@ -38,6 +53,7 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createCollege(data: CreateCollegeInput!): CollegeObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
   deleteUniversity(id: String!): UniversityObject!
   leaveUniversity(id: String!): UniversityObject!
@@ -45,10 +61,12 @@ type Mutation {
   logout: Authentication
   refreshTokens: Authentication!
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
-  updateUniversity(data: UpdateUniversityInput!, id: String!, logo: Upload): UniversityObject!
+  updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
+  updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
 }
 
 type Query {
+  colleges: [CollegeObject!]!
   me: UserObject!
 }
 
@@ -95,10 +113,6 @@ type UniversityUser {
   universityId: String!
   user: User!
   userId: String!
-}
-
-input UpdateUniversityInput {
-  name: String
 }
 
 """The `Upload` scalar type represents a file upload."""

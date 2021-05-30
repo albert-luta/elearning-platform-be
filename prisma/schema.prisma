@@ -48,6 +48,7 @@ model College {
 
     courses Course[]
 
+    @@unique([id, universityId])
     @@unique([universityId, name])
 }
 
@@ -60,6 +61,7 @@ model Course {
     university University @relation(fields: [universityId], references: [id])
     college    College    @relation(fields: [collegeId], references: [id])
 
+    @@unique([id, universityId])
     @@unique([collegeId, name])
 }
 

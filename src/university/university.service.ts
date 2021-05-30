@@ -10,7 +10,6 @@ import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CreateUniversityInput } from './dto/create-university.input';
-import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityReturnType } from './university.types';
 
 @Injectable()
@@ -51,13 +50,13 @@ export class UniversityService {
 
 	async createUniversity(
 		userId: string,
-		{ name }: CreateUniversityInput,
+		data: CreateUniversityInput,
 		logo: FileUpload | undefined
 	): Promise<UniversityReturnType> {
 		try {
 			const createdUniversity = await this.prisma.university.create({
 				data: {
-					name,
+					...data,
 					universityUsers: {
 						create: {
 							user: {
@@ -101,7 +100,7 @@ export class UniversityService {
 	async updateUniversity(
 		userId: string,
 		universityId: string,
-		data: UpdateUniversityInput,
+		data: CreateUniversityInput,
 		logo: FileUpload | undefined
 	): Promise<UniversityReturnType> {
 		try {

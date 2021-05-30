@@ -21,7 +21,7 @@ export class AuthenticationGuard implements CanActivate {
 	) {}
 
 	canActivate(ctx: ExecutionContext) {
-		const isPublic = this.reflector.getAllAndOverride<boolean>(
+		const isPublic = this.reflector.getAllAndOverride<true | undefined>(
 			IS_PUBLIC_KEY,
 			[ctx.getHandler(), ctx.getClass()]
 		);
@@ -55,7 +55,6 @@ export class AuthenticationGuard implements CanActivate {
 		if (authorization == null) {
 			throw new UnauthorizedException('jwt must be provided');
 		}
-
 		if (!authorization.startsWith('Bearer ')) {
 			throw new UnauthorizedException('invalid authorization header');
 		}

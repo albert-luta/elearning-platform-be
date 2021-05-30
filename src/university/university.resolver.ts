@@ -4,7 +4,6 @@ import { UserType } from 'src/my-graphql/my-graphql.types';
 import { User } from 'src/user/decorators/user.decorator';
 import { CreateUniversityInput } from './dto/create-university.input';
 import { UniversityObject } from './dto/university.object';
-import { UpdateUniversityInput } from './dto/update-university.input';
 import { UniversityService } from './university.service';
 import { UniversityReturnType } from './university.types';
 
@@ -26,7 +25,7 @@ export class UniversityResolver {
 	updateUniversity(
 		@User() user: UserType,
 		@Args('id') id: string,
-		@Args('data') data: UpdateUniversityInput,
+		@Args('data') data: CreateUniversityInput,
 		@Args({ name: 'logo', type: () => GraphQLUpload, nullable: true })
 		logo?: FileUpload
 	): Promise<UniversityReturnType> {
