@@ -26,7 +26,7 @@ export class CollegeResolver {
 	@Scopes('read:colleges')
 	@Query(() => [CollegeObject])
 	colleges(
-		@UniversityId() universityId: string
+		@Args('universityId') universityId: string
 	): Promise<CollegeReturnType[]> {
 		return this.collegeService.getColleges(universityId);
 	}
@@ -48,6 +48,15 @@ export class CollegeResolver {
 		@Args('data') data: CreateCollegeInput
 	): Promise<CollegeReturnType> {
 		return this.collegeService.updateCollege(universityId, id, data);
+	}
+
+	@Scopes('delete:college')
+	@Mutation(() => CollegeObject)
+	deleteCollege(
+		@UniversityId() universityId: string,
+		@Args('id') id: string
+	): Promise<CollegeReturnType> {
+		return this.collegeService.deleteCollege(universityId, id);
 	}
 
 	@ResolveField()

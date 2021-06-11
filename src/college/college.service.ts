@@ -79,7 +79,6 @@ export class CollegeService {
 
 			return college;
 		} catch (e) {
-			console.log(e);
 			if (
 				e.code === PrismaError.UniqueConstraintViolation &&
 				e.meta.target.includes('name')
@@ -88,6 +87,35 @@ export class CollegeService {
 					name: 'There is already a college with this name'
 				});
 			} else if (e.code === 'P2025') {
+				throw new NotFoundException();
+			}
+
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async deleteCollege(
+		universityId: string,
+		id: string
+	): Promise<CollegeReturnType> {
+		try {
+			await this.prisma.course.deleteMany({
+				where: {
+					collegeId: id
+				}
+			});
+			const college = await this.prisma.college.delete({
+				where: {
+					id_universityId: {
+						id,
+						universityId
+					}
+				}
+			});
+
+			return college;
+		} catch (e) {
+			if (e.code === 'P2025') {
 				throw new NotFoundException();
 			}
 

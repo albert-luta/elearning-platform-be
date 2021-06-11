@@ -18,6 +18,7 @@ type CollegeObject {
   courses: [CourseObject!]!
   id: ID!
   name: String!
+  universityId: String!
 }
 
 type Course {
@@ -30,11 +31,18 @@ type Course {
 }
 
 type CourseObject {
+  collegeId: String!
   id: ID!
   name: String!
+  universityId: String!
 }
 
 input CreateCollegeInput {
+  name: String!
+}
+
+input CreateCourseInput {
+  collegeId: String!
   name: String!
 }
 
@@ -54,7 +62,10 @@ input LoginUserInput {
 
 type Mutation {
   createCollege(data: CreateCollegeInput!): CollegeObject!
+  createCourse(data: CreateCourseInput!): CourseObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
+  deleteCollege(id: String!): CollegeObject!
+  deleteCourse(id: String!): CourseObject!
   deleteUniversity(id: String!): UniversityObject!
   leaveUniversity(id: String!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
@@ -62,11 +73,12 @@ type Mutation {
   refreshTokens: Authentication!
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
+  updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
 }
 
 type Query {
-  colleges: [CollegeObject!]!
+  colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
 }
 

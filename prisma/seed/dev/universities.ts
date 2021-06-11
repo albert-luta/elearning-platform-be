@@ -8,8 +8,8 @@ export const universities: SeedDev<Prisma.UniversityCreateManyInput>[] = Object.
 	(role): SeedDev<Prisma.UniversityCreateManyInput> => ({
 		name: role,
 		logo:
-			role === UserRole.ADMIN_UNIVERSITY
-				? '_development/universities/admin-university/logo.png'
+			role === UserRole.ADMIN
+				? '_development/universities/admin/logo.png'
 				: undefined
 	})
 );

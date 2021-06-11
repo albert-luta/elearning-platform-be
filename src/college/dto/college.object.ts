@@ -5,7 +5,6 @@ import { College } from 'src/generated/prisma-nestjs-graphql/college/college.mod
 @ObjectType()
 export class CollegeObject extends OmitType(College, [
 	'university',
-	'universityId',
 	'courses'
 ] as const) {
 	@Field(() => [CourseObject])

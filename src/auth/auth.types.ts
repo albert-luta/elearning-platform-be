@@ -14,8 +14,7 @@ export interface TokensPayload {
 }
 
 export enum UserRole {
-	ADMIN_UNIVERSITY = 'ADMIN_UNIVERSITY',
-	ADMIN_COLLEGE = 'ADMIN_COLLEGE',
+	ADMIN = 'ADMIN',
 	TEACHER = 'TEACHER',
 	STUDENT = 'STUDENT'
 }

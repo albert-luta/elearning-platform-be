@@ -42,7 +42,7 @@ export class UniversityService {
 			}
 		});
 
-		if (res == null || res.role.name !== UserRole.ADMIN_UNIVERSITY) {
+		if (res == null || res.role.name !== UserRole.ADMIN) {
 			return false;
 		}
 		return true;
@@ -66,7 +66,7 @@ export class UniversityService {
 							},
 							role: {
 								connect: {
-									name: UserRole.ADMIN_UNIVERSITY
+									name: UserRole.ADMIN
 								}
 							}
 						}
