@@ -37,6 +37,7 @@ model University {
     universityUsers UniversityUser[]
     colleges        College[]
     courses         Course[]
+    sections        Section[]
 }
 
 model College {
@@ -61,8 +62,24 @@ model Course {
     university University @relation(fields: [universityId], references: [id])
     college    College    @relation(fields: [collegeId], references: [id])
 
+    sections Section[]
+
     @@unique([id, universityId])
     @@unique([collegeId, name])
+}
+
+model Section {
+    id           String   @id @default(cuid())
+    universityId String
+    courseId     String
+    name         String
+    createdAt    DateTime @default(now())
+
+    university University @relation(fields: [universityId], references: [id])
+    course     Course     @relation(fields: [courseId], references: [id])
+
+    @@unique([id, universityId])
+    @@unique([courseId, name])
 }
 
 model UniversityUser {

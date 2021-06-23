@@ -18,6 +18,9 @@ export class CollegeService {
 			const colleges = await this.prisma.college.findMany({
 				where: {
 					universityId
+				},
+				orderBy: {
+					name: 'asc'
 				}
 			});
 
@@ -99,9 +102,27 @@ export class CollegeService {
 		id: string
 	): Promise<CollegeReturnType> {
 		try {
+			const courses = await this.prisma.course.findMany({
+				where: {
+					AND: {
+						collegeId: id,
+						universityId
+					}
+				}
+			});
+			await this.prisma.section.deleteMany({
+				where: {
+					courseId: {
+						in: courses.map((c) => c.id)
+					}
+				}
+			});
 			await this.prisma.course.deleteMany({
 				where: {
-					collegeId: id
+					AND: {
+						collegeId: id,
+						universityId
+					}
 				}
 			});
 			const college = await this.prisma.college.delete({

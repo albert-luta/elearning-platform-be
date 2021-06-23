@@ -4,6 +4,18 @@ import { UserRole } from '../../../src/auth/auth.types';
 const studentScopes: Prisma.ScopeCreateManyInput[] = [
 	{
 		name: 'read:colleges'
+	},
+	{
+		name: 'read:sections'
+	},
+	{
+		name: 'create:section'
+	},
+	{
+		name: 'update:section'
+	},
+	{
+		name: 'delete:section'
 	}
 ];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [...studentScopes];

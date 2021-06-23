@@ -5,5 +5,6 @@ import { University } from 'src/generated/prisma-nestjs-graphql/university/unive
 export class UniversityObject extends OmitType(University, [
 	'universityUsers',
 	'colleges',
-	'courses'
+	'courses',
+	'sections'
 ] as const) {}

@@ -219,6 +219,7 @@ export class UniversityService {
 			const universityUsers = this.prisma.universityUser.deleteMany(
 				related
 			);
+			const sections = this.prisma.section.deleteMany(related);
 			const courses = this.prisma.course.deleteMany(related);
 			const colleges = this.prisma.college.deleteMany(related);
 			const uni = this.prisma.university.delete({
@@ -228,6 +229,7 @@ export class UniversityService {
 			});
 			await this.prisma.$transaction([
 				universityUsers,
+				sections,
 				courses,
 				colleges,
 				uni

@@ -6,33 +6,55 @@ import {
 import { PrismaError } from 'prisma-error-enum';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { CourseReturnType } from './course.types';
-import { CreateCourseInput } from './dto/create-course.input';
+import { CreateSectionInput } from './dto/create-section.input';
+import { SectionReturnType } from './section.types';
 
 @Injectable()
-export class CourseService {
+export class SectionService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async createCourse(
-		universityId: string,
-		data: CreateCourseInput
-	): Promise<CourseReturnType> {
+	async getSections(courseId: string): Promise<SectionReturnType[]> {
 		try {
-			const course = await this.prisma.course.create({
+			const sections = await this.prisma.section.findMany({
+				where: {
+					courseId
+				},
+				orderBy: {
+					createdAt: 'asc'
+				}
+			});
+
+			return sections;
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async createSection(
+		universityId: string,
+		data: CreateSectionInput
+	): Promise<SectionReturnType> {
+		try {
+			const section = await this.prisma.section.create({
 				data: {
 					...data,
 					universityId
 				}
 			});
 
-			return course;
+			return section;
 		} catch (e) {
-			if (
+			if (e.code === PrismaError.ForeignConstraintViolation) {
+				throw new MyBadRequestException({
+					univeristy: 'This university doesn"t exist anymore'
+				});
+			} else if (
 				e.code === PrismaError.UniqueConstraintViolation &&
 				e.meta.target.includes('name')
 			) {
 				throw new MyBadRequestException({
-					name: 'There is already a course with this name'
+					name:
+						'There is already a section with the same name in this course'
 				});
 			}
 
@@ -40,13 +62,13 @@ export class CourseService {
 		}
 	}
 
-	async updateCourse(
+	async updateSection(
 		universityId: string,
 		id: string,
-		data: CreateCourseInput
-	): Promise<CourseReturnType> {
+		data: CreateSectionInput
+	): Promise<SectionReturnType> {
 		try {
-			const course = await this.prisma.course.update({
+			const section = await this.prisma.section.update({
 				where: {
 					id_universityId: {
 						id,
@@ -56,14 +78,15 @@ export class CourseService {
 				data
 			});
 
-			return course;
+			return section;
 		} catch (e) {
 			if (
 				e.code === PrismaError.UniqueConstraintViolation &&
 				e.meta.target.includes('name')
 			) {
 				throw new MyBadRequestException({
-					name: 'There is already a course with this name'
+					name:
+						'There is already a section with the same name in this course'
 				});
 			} else if (e.code === 'P2025') {
 				throw new NotFoundException();
@@ -73,20 +96,12 @@ export class CourseService {
 		}
 	}
 
-	async deleteCourse(
+	async deleteSection(
 		universityId: string,
 		id: string
-	): Promise<CourseReturnType> {
+	): Promise<SectionReturnType> {
 		try {
-			await this.prisma.section.deleteMany({
-				where: {
-					AND: {
-						courseId: id,
-						universityId
-					}
-				}
-			});
-			const course = await this.prisma.course.delete({
+			const section = await this.prisma.section.delete({
 				where: {
 					id_universityId: {
 						id,
@@ -95,7 +110,7 @@ export class CourseService {
 				}
 			});
 
-			return course;
+			return section;
 		} catch (e) {
 			if (e.code === 'P2025') {
 				throw new NotFoundException();

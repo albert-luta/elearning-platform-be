@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { colleges } from './seed/dev/colleges';
 import { courses } from './seed/dev/courses';
+import { sections } from './seed/dev/sections';
 import { universities } from './seed/dev/universities';
 import { users } from './seed/dev/users';
 import { expand } from './seed/dev/utills';
@@ -55,8 +56,21 @@ export const seedDev = async (prisma: PrismaClient) => {
 			courses,
 			({ universityId, id }, course) => ({
 				...course,
-				universityId: universityId,
+				universityId,
 				collegeId: id
+			})
+		)
+	});
+
+	const createdCourses = await prisma.course.findMany();
+	await prisma.section.createMany({
+		data: expand(
+			createdCourses,
+			sections,
+			({ universityId, id }, section) => ({
+				...section,
+				universityId,
+				courseId: id
 			})
 		)
 	});

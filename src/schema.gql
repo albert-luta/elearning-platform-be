@@ -26,6 +26,7 @@ type Course {
   collegeId: String!
   id: ID!
   name: String!
+  sections: [Section!]
   university: University!
   universityId: String!
 }
@@ -46,9 +47,19 @@ input CreateCourseInput {
   name: String!
 }
 
+input CreateSectionInput {
+  courseId: String!
+  name: String!
+}
+
 input CreateUniversityInput {
   name: String!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type GroupedByRoleUniversitiesObject {
   role: String!
@@ -63,9 +74,11 @@ input LoginUserInput {
 type Mutation {
   createCollege(data: CreateCollegeInput!): CollegeObject!
   createCourse(data: CreateCourseInput!): CourseObject!
+  createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
   deleteCollege(id: String!): CollegeObject!
   deleteCourse(id: String!): CourseObject!
+  deleteSection(id: String!): SectionObject!
   deleteUniversity(id: String!): UniversityObject!
   leaveUniversity(id: String!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
@@ -74,12 +87,14 @@ type Mutation {
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
+  updateSection(data: CreateSectionInput!, id: String!): SectionObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
 }
 
 type Query {
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
+  sections(courseId: String!): [SectionObject!]!
 }
 
 input RegisterUserInput {
@@ -103,12 +118,31 @@ type Scope {
   roles: [Role!]
 }
 
+type Section {
+  course: Course!
+  courseId: String!
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  university: University!
+  universityId: String!
+}
+
+type SectionObject {
+  courseId: String!
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  universityId: String!
+}
+
 type University {
   colleges: [College!]
   courses: [Course!]
   id: ID!
   logo: String
   name: String!
+  sections: [Section!]
   universityUsers: [UniversityUser!]
 }
 

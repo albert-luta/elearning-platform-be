@@ -14,6 +14,7 @@ import { MyServeStaticModule } from './my-serve-static/my-serve-static.module';
 import { CollegeModule } from './college/college.module';
 import { AuthorizationGuard } from './auth/guards/authorization.guard';
 import { CourseModule } from './course/course.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
 	imports: [
@@ -27,7 +28,8 @@ import { CourseModule } from './course/course.module';
 		UserModule,
 		UniversityModule,
 		CollegeModule,
-		CourseModule
+		CourseModule,
+		SectionModule
 	],
 	providers: [
 		{

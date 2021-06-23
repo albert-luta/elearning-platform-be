@@ -14,6 +14,9 @@ export class CourseLoader {
 					collegeId: {
 						in: [...ids]
 					}
+				},
+				orderBy: {
+					name: 'asc'
 				}
 			});
 			const coursesMap = courses.reduce<Record<string, CourseObject[]>>(
