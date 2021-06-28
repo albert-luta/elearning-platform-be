@@ -2,8 +2,59 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Activity {
+  assignments: [Assignment!]
+  createdAt: DateTime!
+  description: String
+  files: [String!]
+  id: ID!
+  name: String!
+  quizes: [Quiz!]
+  resources: [Resource!]
+  section: Section!
+  sectionId: String!
+  type: ActivityType!
+  university: University!
+  universityId: String!
+}
+
+enum ActivityType {
+  ASSIGNMENT
+  QUIZ
+  RESOURCE
+}
+
+type Assignment {
+  activity: Activity!
+  activityId: ID!
+  university: University!
+  universityId: String!
+}
+
+type AssignmentObject implements BaseActivityInterface {
+  createdAt: DateTime!
+  description: String
+  files: [String!]!
+  id: String!
+  name: String!
+  sectionId: String!
+  type: String!
+  universityId: String!
+}
+
 type Authentication {
   accessToken: String!
+}
+
+interface BaseActivityInterface {
+  createdAt: DateTime!
+  description: String
+  files: [String!]!
+  id: String!
+  name: String!
+  sectionId: String!
+  type: String!
+  universityId: String!
 }
 
 type College {
@@ -38,6 +89,12 @@ type CourseObject {
   universityId: String!
 }
 
+input CreateAssignmentInput {
+  description: String!
+  name: String!
+  sectionId: String!
+}
+
 input CreateCollegeInput {
   name: String!
 }
@@ -45,6 +102,18 @@ input CreateCollegeInput {
 input CreateCourseInput {
   collegeId: String!
   name: String!
+}
+
+input CreateQuizInput {
+  description: String!
+  name: String!
+  sectionId: String!
+}
+
+input CreateResourceInput {
+  description: String!
+  name: String!
+  sectionId: String!
 }
 
 input CreateSectionInput {
@@ -72,8 +141,11 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createAssignment(data: CreateAssignmentInput!, files: [Upload!]!): BaseActivityInterface!
   createCollege(data: CreateCollegeInput!): CollegeObject!
   createCourse(data: CreateCourseInput!): CourseObject!
+  createQuiz(data: CreateQuizInput!, files: [Upload!]!): BaseActivityInterface!
+  createResource(data: CreateResourceInput!, files: [Upload!]!): BaseActivityInterface!
   createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
   deleteCollege(id: String!): CollegeObject!
@@ -92,9 +164,28 @@ type Mutation {
 }
 
 type Query {
+  activity(id: String!): BaseActivityInterface!
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
   sections(courseId: String!): [SectionObject!]!
+}
+
+type Quiz {
+  activity: Activity!
+  activityId: ID!
+  university: University!
+  universityId: String!
+}
+
+type QuizObject implements BaseActivityInterface {
+  createdAt: DateTime!
+  description: String
+  files: [String!]!
+  id: String!
+  name: String!
+  sectionId: String!
+  type: String!
+  universityId: String!
 }
 
 input RegisterUserInput {
@@ -103,6 +194,24 @@ input RegisterUserInput {
   firstName: String!
   lastName: String!
   password: String!
+}
+
+type Resource {
+  activity: Activity!
+  activityId: ID!
+  university: University!
+  universityId: String!
+}
+
+type ResourceObject implements BaseActivityInterface {
+  createdAt: DateTime!
+  description: String
+  files: [String!]!
+  id: String!
+  name: String!
+  sectionId: String!
+  type: String!
+  universityId: String!
 }
 
 type Role {
@@ -119,6 +228,7 @@ type Scope {
 }
 
 type Section {
+  activities: [Activity!]
   course: Course!
   courseId: String!
   createdAt: DateTime!
@@ -129,6 +239,7 @@ type Section {
 }
 
 type SectionObject {
+  activities: [BaseActivityInterface!]!
   courseId: String!
   createdAt: DateTime!
   id: ID!
@@ -137,11 +248,15 @@ type SectionObject {
 }
 
 type University {
+  activities: [Activity!]
+  assignments: [Assignment!]
   colleges: [College!]
   courses: [Course!]
   id: ID!
   logo: String
   name: String!
+  quizes: [Quiz!]
+  resources: [Resource!]
   sections: [Section!]
   universityUsers: [UniversityUser!]
 }

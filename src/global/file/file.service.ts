@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
 import { UNIVERSITY_LOGO, USER_AVATAR } from './file.constants';
+import { ActivityIdentification } from './file.types';
 import { FileUtilsService } from './services/file-utils';
 
 @Injectable()
@@ -28,5 +29,29 @@ export class FileService {
 			this.fileUtilsService.getUniversityDir(universityId),
 			UNIVERSITY_LOGO
 		);
+	}
+
+	createBaseActivityFiles(
+		{
+			universityId,
+			collegeId,
+			courseId,
+			sectionId,
+			activityId
+		}: ActivityIdentification,
+		files: FileUpload[]
+	): Promise<string[]> {
+		const activityDir = this.fileUtilsService.getActivityDir(
+			universityId,
+			collegeId,
+			courseId,
+			sectionId,
+			activityId
+		);
+		const filesPromises = files.map((file) =>
+			this.fileUtilsService.writeFile(file, activityDir)
+		);
+
+		return Promise.all(filesPromises);
 	}
 }

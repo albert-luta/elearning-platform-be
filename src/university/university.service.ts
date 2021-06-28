@@ -219,16 +219,24 @@ export class UniversityService {
 			const universityUsers = this.prisma.universityUser.deleteMany(
 				related
 			);
-			const sections = this.prisma.section.deleteMany(related);
-			const courses = this.prisma.course.deleteMany(related);
-			const colleges = this.prisma.college.deleteMany(related);
 			const uni = this.prisma.university.delete({
 				where: {
 					id: universityId
 				}
 			});
+			const colleges = this.prisma.college.deleteMany(related);
+			const courses = this.prisma.course.deleteMany(related);
+			const sections = this.prisma.section.deleteMany(related);
+			const activities = this.prisma.activity.deleteMany(related);
+			const resources = this.prisma.resource.deleteMany(related);
+			const assignments = this.prisma.assignment.deleteMany(related);
+			const quizes = this.prisma.quiz.deleteMany(related);
 			await this.prisma.$transaction([
 				universityUsers,
+				resources,
+				assignments,
+				quizes,
+				activities,
 				sections,
 				courses,
 				colleges,

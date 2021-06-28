@@ -15,6 +15,7 @@ import { CollegeModule } from './college/college.module';
 import { AuthorizationGuard } from './auth/guards/authorization.guard';
 import { CourseModule } from './course/course.module';
 import { SectionModule } from './section/section.module';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
 	imports: [
@@ -29,7 +30,8 @@ import { SectionModule } from './section/section.module';
 		UniversityModule,
 		CollegeModule,
 		CourseModule,
-		SectionModule
+		SectionModule,
+		ActivityModule
 	],
 	providers: [
 		{

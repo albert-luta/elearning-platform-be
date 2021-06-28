@@ -4,3 +4,7 @@ export const USERS_DIR_NAME = 'users';
 export const USER_AVATAR = 'avatar';
 export const UNIVERSITIES_DIR_NAME = 'universities';
 export const UNIVERSITY_LOGO = 'logo';
+export const COLLEGES_DIR_NAME = 'colleges';
+export const COURSES_DIR_NAME = 'courses';
+export const SECTIONS_DIR_NAME = 'sections';
+export const ACTIVITIES_DIR_NAME = 'activities';

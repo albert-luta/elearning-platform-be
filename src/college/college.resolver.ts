@@ -31,6 +31,15 @@ export class CollegeResolver {
 		return this.collegeService.getColleges(universityId);
 	}
 
+	@ResolveField()
+	courses(@Parent() college: CollegeObject): Promise<CourseReturnType[]> {
+		try {
+			return this.courseLoader.byCollegeId.load(college.id);
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
 	@Scopes('create:college')
 	@Mutation(() => CollegeObject)
 	createCollege(
@@ -57,14 +66,5 @@ export class CollegeResolver {
 		@Args('id') id: string
 	): Promise<CollegeReturnType> {
 		return this.collegeService.deleteCollege(universityId, id);
-	}
-
-	@ResolveField()
-	courses(@Parent() college: CollegeObject): Promise<CourseReturnType[]> {
-		try {
-			return this.courseLoader.byCollegeId.load(college.id);
-		} catch (e) {
-			throw new InternalServerErrorException();
-		}
 	}
 }

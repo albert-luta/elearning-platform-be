@@ -102,29 +102,50 @@ export class CollegeService {
 		id: string
 	): Promise<CollegeReturnType> {
 		try {
-			const courses = await this.prisma.course.findMany({
+			const relatedCourses = {
 				where: {
 					AND: {
 						collegeId: id,
 						universityId
 					}
 				}
-			});
-			await this.prisma.section.deleteMany({
+			};
+			const courses = await this.prisma.course.findMany(relatedCourses);
+			const relatedSections = {
 				where: {
 					courseId: {
 						in: courses.map((c) => c.id)
 					}
 				}
-			});
-			await this.prisma.course.deleteMany({
+			};
+			const sections = await this.prisma.section.findMany(
+				relatedSections
+			);
+			const relatedActivities = {
 				where: {
-					AND: {
-						collegeId: id,
-						universityId
+					sectionId: {
+						in: sections.map((s) => s.id)
 					}
 				}
-			});
+			};
+			const activities = await this.prisma.activity.findMany(
+				relatedActivities
+			);
+			const relatedSpecificActivities = {
+				where: {
+					activityId: {
+						in: activities.map((a) => a.id)
+					}
+				}
+			};
+			await this.prisma.$transaction([
+				this.prisma.resource.deleteMany(relatedSpecificActivities),
+				this.prisma.assignment.deleteMany(relatedSpecificActivities),
+				this.prisma.quiz.deleteMany(relatedSpecificActivities),
+				this.prisma.activity.deleteMany(relatedActivities),
+				this.prisma.section.deleteMany(relatedSections),
+				this.prisma.course.deleteMany(relatedCourses)
+			]);
 			const college = await this.prisma.college.delete({
 				where: {
 					id_universityId: {

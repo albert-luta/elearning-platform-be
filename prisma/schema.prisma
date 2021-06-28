@@ -38,6 +38,10 @@ model University {
     colleges        College[]
     courses         Course[]
     sections        Section[]
+    activities      Activity[]
+    resources       Resource[]
+    assignments     Assignment[]
+    quizes          Quiz[]
 }
 
 model College {
@@ -78,8 +82,69 @@ model Section {
     university University @relation(fields: [universityId], references: [id])
     course     Course     @relation(fields: [courseId], references: [id])
 
+    activities Activity[]
+
     @@unique([id, universityId])
     @@unique([courseId, name])
+}
+
+enum ActivityType {
+    RESOURCE
+    ASSIGNMENT
+    QUIZ
+}
+
+model Activity {
+    id           String       @id @default(cuid())
+    universityId String
+    sectionId    String
+    type         ActivityType
+    createdAt    DateTime     @default(now())
+    name         String
+    description  String?
+    files        String[]
+
+    university University @relation(fields: [universityId], references: [id])
+    section    Section    @relation(fields: [sectionId], references: [id])
+
+    resources   Resource[]
+    assignments Assignment[]
+    quizes      Quiz[]
+
+    @@unique([id, universityId])
+}
+
+model Resource {
+    activityId   String @id
+    universityId String
+
+    activity   Activity   @relation(fields: [activityId], references: [id])
+    university University @relation(fields: [universityId], references: [id])
+
+    @@unique([activityId, universityId])
+}
+
+model Assignment {
+    activityId   String @id
+    universityId String
+    // deadline        DateTime
+    // points          Float
+    // gradePercentage Float
+
+    activity   Activity   @relation(fields: [activityId], references: [id])
+    university University @relation(fields: [universityId], references: [id])
+
+    @@unique([activityId, universityId])
+}
+
+model Quiz {
+    activityId   String @id
+    universityId String
+
+    activity   Activity   @relation(fields: [activityId], references: [id])
+    university University @relation(fields: [universityId], references: [id])
+
+    @@unique([activityId, universityId])
 }
 
 model UniversityUser {
