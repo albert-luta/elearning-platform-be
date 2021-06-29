@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { ActivityService } from './activity.service';
 import { ActivityReturnType } from './activity.types';
@@ -48,5 +49,14 @@ export class ActivityResolver {
 		files: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.createQuiz(universityId, data, files);
+	}
+
+	@Mutation(() => BaseActivityInterface)
+	deleteActivity(
+		@UniversityId() universityId: string,
+		@Args('id') id: string,
+		@Args('type', { type: () => ActivityType }) type: ActivityType
+	): Promise<ActivityReturnType> {
+		return this.activityService.deleteActivity(universityId, id, type);
 	}
 }

@@ -5,13 +5,17 @@ import {
 } from '@nestjs/common';
 import { PrismaError } from 'prisma-error-enum';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
+import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CourseReturnType } from './course.types';
 import { CreateCourseInput } from './dto/create-course.input';
 
 @Injectable()
 export class CourseService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly fileService: FileService
+	) {}
 
 	async createCourse(
 		universityId: string,
@@ -120,6 +124,11 @@ export class CourseService {
 						universityId
 					}
 				}
+			});
+			await this.fileService.deleteCourseFiles({
+				universityId,
+				collegeId: course.collegeId,
+				courseId: id
 			});
 
 			return course;

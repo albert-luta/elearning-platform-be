@@ -5,13 +5,17 @@ import {
 } from '@nestjs/common';
 import { PrismaError } from 'prisma-error-enum';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
+import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CollegeReturnType } from './college.types';
 import { CreateCollegeInput } from './dto/create-college.input';
 
 @Injectable()
 export class CollegeService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly fileService: FileService
+	) {}
 
 	async getColleges(universityId: string): Promise<CollegeReturnType[]> {
 		try {
@@ -153,6 +157,10 @@ export class CollegeService {
 						universityId
 					}
 				}
+			});
+			await this.fileService.deleteCollegeFiles({
+				universityId,
+				collegeId: id
 			});
 
 			return college;

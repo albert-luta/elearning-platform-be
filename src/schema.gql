@@ -148,6 +148,7 @@ type Mutation {
   createResource(data: CreateResourceInput!, files: [Upload!]!): BaseActivityInterface!
   createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
+  deleteActivity(id: String!, type: ActivityType!): BaseActivityInterface!
   deleteCollege(id: String!): CollegeObject!
   deleteCourse(id: String!): CourseObject!
   deleteSection(id: String!): SectionObject!

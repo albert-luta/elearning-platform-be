@@ -242,6 +242,7 @@ export class UniversityService {
 				colleges,
 				uni
 			]);
+			await this.fileService.deleteUniversityFiles({ universityId });
 
 			return university;
 		} catch (e) {

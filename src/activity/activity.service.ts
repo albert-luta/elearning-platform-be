@@ -297,4 +297,90 @@ export class ActivityService {
 			throw new InternalServerErrorException();
 		}
 	}
+
+	async deleteActivity(
+		universityId: string,
+		id: string,
+		type: ActivityType
+	): Promise<ActivityReturnType> {
+		try {
+			const relatedActivity = {
+				where: {
+					activityId_universityId: {
+						activityId: id,
+						universityId
+					}
+				}
+			};
+			let specificActivity: Resource | Assignment | Quiz;
+			switch (type) {
+				case ActivityType.RESOURCE:
+					specificActivity = await this.prisma.resource.delete(
+						relatedActivity
+					);
+					break;
+				case ActivityType.ASSIGNMENT:
+					specificActivity = await this.prisma.assignment.delete(
+						relatedActivity
+					);
+					break;
+				case ActivityType.QUIZ:
+				default:
+					specificActivity = await this.prisma.quiz.delete(
+						relatedActivity
+					);
+			}
+			const activityIdentification = {
+				where: {
+					id_universityId: {
+						id,
+						universityId
+					}
+				}
+			};
+			const deleteExtraInfo = await this.prisma.activity.findUnique({
+				...activityIdentification,
+				select: {
+					sectionId: true,
+					section: {
+						select: {
+							courseId: true,
+							course: {
+								select: {
+									collegeId: true
+								}
+							}
+						}
+					}
+				}
+			});
+			if (!deleteExtraInfo) {
+				throw new Error();
+			}
+			const baseActivity = await this.prisma.activity.delete(
+				activityIdentification
+			);
+			await this.fileService.deleteActivityFiles({
+				universityId,
+				collegeId: deleteExtraInfo.section.course.collegeId,
+				courseId: deleteExtraInfo.section.courseId,
+				sectionId: baseActivity.sectionId,
+				activityId: id
+			});
+
+			return {
+				...baseActivity,
+				files: baseActivity.files.map((file) =>
+					this.fileService.getFileUrl(file)
+				),
+				...this.normalizeSpecificActivity(specificActivity)
+			};
+		} catch (e) {
+			if (e.code === 'P2025') {
+				throw new NotFoundException();
+			}
+
+			throw new InternalServerErrorException();
+		}
+	}
 }

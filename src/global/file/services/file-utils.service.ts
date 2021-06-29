@@ -14,6 +14,13 @@ import {
 	USERS_DIR_NAME
 } from '../file.constants';
 import { ConfigService } from '@nestjs/config';
+import {
+	ActivityIdentification,
+	CollegeIdentification,
+	CourseIdentification,
+	SectionIdentification,
+	UniversityIdentification
+} from '../file.types';
 
 @Injectable()
 export class FileUtilsService {
@@ -32,48 +39,45 @@ export class FileUtilsService {
 	getUserDir(userId: string): string {
 		return p.join(this.UPLOADS_DIR, USERS_DIR_NAME, userId);
 	}
-	getUniversityDir(universityId: string): string {
+	getUniversityDir({ universityId }: UniversityIdentification): string {
 		return p.join(this.UPLOADS_DIR, UNIVERSITIES_DIR_NAME, universityId);
 	}
-	getCollegeDir(universityId: string, collegeId: string): string {
+	getCollegeDir({
+		collegeId,
+		...universityIdentification
+	}: CollegeIdentification): string {
 		return p.join(
-			this.getUniversityDir(universityId),
+			this.getUniversityDir(universityIdentification),
 			COLLEGES_DIR_NAME,
 			collegeId
 		);
 	}
-	getCourseDir(
-		universityId: string,
-		collegeId: string,
-		courseId: string
-	): string {
+	getCourseDir({
+		courseId,
+		...collegeIdentification
+	}: CourseIdentification): string {
 		return p.join(
-			this.getCollegeDir(universityId, collegeId),
+			this.getCollegeDir(collegeIdentification),
 			COURSES_DIR_NAME,
 			courseId
 		);
 	}
-	getSectionDir(
-		universityId: string,
-		collegeId: string,
-		courseId: string,
-		sectionId: string
-	): string {
+	getSectionDir({
+		sectionId,
+		...courseIdentificaton
+	}: SectionIdentification): string {
 		return p.join(
-			this.getCourseDir(universityId, collegeId, courseId),
+			this.getCourseDir(courseIdentificaton),
 			SECTIONS_DIR_NAME,
 			sectionId
 		);
 	}
-	getActivityDir(
-		universityId: string,
-		collegeId: string,
-		courseId: string,
-		sectionId: string,
-		activityId: string
-	): string {
+	getActivityDir({
+		activityId,
+		...sectionIdentification
+	}: ActivityIdentification): string {
 		return p.join(
-			this.getSectionDir(universityId, collegeId, courseId, sectionId),
+			this.getSectionDir(sectionIdentification),
 			ACTIVITIES_DIR_NAME,
 			activityId
 		);
@@ -99,6 +103,10 @@ export class FileUtilsService {
 				.on('finish', () => res(this.toUnix(relativePath)))
 				.on('error', () => rej(new InternalServerErrorException()));
 		});
+	}
+
+	deleteFileOrDir(path: string): Promise<void> {
+		return fsp.rm(path, { recursive: true, force: true });
 	}
 
 	getFileUrl(path: string): string {

@@ -5,13 +5,17 @@ import {
 } from '@nestjs/common';
 import { PrismaError } from 'prisma-error-enum';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
+import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { CreateSectionInput } from './dto/create-section.input';
 import { SectionReturnType } from './section.types';
 
 @Injectable()
 export class SectionService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly fileService: FileService
+	) {}
 
 	async getSections(courseId: string): Promise<SectionReturnType[]> {
 		try {
@@ -122,13 +126,35 @@ export class SectionService {
 				this.prisma.quiz.deleteMany(relatedSpecificActivities),
 				this.prisma.activity.deleteMany(relatedActivities)
 			]);
-			const section = await this.prisma.section.delete({
+			const sectionIdentification = {
 				where: {
 					id_universityId: {
 						id,
 						universityId
 					}
 				}
+			};
+			const deleteExtraInfo = await this.prisma.section.findUnique({
+				...sectionIdentification,
+				select: {
+					course: {
+						select: {
+							collegeId: true
+						}
+					}
+				}
+			});
+			if (!deleteExtraInfo) {
+				throw new Error();
+			}
+			const section = await this.prisma.section.delete(
+				sectionIdentification
+			);
+			await this.fileService.deleteSectionFiles({
+				universityId,
+				collegeId: deleteExtraInfo.course.collegeId,
+				courseId: section.courseId,
+				sectionId: id
 			});
 
 			return section;

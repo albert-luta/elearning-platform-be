@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { FileService } from './file.service';
-import { FileUtilsService } from './services/file-utils';
+import { FileUtilsService } from './services/file-utils.service';
 
 @Global()
 @Module({
