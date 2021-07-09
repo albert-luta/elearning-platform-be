@@ -250,6 +250,7 @@ export class ActivityService {
 				...this.normalizeSpecificActivity(specificActivity)
 			};
 		} catch (e) {
+			console.log(e);
 			if (e.message === this.NOT_FOUND) {
 				throw new NotFoundException();
 			}

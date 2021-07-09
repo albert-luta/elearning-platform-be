@@ -125,11 +125,10 @@ model Resource {
 }
 
 model Assignment {
-    activityId   String @id
+    activityId   String   @id
     universityId String
-    // deadline        DateTime
-    // points          Float
-    // gradePercentage Float
+    deadline     DateTime
+    points       Float
 
     activity   Activity   @relation(fields: [activityId], references: [id])
     university University @relation(fields: [universityId], references: [id])

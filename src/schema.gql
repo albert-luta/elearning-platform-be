@@ -27,6 +27,8 @@ enum ActivityType {
 type Assignment {
   activity: Activity!
   activityId: ID!
+  deadline: DateTime!
+  points: Float!
   university: University!
   universityId: String!
 }
@@ -90,8 +92,10 @@ type CourseObject {
 }
 
 input CreateAssignmentInput {
+  deadline: DateTime!
   description: String!
   name: String!
+  points: Float!
   sectionId: String!
 }
 

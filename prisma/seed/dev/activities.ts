@@ -26,5 +26,8 @@ export const activities: SeedDev<
 ];
 
 export const resourceActivity: SpecificActivity<Prisma.ResourceCreateManyInput> = {};
-export const assignmentActivity: SpecificActivity<Prisma.AssignmentCreateManyInput> = {};
+export const assignmentActivity: SpecificActivity<Prisma.AssignmentCreateManyInput> = {
+	deadline: new Date(),
+	points: 30
+};
 export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {};
