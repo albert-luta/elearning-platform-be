@@ -14,8 +14,17 @@ import { FileUtilsService } from './services/file-utils.service';
 export class FileService {
 	constructor(private readonly fileUtilsService: FileUtilsService) {}
 
-	getFileUrl(path: string): string {
-		return this.fileUtilsService.getFileUrl(path);
+	getUrlFromDbFilePath(path: string): string {
+		return this.fileUtilsService.getUrlFromDbFilePath(path);
+	}
+	getDbFilePathFromUrl(url: string): string {
+		return this.fileUtilsService.getDbFilePathFromUrl(url);
+	}
+
+	deletePathFromUrl(url: string): Promise<void> {
+		return this.fileUtilsService.deleteFromPath(
+			this.fileUtilsService.getAbsoluteFilePathFromUrl(url)
+		);
 	}
 
 	createUserAvatar(userId: string, avatar: FileUpload): Promise<string> {
@@ -58,7 +67,7 @@ export class FileService {
 			universityIdentification
 		);
 
-		return this.fileUtilsService.deleteFileOrDir(universityDir);
+		return this.fileUtilsService.deleteFromPath(universityDir);
 	}
 
 	deleteCollegeFiles(
@@ -68,7 +77,7 @@ export class FileService {
 			collegeIdentification
 		);
 
-		return this.fileUtilsService.deleteFileOrDir(collegeDir);
+		return this.fileUtilsService.deleteFromPath(collegeDir);
 	}
 
 	deleteCourseFiles(
@@ -78,7 +87,7 @@ export class FileService {
 			courseIdentification
 		);
 
-		return this.fileUtilsService.deleteFileOrDir(courseDir);
+		return this.fileUtilsService.deleteFromPath(courseDir);
 	}
 
 	deleteSectionFiles(
@@ -88,7 +97,7 @@ export class FileService {
 			sectionIdentification
 		);
 
-		return this.fileUtilsService.deleteFileOrDir(sectionDir);
+		return this.fileUtilsService.deleteFromPath(sectionDir);
 	}
 
 	deleteActivityFiles(
@@ -98,6 +107,6 @@ export class FileService {
 			activityIdentification
 		);
 
-		return this.fileUtilsService.deleteFileOrDir(activityDir);
+		return this.fileUtilsService.deleteFromPath(activityDir);
 	}
 }

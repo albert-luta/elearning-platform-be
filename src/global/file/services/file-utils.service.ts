@@ -26,7 +26,7 @@ import {
 export class FileUtilsService {
 	constructor(private readonly configService: ConfigService) {}
 
-	private readonly UPLOADS_DIR = p.resolve(
+	private readonly UPLOADS_DIR_PATH = p.resolve(
 		p.dirname(p.dirname(p.dirname(require.main?.filename ?? ''))),
 		PUBLIC_DIR_NAME,
 		UPLOADS_DIR_NAME
@@ -37,10 +37,14 @@ export class FileUtilsService {
 	}
 
 	getUserDir(userId: string): string {
-		return p.join(this.UPLOADS_DIR, USERS_DIR_NAME, userId);
+		return p.join(this.UPLOADS_DIR_PATH, USERS_DIR_NAME, userId);
 	}
 	getUniversityDir({ universityId }: UniversityIdentification): string {
-		return p.join(this.UPLOADS_DIR, UNIVERSITIES_DIR_NAME, universityId);
+		return p.join(
+			this.UPLOADS_DIR_PATH,
+			UNIVERSITIES_DIR_NAME,
+			universityId
+		);
 	}
 	getCollegeDir({
 		collegeId,
@@ -95,7 +99,7 @@ export class FileUtilsService {
 			dir,
 			name ? `${name}${p.extname(file.filename)}` : file.filename
 		);
-		const relativePath = p.relative(this.UPLOADS_DIR, absolutePath);
+		const relativePath = p.relative(this.UPLOADS_DIR_PATH, absolutePath);
 
 		return new Promise((res, rej) => {
 			file.createReadStream()
@@ -105,16 +109,29 @@ export class FileUtilsService {
 		});
 	}
 
-	deleteFileOrDir(path: string): Promise<void> {
+	deleteFromPath(path: string): Promise<void> {
 		return fsp.rm(path, { recursive: true, force: true });
 	}
 
-	getFileUrl(path: string): string {
+	getUrlFromDbFilePath(path: string): string {
 		return encodeURI(
-			`${this.configService.get<string>('BACKEND_URL')}/${p.join(
+			`${this.configService.get<string>('BACKEND_URL') ?? ''}/${p.join(
 				UPLOADS_DIR_NAME,
 				path
 			)}`
 		);
+	}
+	getDbFilePathFromUrl(url: string): string {
+		return decodeURI(url)
+			.replace(
+				`${
+					this.configService.get<string>('BACKEND_URL') ?? ''
+				}/${UPLOADS_DIR_NAME}`,
+				''
+			)
+			.slice(1);
+	}
+	getAbsoluteFilePathFromUrl(url: string): string {
+		return p.join(this.UPLOADS_DIR_PATH, this.getDbFilePathFromUrl(url));
 	}
 }

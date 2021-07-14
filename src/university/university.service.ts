@@ -90,7 +90,7 @@ export class UniversityService {
 
 			return {
 				...createdUniversity,
-				logo: this.fileService.getFileUrl(logoPath)
+				logo: this.fileService.getUrlFromDbFilePath(logoPath)
 			};
 		} catch (e) {
 			throw new InternalServerErrorException();
@@ -131,7 +131,7 @@ export class UniversityService {
 				...university,
 				logo:
 					university.logo &&
-					this.fileService.getFileUrl(university.logo)
+					this.fileService.getUrlFromDbFilePath(university.logo)
 			};
 		} catch (e) {
 			if (e.message === this.UNAUTHORIZED) {

@@ -8,6 +8,9 @@ import { BaseActivityInterface } from './dto/base-activity.interface';
 import { CreateAssignmentInput } from './dto/create-assignment.input';
 import { CreateQuizInput } from './dto/create-quiz.input';
 import { CreateResourceInput } from './dto/create-resource.input';
+import { UpdateAssignmentInput } from './dto/update-assignment.input';
+import { UpdateQuizInput } from './dto/update-quiz.input';
+import { UpdateResourceInput } from './dto/update-resource.input';
 
 @Resolver()
 export class ActivityResolver {
@@ -32,6 +35,22 @@ export class ActivityResolver {
 	}
 
 	@Mutation(() => BaseActivityInterface)
+	updateResource(
+		@UniversityId() universityId: string,
+		@Args('id') id: string,
+		@Args('data') data: UpdateResourceInput,
+		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		newFiles: FileUpload[]
+	): Promise<ActivityReturnType> {
+		return this.activityService.updateResource(
+			universityId,
+			id,
+			data,
+			newFiles
+		);
+	}
+
+	@Mutation(() => BaseActivityInterface)
 	createAssignment(
 		@UniversityId() universityId: string,
 		@Args('data') data: CreateAssignmentInput,
@@ -42,6 +61,22 @@ export class ActivityResolver {
 	}
 
 	@Mutation(() => BaseActivityInterface)
+	updateAssignment(
+		@UniversityId() universityId: string,
+		@Args('id') id: string,
+		@Args('data') data: UpdateAssignmentInput,
+		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		newFiles: FileUpload[]
+	): Promise<ActivityReturnType> {
+		return this.activityService.updateAssignment(
+			universityId,
+			id,
+			data,
+			newFiles
+		);
+	}
+
+	@Mutation(() => BaseActivityInterface)
 	createQuiz(
 		@UniversityId() universityId: string,
 		@Args('data') data: CreateQuizInput,
@@ -49,6 +84,22 @@ export class ActivityResolver {
 		files: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.createQuiz(universityId, data, files);
+	}
+
+	@Mutation(() => BaseActivityInterface)
+	updateQuiz(
+		@UniversityId() universityId: string,
+		@Args('id') id: string,
+		@Args('data') data: UpdateQuizInput,
+		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		newFiles: FileUpload[]
+	): Promise<ActivityReturnType> {
+		return this.activityService.updateQuiz(
+			universityId,
+			id,
+			data,
+			newFiles
+		);
 	}
 
 	@Mutation(() => BaseActivityInterface)

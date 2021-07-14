@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseActivityInterface } from './base-activity.interface';
 
 @ObjectType({
@@ -13,4 +13,10 @@ export class AssignmentObject implements BaseActivityInterface {
 	description: string | null;
 	files: Array<string>;
 	type: string;
+
+	@Field()
+	deadline: Date;
+
+	@Field()
+	points: number;
 }

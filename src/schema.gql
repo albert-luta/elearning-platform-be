@@ -35,10 +35,12 @@ type Assignment {
 
 type AssignmentObject implements BaseActivityInterface {
   createdAt: DateTime!
+  deadline: DateTime!
   description: String
   files: [String!]!
   id: String!
   name: String!
+  points: Float!
   sectionId: String!
   type: String!
   universityId: String!
@@ -162,8 +164,11 @@ type Mutation {
   logout: Authentication
   refreshTokens: Authentication!
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
+  updateAssignment(data: UpdateAssignmentInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
+  updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
+  updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateSection(data: CreateSectionInput!, id: String!): SectionObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
 }
@@ -279,6 +284,32 @@ type UniversityUser {
   universityId: String!
   user: User!
   userId: String!
+}
+
+input UpdateAssignmentInput {
+  deadline: DateTime!
+  description: String!
+  filesToDelete: [String!]!
+  name: String!
+  oldFiles: [String!]!
+  points: Float!
+  sectionId: String!
+}
+
+input UpdateQuizInput {
+  description: String!
+  filesToDelete: [String!]!
+  name: String!
+  oldFiles: [String!]!
+  sectionId: String!
+}
+
+input UpdateResourceInput {
+  description: String!
+  filesToDelete: [String!]!
+  name: String!
+  oldFiles: [String!]!
+  sectionId: String!
 }
 
 """The `Upload` scalar type represents a file upload."""

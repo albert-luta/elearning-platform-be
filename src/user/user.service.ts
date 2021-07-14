@@ -28,7 +28,7 @@ export class UserService {
 
 		return {
 			...rest,
-			avatar: avatar && this.fileService.getFileUrl(avatar)
+			avatar: avatar && this.fileService.getUrlFromDbFilePath(avatar)
 		};
 	}
 
@@ -57,7 +57,7 @@ export class UserService {
 				const logo = curr.university.logo;
 				const university: typeof curr.university = {
 					...curr.university,
-					logo: logo && this.fileService.getFileUrl(logo)
+					logo: logo && this.fileService.getUrlFromDbFilePath(logo)
 				};
 
 				const roleIndex = acc.roles[curr.role.name];

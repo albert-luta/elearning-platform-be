@@ -1,5 +1,5 @@
 import { InputType } from '@nestjs/graphql';
-import { BaseActivityInput } from './base-activity.input';
+import { CreateBaseActivityInput } from './create-base-activity.input';
 
 @InputType()
-export class CreateQuizInput extends BaseActivityInput {}
+export class CreateQuizInput extends CreateBaseActivityInput {}
