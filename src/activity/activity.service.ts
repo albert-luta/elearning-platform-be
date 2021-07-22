@@ -543,36 +543,35 @@ export class ActivityService {
 					}
 				}
 			};
-			let specificActivity: Resource | Assignment | Quiz;
+			let specificActivity: Resource | Assignment | Quiz | null;
 			switch (type) {
 				case ActivityType.RESOURCE:
-					specificActivity = await this.prisma.resource.delete(
+					specificActivity = await this.prisma.resource.findUnique(
 						relatedActivity
 					);
 					break;
 				case ActivityType.ASSIGNMENT:
-					specificActivity = await this.prisma.assignment.delete(
+					specificActivity = await this.prisma.assignment.findUnique(
 						relatedActivity
 					);
 					break;
 				case ActivityType.QUIZ:
 				default:
-					specificActivity = await this.prisma.quiz.delete(
+					specificActivity = await this.prisma.quiz.findUnique(
 						relatedActivity
 					);
 			}
-			const activityIdentification = {
+			if (!specificActivity) {
+				throw new Error(this.NOT_FOUND);
+			}
+			const baseActivity = await this.prisma.activity.delete({
 				where: {
 					id_universityId: {
 						id,
 						universityId
 					}
-				}
-			};
-			const deleteExtraInfo = await this.prisma.activity.findUnique({
-				...activityIdentification,
-				select: {
-					sectionId: true,
+				},
+				include: {
 					section: {
 						select: {
 							courseId: true,
@@ -585,16 +584,10 @@ export class ActivityService {
 					}
 				}
 			});
-			if (!deleteExtraInfo) {
-				throw new Error();
-			}
-			const baseActivity = await this.prisma.activity.delete(
-				activityIdentification
-			);
 			await this.fileService.deleteActivityFiles({
 				universityId,
-				collegeId: deleteExtraInfo.section.course.collegeId,
-				courseId: deleteExtraInfo.section.courseId,
+				collegeId: baseActivity.section.course.collegeId,
+				courseId: baseActivity.section.courseId,
 				sectionId: baseActivity.sectionId,
 				activityId: id
 			});
@@ -607,7 +600,7 @@ export class ActivityService {
 				...this.normalizeSpecificActivity(specificActivity)
 			};
 		} catch (e) {
-			if (e.code === 'P2025') {
+			if (e.message === this.NOT_FOUND || e.code === 'P2025') {
 				throw new NotFoundException();
 			}
 

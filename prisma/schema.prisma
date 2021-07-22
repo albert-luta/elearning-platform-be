@@ -5,7 +5,8 @@ datasource db {
 }
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["referentialActions"]
 }
 
 generator nestgraphql {
@@ -49,7 +50,7 @@ model College {
     universityId String
     name         String
 
-    university University @relation(fields: [universityId], references: [id])
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
     courses Course[]
 
@@ -63,8 +64,8 @@ model Course {
     collegeId    String
     name         String
 
-    university University @relation(fields: [universityId], references: [id])
-    college    College    @relation(fields: [collegeId], references: [id])
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+    college    College    @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 
     sections Section[]
 
@@ -79,8 +80,8 @@ model Section {
     name         String
     createdAt    DateTime @default(now())
 
-    university University @relation(fields: [universityId], references: [id])
-    course     Course     @relation(fields: [courseId], references: [id])
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+    course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
     activities Activity[]
 
@@ -104,8 +105,8 @@ model Activity {
     description  String?
     files        String[]
 
-    university University @relation(fields: [universityId], references: [id])
-    section    Section    @relation(fields: [sectionId], references: [id])
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+    section    Section    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
     resources   Resource[]
     assignments Assignment[]
@@ -118,8 +119,8 @@ model Resource {
     activityId   String @id
     universityId String
 
-    activity   Activity   @relation(fields: [activityId], references: [id])
-    university University @relation(fields: [universityId], references: [id])
+    activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
     @@unique([activityId, universityId])
 }
@@ -130,8 +131,8 @@ model Assignment {
     deadline     DateTime
     points       Float
 
-    activity   Activity   @relation(fields: [activityId], references: [id])
-    university University @relation(fields: [universityId], references: [id])
+    activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
     @@unique([activityId, universityId])
 }
@@ -140,8 +141,8 @@ model Quiz {
     activityId   String @id
     universityId String
 
-    activity   Activity   @relation(fields: [activityId], references: [id])
-    university University @relation(fields: [universityId], references: [id])
+    activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
     @@unique([activityId, universityId])
 }
@@ -151,8 +152,8 @@ model UniversityUser {
     userId       String
     roleId       String
 
-    university University @relation(fields: [universityId], references: [id])
-    user       User       @relation(fields: [userId], references: [id])
+    university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+    user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     role       Role       @relation(fields: [roleId], references: [id])
 
     @@id([universityId, userId])

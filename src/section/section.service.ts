@@ -105,38 +105,14 @@ export class SectionService {
 		id: string
 	): Promise<SectionReturnType> {
 		try {
-			const relatedActivities = {
-				where: {
-					sectionId: id
-				}
-			};
-			const activities = await this.prisma.activity.findMany(
-				relatedActivities
-			);
-			const relatedSpecificActivities = {
-				where: {
-					activityId: {
-						in: activities.map((a) => a.id)
-					}
-				}
-			};
-			await this.prisma.$transaction([
-				this.prisma.resource.deleteMany(relatedSpecificActivities),
-				this.prisma.assignment.deleteMany(relatedSpecificActivities),
-				this.prisma.quiz.deleteMany(relatedSpecificActivities),
-				this.prisma.activity.deleteMany(relatedActivities)
-			]);
-			const sectionIdentification = {
+			const section = await this.prisma.section.delete({
 				where: {
 					id_universityId: {
 						id,
 						universityId
 					}
-				}
-			};
-			const deleteExtraInfo = await this.prisma.section.findUnique({
-				...sectionIdentification,
-				select: {
+				},
+				include: {
 					course: {
 						select: {
 							collegeId: true
@@ -144,15 +120,9 @@ export class SectionService {
 					}
 				}
 			});
-			if (!deleteExtraInfo) {
-				throw new Error();
-			}
-			const section = await this.prisma.section.delete(
-				sectionIdentification
-			);
 			await this.fileService.deleteSectionFiles({
 				universityId,
-				collegeId: deleteExtraInfo.course.collegeId,
+				collegeId: section.course.collegeId,
 				courseId: section.courseId,
 				sectionId: id
 			});
