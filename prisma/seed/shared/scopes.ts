@@ -7,6 +7,9 @@ const studentScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'read:sections'
+	},
+	{
+		name: 'read:activity'
 	}
 ];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [
@@ -19,6 +22,27 @@ const teacherScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'delete:section'
+	},
+	{
+		name: 'create:resource'
+	},
+	{
+		name: 'update:resource'
+	},
+	{
+		name: 'create:assignment'
+	},
+	{
+		name: 'update:assignment'
+	},
+	{
+		name: 'create:quiz'
+	},
+	{
+		name: 'update:quiz'
+	},
+	{
+		name: 'delete:activity'
 	}
 ];
 const adminScopes: Prisma.ScopeCreateManyInput[] = [
@@ -31,6 +55,15 @@ const adminScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'delete:college'
+	},
+	{
+		name: 'create:course'
+	},
+	{
+		name: 'update:course'
+	},
+	{
+		name: 'delete:course'
 	}
 ];
 

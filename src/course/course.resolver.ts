@@ -1,4 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { CourseService } from './course.service';
 import { CourseReturnType } from './course.types';
@@ -9,6 +10,7 @@ import { CreateCourseInput } from './dto/create-course.input';
 export class CourseResolver {
 	constructor(private readonly courseService: CourseService) {}
 
+	@Scopes('create:course')
 	@Mutation(() => CourseObject)
 	createCourse(
 		@UniversityId() universityId: string,
@@ -17,6 +19,7 @@ export class CourseResolver {
 		return this.courseService.createCourse(universityId, data);
 	}
 
+	@Scopes('update:course')
 	@Mutation(() => CourseObject)
 	updateCourse(
 		@UniversityId() universityId: string,
@@ -26,6 +29,7 @@ export class CourseResolver {
 		return this.courseService.updateCourse(universityId, id, data);
 	}
 
+	@Scopes('delete:course')
 	@Mutation(() => CourseObject)
 	deleteCourse(
 		@UniversityId() universityId: string,

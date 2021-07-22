@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { ActivityService } from './activity.service';
@@ -16,6 +17,7 @@ import { UpdateResourceInput } from './dto/update-resource.input';
 export class ActivityResolver {
 	constructor(private readonly activityService: ActivityService) {}
 
+	@Scopes('read:activity')
 	@Query(() => BaseActivityInterface)
 	activity(
 		@UniversityId() universityId: string,
@@ -24,6 +26,7 @@ export class ActivityResolver {
 		return this.activityService.getActivity(universityId, id);
 	}
 
+	@Scopes('create:resource')
 	@Mutation(() => BaseActivityInterface)
 	createResource(
 		@UniversityId() universityId: string,
@@ -34,6 +37,7 @@ export class ActivityResolver {
 		return this.activityService.createResource(universityId, data, files);
 	}
 
+	@Scopes('update:resource')
 	@Mutation(() => BaseActivityInterface)
 	updateResource(
 		@UniversityId() universityId: string,
@@ -50,6 +54,7 @@ export class ActivityResolver {
 		);
 	}
 
+	@Scopes('create:assignment')
 	@Mutation(() => BaseActivityInterface)
 	createAssignment(
 		@UniversityId() universityId: string,
@@ -60,6 +65,7 @@ export class ActivityResolver {
 		return this.activityService.createAssignment(universityId, data, files);
 	}
 
+	@Scopes('update:assignment')
 	@Mutation(() => BaseActivityInterface)
 	updateAssignment(
 		@UniversityId() universityId: string,
@@ -76,6 +82,7 @@ export class ActivityResolver {
 		);
 	}
 
+	@Scopes('create:quiz')
 	@Mutation(() => BaseActivityInterface)
 	createQuiz(
 		@UniversityId() universityId: string,
@@ -86,6 +93,7 @@ export class ActivityResolver {
 		return this.activityService.createQuiz(universityId, data, files);
 	}
 
+	@Scopes('update:quiz')
 	@Mutation(() => BaseActivityInterface)
 	updateQuiz(
 		@UniversityId() universityId: string,
@@ -102,6 +110,7 @@ export class ActivityResolver {
 		);
 	}
 
+	@Scopes('delete:activity')
 	@Mutation(() => BaseActivityInterface)
 	deleteActivity(
 		@UniversityId() universityId: string,
