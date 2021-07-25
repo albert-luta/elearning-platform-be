@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import {
-	GroupedByRoleUniversitiesResolverReturnType,
-	UserResolverReturnType
+	GroupedByRoleUniversitiesReturnType,
+	UserReturnType
 } from './user.types';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class UserService {
 		private readonly fileService: FileService
 	) {}
 
-	async getUser(id: string): Promise<UserResolverReturnType> {
+	async getUser(id: string): Promise<UserReturnType> {
 		const res = await this.prisma.user.findUnique({
 			where: {
 				id
@@ -34,7 +34,7 @@ export class UserService {
 
 	async getUserGroupedByRoleUniversities(
 		userId: string
-	): Promise<GroupedByRoleUniversitiesResolverReturnType> {
+	): Promise<GroupedByRoleUniversitiesReturnType> {
 		const universities = await this.prisma.universityUser.findMany({
 			where: {
 				userId
@@ -51,7 +51,7 @@ export class UserService {
 
 		const manipulated = universities.reduce<{
 			roles: Record<string, number | undefined>;
-			groupedUniversities: GroupedByRoleUniversitiesResolverReturnType;
+			groupedUniversities: GroupedByRoleUniversitiesReturnType;
 		}>(
 			(acc, curr) => {
 				const logo = curr.university.logo;
