@@ -32,7 +32,7 @@ export class UserService {
 		};
 	}
 
-	async getUserGroupedByRoleUniversities(
+	async getGroupedByRoleUserUniversities(
 		userId: string
 	): Promise<GroupedByRoleUniversitiesReturnType> {
 		const universities = await this.prisma.universityUser.findMany({

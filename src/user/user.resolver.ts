@@ -21,6 +21,6 @@ export class UserResolver {
 	groupedByRoleUniversities(
 		@Parent() user: UserObject
 	): Promise<GroupedByRoleUniversitiesReturnType> {
-		return this.userService.getUserGroupedByRoleUniversities(user.id);
+		return this.userService.getGroupedByRoleUserUniversities(user.id);
 	}
 }
