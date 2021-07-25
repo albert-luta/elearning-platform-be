@@ -21,7 +21,16 @@ export class CollegeService {
 		try {
 			const colleges = await this.prisma.college.findMany({
 				where: {
-					universityId
+					AND: [
+						{
+							universityId
+						},
+						{
+							collegeUsers: {
+								some: {}
+							}
+						}
+					]
 				},
 				orderBy: {
 					name: 'asc'
@@ -36,13 +45,26 @@ export class CollegeService {
 
 	async createCollege(
 		universityId: string,
+		userId: string,
 		data: CreateCollegeInput
 	): Promise<CollegeReturnType> {
 		try {
 			const college = await this.prisma.college.create({
 				data: {
 					...data,
-					universityId
+					universityId,
+					collegeUsers: {
+						create: {
+							universityUser: {
+								connect: {
+									universityId_userId: {
+										universityId,
+										userId
+									}
+								}
+							}
+						}
+					}
 				}
 			});
 

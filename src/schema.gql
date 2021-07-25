@@ -62,6 +62,7 @@ interface BaseActivityInterface {
 }
 
 type College {
+  collegeUsers: [CollegeUser!]
   courses: [Course!]
   id: ID!
   name: String!
@@ -76,9 +77,19 @@ type CollegeObject {
   universityId: String!
 }
 
+type CollegeUser {
+  college: College!
+  collegeId: String!
+  courseUsers: [CourseUser!]
+  id: ID!
+  universityUser: UniversityUser!
+  universityUserId: String!
+}
+
 type Course {
   college: College!
   collegeId: String!
+  courseUsers: [CourseUser!]
   id: ID!
   name: String!
   sections: [Section!]
@@ -91,6 +102,14 @@ type CourseObject {
   id: ID!
   name: String!
   universityId: String!
+}
+
+type CourseUser {
+  collegeUser: CollegeUser!
+  collegeUserId: String!
+  course: Course!
+  courseId: String!
+  id: ID!
 }
 
 input CreateAssignmentInput {
@@ -278,6 +297,8 @@ type UniversityObject {
 }
 
 type UniversityUser {
+  collegeUsers: [CollegeUser!]
+  id: ID!
   role: Role!
   roleId: String!
   university: University!

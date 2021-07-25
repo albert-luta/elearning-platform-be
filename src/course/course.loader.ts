@@ -11,9 +11,18 @@ export class CourseLoader {
 		async (ids) => {
 			const courses = await this.prisma.course.findMany({
 				where: {
-					collegeId: {
-						in: [...ids]
-					}
+					AND: [
+						{
+							collegeId: {
+								in: [...ids]
+							}
+						},
+						{
+							courseUsers: {
+								some: {}
+							}
+						}
+					]
 				},
 				orderBy: {
 					name: 'asc'

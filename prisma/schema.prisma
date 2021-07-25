@@ -52,7 +52,8 @@ model College {
 
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
-    courses Course[]
+    courses      Course[]
+    collegeUsers CollegeUser[]
 
     @@unique([id, universityId])
     @@unique([universityId, name])
@@ -67,7 +68,8 @@ model Course {
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
     college    College    @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 
-    sections Section[]
+    sections    Section[]
+    courseUsers CourseUser[]
 
     @@unique([id, universityId])
     @@unique([collegeId, name])
@@ -148,6 +150,7 @@ model Quiz {
 }
 
 model UniversityUser {
+    id           String @id @default(cuid())
     universityId String
     userId       String
     roleId       String
@@ -156,7 +159,33 @@ model UniversityUser {
     user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     role       Role       @relation(fields: [roleId], references: [id])
 
-    @@id([universityId, userId])
+    collegeUsers CollegeUser[]
+
+    @@unique([universityId, userId])
+}
+
+model CollegeUser {
+    id               String @id @default(cuid())
+    universityUserId String
+    collegeId        String
+
+    universityUser UniversityUser @relation(fields: [universityUserId], references: [id], onDelete: Cascade)
+    college        College        @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+    courseUsers CourseUser[]
+
+    @@unique([universityUserId, collegeId])
+}
+
+model CourseUser {
+    id            String @id @default(cuid())
+    collegeUserId String
+    courseId      String
+
+    collegeUser CollegeUser @relation(fields: [collegeUserId], references: [id], onDelete: Cascade)
+    course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+    @@unique([collegeUserId, courseId])
 }
 
 model User {

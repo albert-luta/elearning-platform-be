@@ -5,5 +5,6 @@ import { Course } from 'src/generated/prisma-nestjs-graphql/course/course.model'
 export class CourseObject extends OmitType(Course, [
 	'college',
 	'university',
-	'sections'
+	'sections',
+	'courseUsers'
 ] as const) {}

@@ -17,15 +17,41 @@ export class CourseService {
 		private readonly fileService: FileService
 	) {}
 
+	private readonly NOT_FOUND = 'NOT_FOUND';
+
 	async createCourse(
 		universityId: string,
+		userId: string,
 		data: CreateCourseInput
 	): Promise<CourseReturnType> {
 		try {
+			const universityUser = await this.prisma.universityUser.findUnique({
+				where: {
+					universityId_userId: {
+						universityId,
+						userId
+					}
+				}
+			});
+			if (!universityUser) {
+				throw new Error(this.NOT_FOUND);
+			}
 			const course = await this.prisma.course.create({
 				data: {
 					...data,
-					universityId
+					universityId,
+					courseUsers: {
+						create: {
+							collegeUser: {
+								connect: {
+									universityUserId_collegeId: {
+										universityUserId: universityUser.id,
+										collegeId: data.collegeId
+									}
+								}
+							}
+						}
+					}
 				}
 			});
 
@@ -38,6 +64,8 @@ export class CourseService {
 				throw new MyBadRequestException({
 					name: 'There is already a course with this name'
 				});
+			} else if (e.message === this.NOT_FOUND) {
+				throw new NotFoundException();
 			}
 
 			throw new InternalServerErrorException();

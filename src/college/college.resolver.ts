@@ -10,7 +10,9 @@ import {
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { CourseLoader } from 'src/course/course.loader';
 import { CourseReturnType } from 'src/course/course.types';
+import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { CollegeService } from './college.service';
 import { CollegeReturnType } from './college.types';
 import { CollegeObject } from './dto/college.object';
@@ -44,9 +46,10 @@ export class CollegeResolver {
 	@Mutation(() => CollegeObject)
 	createCollege(
 		@UniversityId() universityId: string,
+		@User() user: UserType,
 		@Args('data') data: CreateCollegeInput
 	): Promise<CollegeReturnType> {
-		return this.collegeService.createCollege(universityId, data);
+		return this.collegeService.createCollege(universityId, user.id, data);
 	}
 
 	@Scopes('update:college')

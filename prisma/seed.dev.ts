@@ -55,8 +55,21 @@ export const seedDev = async (prisma: PrismaClient) => {
 			universityId: id
 		}))
 	});
+	const [createdUniversityUsers, createdColleges] = await Promise.all([
+		prisma.universityUser.findMany(),
+		prisma.college.findMany()
+	]);
+	await prisma.collegeUser.createMany({
+		data: expand(
+			createdUniversityUsers,
+			createdColleges,
+			({ id: universityUserId }, { id: collegeId }) => ({
+				universityUserId,
+				collegeId
+			})
+		)
+	});
 
-	const createdColleges = await prisma.college.findMany();
 	await prisma.course.createMany({
 		data: expand(
 			createdColleges,
@@ -68,8 +81,21 @@ export const seedDev = async (prisma: PrismaClient) => {
 			})
 		)
 	});
+	const [createdCollegeUsers, createdCourses] = await Promise.all([
+		prisma.collegeUser.findMany(),
+		prisma.course.findMany()
+	]);
+	await prisma.courseUser.createMany({
+		data: expand(
+			createdCollegeUsers,
+			createdCourses,
+			({ id: collegeUserId }, { id: courseId }) => ({
+				collegeUserId,
+				courseId
+			})
+		)
+	});
 
-	const createdCourses = await prisma.course.findMany();
 	await prisma.section.createMany({
 		data: expand(
 			createdCourses,
