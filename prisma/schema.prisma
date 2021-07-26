@@ -131,7 +131,7 @@ model Assignment {
     activityId   String   @id
     universityId String
     deadline     DateTime
-    points       Float
+    maxGrade     Float
 
     activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)

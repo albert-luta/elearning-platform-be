@@ -14,5 +14,5 @@ export class CreateAssignmentInput extends CreateBaseActivityInput {
 	@IsNotEmpty()
 	@IsNumber()
 	@Min(0)
-	points: number;
+	maxGrade: number;
 }
