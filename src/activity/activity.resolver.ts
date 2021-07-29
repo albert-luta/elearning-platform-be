@@ -2,7 +2,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
+import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { ActivityService } from './activity.service';
 import { ActivityReturnType } from './activity.types';
 import { BaseActivityInterface } from './dto/base-activity.interface';
@@ -12,6 +14,7 @@ import { CreateResourceInput } from './dto/create-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateResourceInput } from './dto/update-resource.input';
+import { UserAssignmentObject } from './dto/user-assignment.object';
 
 @Resolver()
 export class ActivityResolver {
@@ -118,5 +121,20 @@ export class ActivityResolver {
 		@Args('type', { type: () => ActivityType }) type: ActivityType
 	): Promise<ActivityReturnType> {
 		return this.activityService.deleteActivity(universityId, id, type);
+	}
+
+	@Scopes('read:my-assignment')
+	@Query(() => UserAssignmentObject)
+	myAssignment(
+		@User() user: UserType,
+		@Args('id') id: string
+	): Promise<UserAssignmentObject> {
+		return this.activityService.getMyAssignment(user.id, id);
+	}
+
+	@Scopes('read:user-assignments')
+	@Query(() => [UserAssignmentObject])
+	userAssignments(@Args('id') id: string): Promise<UserAssignmentObject[]> {
+		return this.activityService.getUserAssignments(id);
 	}
 }

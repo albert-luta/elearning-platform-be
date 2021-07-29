@@ -197,7 +197,9 @@ type Query {
   activity(id: String!): BaseActivityInterface!
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
+  myAssignment(id: String!): UserAssignmentObject!
   sections(courseId: String!): [SectionObject!]!
+  userAssignments(id: String!): [UserAssignmentObject!]!
 }
 
 type Quiz {
@@ -359,6 +361,15 @@ type UserAssignment {
   id: ID!
   updatedAt: DateTime!
   user: User!
+  userId: String!
+}
+
+type UserAssignmentObject {
+  assignmentId: String!
+  files: [String!]
+  grade: Float
+  id: ID!
+  updatedAt: DateTime!
   userId: String!
 }
 

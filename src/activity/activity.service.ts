@@ -17,6 +17,7 @@ import { UpdateResourceInput } from './dto/update-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateBaseActivityInput } from './dto/update-base-activity.input';
+import { UserAssignmentObject } from './dto/user-assignment.object';
 
 @Injectable()
 export class ActivityService {
@@ -525,6 +526,47 @@ export class ActivityService {
 				throw new NotFoundException();
 			}
 
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async getMyAssignment(
+		userId: string,
+		id: string
+	): Promise<UserAssignmentObject> {
+		try {
+			const myAssignment = await this.prisma.userAssignment.findUnique({
+				where: {
+					userId_assignmentId: {
+						userId,
+						assignmentId: id
+					}
+				}
+			});
+			if (!myAssignment) {
+				throw new Error(this.NOT_FOUND);
+			}
+
+			return myAssignment;
+		} catch (e) {
+			if (e.message === this.NOT_FOUND) {
+				throw new NotFoundException();
+			}
+
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async getUserAssignments(id: string): Promise<UserAssignmentObject[]> {
+		try {
+			const userAssignments = await this.prisma.userAssignment.findMany({
+				where: {
+					assignmentId: id
+				}
+			});
+
+			return userAssignments;
+		} catch (e) {
 			throw new InternalServerErrorException();
 		}
 	}
