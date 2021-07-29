@@ -28,9 +28,10 @@ type Assignment {
   activity: Activity!
   activityId: ID!
   deadline: DateTime!
-  points: Float!
+  maxGrade: Float!
   university: University!
   universityId: String!
+  userAssignments: [UserAssignment!]
 }
 
 type AssignmentObject implements BaseActivityInterface {
@@ -115,8 +116,8 @@ type CourseUser {
 input CreateAssignmentInput {
   deadline: DateTime!
   description: String!
+  maxGrade: Float!
   name: String!
-  points: Float!
   sectionId: String!
 }
 
@@ -347,6 +348,18 @@ type User {
   lastName: String!
   password: String!
   universityUsers: [UniversityUser!]
+  userAssignments: [UserAssignment!]
+}
+
+type UserAssignment {
+  assignment: Assignment!
+  assignmentId: String!
+  files: [String!]
+  grade: Float
+  id: ID!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
 }
 
 type UserObject {

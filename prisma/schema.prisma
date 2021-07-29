@@ -136,6 +136,8 @@ model Assignment {
     activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
+    userAssignments UserAssignment[]
+
     @@unique([activityId, universityId])
 }
 
@@ -198,5 +200,20 @@ model User {
     fatherInitial String  @db.Char(1)
     password      String
 
+    userAssignments UserAssignment[]
     universityUsers UniversityUser[]
+}
+
+model UserAssignment {
+    id           String   @id @default(cuid())
+    userId       String
+    assignmentId String
+    grade        Float?
+    updatedAt    DateTime @updatedAt
+    files        String[]
+
+    user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    assignment Assignment @relation(fields: [assignmentId], references: [activityId], onDelete: Cascade)
+
+    @@unique([userId, assignmentId])
 }

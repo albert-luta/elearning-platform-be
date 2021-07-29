@@ -5,7 +5,8 @@ import { GroupedByRoleUniversitiesObject } from './grouped-by-role-universities.
 @ObjectType()
 export class UserObject extends OmitType(User, [
 	'password',
-	'universityUsers'
+	'universityUsers',
+	'userAssignments'
 ] as const) {
 	@Field(() => [GroupedByRoleUniversitiesObject])
 	groupedByRoleUniversities: GroupedByRoleUniversitiesObject[];
