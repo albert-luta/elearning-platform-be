@@ -21,5 +21,5 @@ export class UpdateAssignmentInput extends UpdateBaseActivityInput {
 	@IsNotEmpty()
 	@IsNumber()
 	@Min(0)
-	points: number;
+	maxGrade: number;
 }

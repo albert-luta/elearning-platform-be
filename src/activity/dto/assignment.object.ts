@@ -18,5 +18,5 @@ export class AssignmentObject implements BaseActivityInterface {
 	deadline: Date;
 
 	@Field()
-	points: number;
+	maxGrade: number;
 }

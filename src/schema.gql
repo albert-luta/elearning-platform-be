@@ -40,8 +40,8 @@ type AssignmentObject implements BaseActivityInterface {
   description: String
   files: [String!]!
   id: String!
+  maxGrade: Float!
   name: String!
-  points: Float!
   sectionId: String!
   type: String!
   universityId: String!
@@ -314,9 +314,9 @@ input UpdateAssignmentInput {
   deadline: DateTime!
   description: String!
   filesToDelete: [String!]!
+  maxGrade: Float!
   name: String!
   oldFiles: [String!]!
-  points: Float!
   sectionId: String!
 }
 
