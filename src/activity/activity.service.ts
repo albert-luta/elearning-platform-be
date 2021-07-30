@@ -18,6 +18,7 @@ import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateBaseActivityInput } from './dto/update-base-activity.input';
 import { UserAssignmentObject } from './dto/user-assignment.object';
+import { UpdateMyAssignmentInput } from './dto/update-my-assignment.input';
 
 @Injectable()
 export class ActivityService {
@@ -175,6 +176,26 @@ export class ActivityService {
 		return baseActivityUpdated;
 	}
 
+	private async deleteFiles(
+		oldFiles: string[],
+		filesToDelete: string[]
+	): Promise<string[]> {
+		await Promise.all(
+			filesToDelete.map((fileUrl) =>
+				this.fileService.deletePathFromUrl(fileUrl)
+			)
+		);
+		const filesToDeleteMap = filesToDelete.reduce<Record<string, true>>(
+			(acc, val) => ({ ...acc, [val]: true }),
+			{}
+		);
+		const updatedOldFiles = oldFiles
+			.filter((file) => !filesToDeleteMap[file])
+			.map((fileUrl) => this.fileService.getDbFilePathFromUrl(fileUrl));
+
+		return updatedOldFiles;
+	}
+
 	private async updateBaseActivity(
 		universityId: string,
 		id: string,
@@ -185,18 +206,7 @@ export class ActivityService {
 		}: UpdateBaseActivityInput,
 		newFiles: FileUpload[]
 	): Promise<Activity> {
-		await Promise.all(
-			filesToDelete.map((fileUrl) =>
-				this.fileService.deletePathFromUrl(fileUrl)
-			)
-		);
-		const filesToDeleteMap = filesToDelete.reduce<Record<string, true>>(
-			(acc, val) => ({ ...acc, [val]: true }),
-			{}
-		);
-		const filteredOldFiles = oldFiles
-			.filter((file) => !filesToDeleteMap[file])
-			.map((fileUrl) => this.fileService.getDbFilePathFromUrl(fileUrl));
+		const updatedOldFiles = await this.deleteFiles(oldFiles, filesToDelete);
 		const createdNewFiles = await this.createActivityFiles(
 			universityId,
 			id,
@@ -212,7 +222,7 @@ export class ActivityService {
 			},
 			data: {
 				...baseActivityFields,
-				files: [...filteredOldFiles, ...createdNewFiles]
+				files: [...updatedOldFiles, ...createdNewFiles]
 			}
 		});
 
@@ -546,6 +556,88 @@ export class ActivityService {
 
 			return myAssignment;
 		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async updateMyAssignment(
+		universityId: string,
+		userId: string,
+		id: string,
+		{ oldFiles, filesToDelete }: UpdateMyAssignmentInput,
+		newFiles: FileUpload[]
+	): Promise<UserAssignmentObject> {
+		try {
+			const updatedOldFiles = await this.deleteFiles(
+				oldFiles,
+				filesToDelete
+			);
+			const identificationExtraInfos = await this.prisma.activity.findUnique(
+				{
+					where: {
+						id_universityId: {
+							id,
+							universityId
+						}
+					},
+					select: {
+						sectionId: true,
+						section: {
+							select: {
+								courseId: true,
+								course: {
+									select: {
+										collegeId: true
+									}
+								}
+							}
+						}
+					}
+				}
+			);
+			if (!identificationExtraInfos) {
+				throw new Error(this.NOT_FOUND);
+			}
+			const createdNewFiles = await this.fileService.createUserActivityFiles(
+				{
+					universityId,
+					userId,
+					activityId: id,
+					sectionId: identificationExtraInfos.sectionId,
+					courseId: identificationExtraInfos.section.courseId,
+					collegeId: identificationExtraInfos.section.course.collegeId
+				},
+				newFiles
+			);
+			const files = [...updatedOldFiles, ...createdNewFiles];
+			const userAssignment = await this.prisma.userAssignment.upsert({
+				where: {
+					userId_assignmentId: {
+						userId,
+						assignmentId: id
+					}
+				},
+				update: {
+					files
+				},
+				create: {
+					files,
+					userId,
+					assignmentId: id
+				}
+			});
+
+			return {
+				...userAssignment,
+				files: userAssignment.files.map((file) =>
+					this.fileService.getUrlFromDbFilePath(file)
+				)
+			};
+		} catch (e) {
+			if (e.message === this.NOT_FOUND) {
+				throw new NotFoundException();
+			}
+
 			throw new InternalServerErrorException();
 		}
 	}

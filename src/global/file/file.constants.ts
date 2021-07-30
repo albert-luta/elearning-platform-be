@@ -8,3 +8,4 @@ export const COLLEGES_DIR_NAME = 'colleges';
 export const COURSES_DIR_NAME = 'courses';
 export const SECTIONS_DIR_NAME = 'sections';
 export const ACTIVITIES_DIR_NAME = 'activities';
+export const ACTIVITY_USERS_DIR_NAME = 'users';

@@ -12,6 +12,7 @@ import { CreateAssignmentInput } from './dto/create-assignment.input';
 import { CreateQuizInput } from './dto/create-quiz.input';
 import { CreateResourceInput } from './dto/create-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
+import { UpdateMyAssignmentInput } from './dto/update-my-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateResourceInput } from './dto/update-resource.input';
 import { UserAssignmentObject } from './dto/user-assignment.object';
@@ -130,6 +131,25 @@ export class ActivityResolver {
 		@Args('id') id: string
 	): Promise<UserAssignmentObject | null> {
 		return this.activityService.getMyAssignment(user.id, id);
+	}
+
+	@Scopes('update:my-assignment')
+	@Mutation(() => UserAssignmentObject)
+	updateMyAssignment(
+		@UniversityId() universityId: string,
+		@User() user: UserType,
+		@Args('id') id: string,
+		@Args('data') data: UpdateMyAssignmentInput,
+		@Args('newFiles', { type: () => [GraphQLUpload] })
+		newFiles: FileUpload[]
+	): Promise<UserAssignmentObject> {
+		return this.activityService.updateMyAssignment(
+			universityId,
+			user.id,
+			id,
+			data,
+			newFiles
+		);
 	}
 
 	@Scopes('read:user-assignments')

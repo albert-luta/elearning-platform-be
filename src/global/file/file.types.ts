@@ -17,3 +17,7 @@ export interface SectionIdentification extends CourseIdentification {
 export interface ActivityIdentification extends SectionIdentification {
 	activityId: string;
 }
+
+export interface UserActivityIdentification extends ActivityIdentification {
+	userId: string;
+}

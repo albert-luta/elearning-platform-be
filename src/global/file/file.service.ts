@@ -6,7 +6,8 @@ import {
 	CollegeIdentification,
 	CourseIdentification,
 	SectionIdentification,
-	UniversityIdentification
+	UniversityIdentification,
+	UserActivityIdentification
 } from './file.types';
 import { FileUtilsService } from './services/file-utils.service';
 
@@ -55,6 +56,20 @@ export class FileService {
 		);
 		const filesPromises = files.map((file) =>
 			this.fileUtilsService.writeFile(file, activityDir)
+		);
+
+		return Promise.all(filesPromises);
+	}
+
+	createUserActivityFiles(
+		activityIdentification: UserActivityIdentification,
+		files: FileUpload[]
+	): Promise<string[]> {
+		const userActivityDir = this.fileUtilsService.getUserActivityDir(
+			activityIdentification
+		);
+		const filesPromises = files.map((file) =>
+			this.fileUtilsService.writeFile(file, userActivityDir)
 		);
 
 		return Promise.all(filesPromises);

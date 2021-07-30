@@ -187,6 +187,7 @@ type Mutation {
   updateAssignment(data: UpdateAssignmentInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
+  updateMyAssignment(data: UpdateMyAssignmentInput!, id: String!, newFiles: [Upload!]!): UserAssignmentObject!
   updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateSection(data: CreateSectionInput!, id: String!): SectionObject!
@@ -318,6 +319,11 @@ input UpdateAssignmentInput {
   name: String!
   oldFiles: [String!]!
   sectionId: String!
+}
+
+input UpdateMyAssignmentInput {
+  filesToDelete: [String!]!
+  oldFiles: [String!]!
 }
 
 input UpdateQuizInput {

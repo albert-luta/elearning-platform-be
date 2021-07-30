@@ -5,6 +5,7 @@ import fs from 'fs';
 import fsp from 'fs/promises';
 import {
 	ACTIVITIES_DIR_NAME,
+	ACTIVITY_USERS_DIR_NAME,
 	COLLEGES_DIR_NAME,
 	COURSES_DIR_NAME,
 	PUBLIC_DIR_NAME,
@@ -19,7 +20,8 @@ import {
 	CollegeIdentification,
 	CourseIdentification,
 	SectionIdentification,
-	UniversityIdentification
+	UniversityIdentification,
+	UserActivityIdentification
 } from '../file.types';
 
 @Injectable()
@@ -84,6 +86,16 @@ export class FileUtilsService {
 			this.getSectionDir(sectionIdentification),
 			ACTIVITIES_DIR_NAME,
 			activityId
+		);
+	}
+	getUserActivityDir({
+		userId,
+		...activityIdentification
+	}: UserActivityIdentification): string {
+		return p.join(
+			this.getActivityDir(activityIdentification),
+			ACTIVITY_USERS_DIR_NAME,
+			userId
 		);
 	}
 
