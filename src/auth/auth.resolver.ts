@@ -19,7 +19,7 @@ export class AuthResolver {
 	register(
 		@GraphQLRes() res: ResType,
 		@Args('user') user: RegisterUserInput,
-		@Args({ name: 'avatar', type: () => GraphQLUpload, nullable: true })
+		@Args('avatar', { type: () => GraphQLUpload, nullable: true })
 		avatar?: FileUpload
 	): Promise<Authentication> {
 		return this.authService.register(res, user, avatar);

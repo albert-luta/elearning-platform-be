@@ -15,7 +15,7 @@ export class UniversityResolver {
 	createUniversity(
 		@User() user: UserType,
 		@Args('data') data: CreateUniversityInput,
-		@Args({ name: 'logo', type: () => GraphQLUpload, nullable: true })
+		@Args('logo', { type: () => GraphQLUpload, nullable: true })
 		logo?: FileUpload
 	): Promise<UniversityReturnType> {
 		return this.universityService.createUniversity(user.id, data, logo);
@@ -26,7 +26,7 @@ export class UniversityResolver {
 		@User() user: UserType,
 		@Args('id') id: string,
 		@Args('data') data: CreateUniversityInput,
-		@Args({ name: 'logo', type: () => GraphQLUpload, nullable: true })
+		@Args('logo', { type: () => GraphQLUpload, nullable: true })
 		logo?: FileUpload
 	): Promise<UniversityReturnType> {
 		return this.universityService.updateUniversity(user.id, id, data, logo);

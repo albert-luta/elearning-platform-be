@@ -34,7 +34,7 @@ export class ActivityResolver {
 	createResource(
 		@UniversityId() universityId: string,
 		@Args('data') data: CreateResourceInput,
-		@Args({ name: 'files', type: () => [GraphQLUpload] })
+		@Args('files', { type: () => [GraphQLUpload] })
 		files: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.createResource(universityId, data, files);
@@ -46,7 +46,7 @@ export class ActivityResolver {
 		@UniversityId() universityId: string,
 		@Args('id') id: string,
 		@Args('data') data: UpdateResourceInput,
-		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		@Args('newFiles', { type: () => [GraphQLUpload] })
 		newFiles: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.updateResource(
@@ -62,7 +62,7 @@ export class ActivityResolver {
 	createAssignment(
 		@UniversityId() universityId: string,
 		@Args('data') data: CreateAssignmentInput,
-		@Args({ name: 'files', type: () => [GraphQLUpload] })
+		@Args('files', { type: () => [GraphQLUpload] })
 		files: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.createAssignment(universityId, data, files);
@@ -74,7 +74,7 @@ export class ActivityResolver {
 		@UniversityId() universityId: string,
 		@Args('id') id: string,
 		@Args('data') data: UpdateAssignmentInput,
-		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		@Args('newFiles', { type: () => [GraphQLUpload] })
 		newFiles: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.updateAssignment(
@@ -90,7 +90,7 @@ export class ActivityResolver {
 	createQuiz(
 		@UniversityId() universityId: string,
 		@Args('data') data: CreateQuizInput,
-		@Args({ name: 'files', type: () => [GraphQLUpload] })
+		@Args('files', { type: () => [GraphQLUpload] })
 		files: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.createQuiz(universityId, data, files);
@@ -102,7 +102,7 @@ export class ActivityResolver {
 		@UniversityId() universityId: string,
 		@Args('id') id: string,
 		@Args('data') data: UpdateQuizInput,
-		@Args({ name: 'newFiles', type: () => [GraphQLUpload] })
+		@Args('newFiles', { type: () => [GraphQLUpload] })
 		newFiles: FileUpload[]
 	): Promise<ActivityReturnType> {
 		return this.activityService.updateQuiz(
