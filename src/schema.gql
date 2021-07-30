@@ -197,7 +197,7 @@ type Query {
   activity(id: String!): BaseActivityInterface!
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
-  myAssignment(id: String!): UserAssignmentObject!
+  myAssignment(id: String!): UserAssignmentObject
   sections(courseId: String!): [SectionObject!]!
   userAssignments(id: String!): [UserAssignmentObject!]!
 }

@@ -533,7 +533,7 @@ export class ActivityService {
 	async getMyAssignment(
 		userId: string,
 		id: string
-	): Promise<UserAssignmentObject> {
+	): Promise<UserAssignmentObject | null> {
 		try {
 			const myAssignment = await this.prisma.userAssignment.findUnique({
 				where: {
@@ -543,16 +543,9 @@ export class ActivityService {
 					}
 				}
 			});
-			if (!myAssignment) {
-				throw new Error(this.NOT_FOUND);
-			}
 
 			return myAssignment;
 		} catch (e) {
-			if (e.message === this.NOT_FOUND) {
-				throw new NotFoundException();
-			}
-
 			throw new InternalServerErrorException();
 		}
 	}

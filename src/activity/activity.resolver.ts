@@ -124,11 +124,11 @@ export class ActivityResolver {
 	}
 
 	@Scopes('read:my-assignment')
-	@Query(() => UserAssignmentObject)
+	@Query(() => UserAssignmentObject, { nullable: true })
 	myAssignment(
 		@User() user: UserType,
 		@Args('id') id: string
-	): Promise<UserAssignmentObject> {
+	): Promise<UserAssignmentObject | null> {
 		return this.activityService.getMyAssignment(user.id, id);
 	}
 
