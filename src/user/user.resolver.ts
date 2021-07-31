@@ -19,7 +19,7 @@ export class UserResolver {
 
 	@ResolveField()
 	groupedByRoleUniversities(
-		@Parent() user: UserObject
+		@Parent() user: UserReturnType
 	): Promise<GroupedByRoleUniversitiesReturnType> {
 		return this.userService.getGroupedByRoleUserUniversities(user.id);
 	}

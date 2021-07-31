@@ -34,7 +34,7 @@ export class CollegeResolver {
 	}
 
 	@ResolveField()
-	courses(@Parent() college: CollegeObject): Promise<CourseReturnType[]> {
+	courses(@Parent() college: CollegeReturnType): Promise<CourseReturnType[]> {
 		try {
 			return this.courseLoader.byCollegeId.load(college.id);
 		} catch (e) {
