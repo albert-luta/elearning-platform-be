@@ -376,6 +376,7 @@ type UserAssignmentObject {
   grade: Float
   id: ID!
   updatedAt: DateTime!
+  user: UserObject!
   userId: String!
 }
 

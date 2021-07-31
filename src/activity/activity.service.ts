@@ -17,14 +17,14 @@ import { UpdateResourceInput } from './dto/update-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateBaseActivityInput } from './dto/update-base-activity.input';
-import { UserAssignmentObject } from './dto/user-assignment.object';
-import { UpdateMyAssignmentInput } from './dto/update-my-assignment.input';
+import { ActivityUtilsService } from './services/activity-utils.service';
 
 @Injectable()
 export class ActivityService {
 	constructor(
 		private readonly prisma: PrismaService,
-		private readonly fileService: FileService
+		private readonly fileService: FileService,
+		private readonly activityUtilsService: ActivityUtilsService
 	) {}
 
 	private readonly NOT_FOUND = 'NOT_FOUND';
@@ -176,26 +176,6 @@ export class ActivityService {
 		return baseActivityUpdated;
 	}
 
-	private async deleteFiles(
-		oldFiles: string[],
-		filesToDelete: string[]
-	): Promise<string[]> {
-		await Promise.all(
-			filesToDelete.map((fileUrl) =>
-				this.fileService.deletePathFromUrl(fileUrl)
-			)
-		);
-		const filesToDeleteMap = filesToDelete.reduce<Record<string, true>>(
-			(acc, val) => ({ ...acc, [val]: true }),
-			{}
-		);
-		const updatedOldFiles = oldFiles
-			.filter((file) => !filesToDeleteMap[file])
-			.map((fileUrl) => this.fileService.getDbFilePathFromUrl(fileUrl));
-
-		return updatedOldFiles;
-	}
-
 	private async updateBaseActivity(
 		universityId: string,
 		id: string,
@@ -206,7 +186,10 @@ export class ActivityService {
 		}: UpdateBaseActivityInput,
 		newFiles: FileUpload[]
 	): Promise<Activity> {
-		const updatedOldFiles = await this.deleteFiles(oldFiles, filesToDelete);
+		const updatedOldFiles = await this.activityUtilsService.deleteFiles(
+			oldFiles,
+			filesToDelete
+		);
 		const createdNewFiles = await this.createActivityFiles(
 			universityId,
 			id,
@@ -536,136 +519,6 @@ export class ActivityService {
 				throw new NotFoundException();
 			}
 
-			throw new InternalServerErrorException();
-		}
-	}
-
-	async getMyAssignment(
-		userId: string,
-		id: string
-	): Promise<UserAssignmentObject | null> {
-		try {
-			const myAssignment = await this.prisma.userAssignment.findUnique({
-				where: {
-					userId_assignmentId: {
-						userId,
-						assignmentId: id
-					}
-				}
-			});
-
-			return (
-				myAssignment && {
-					...myAssignment,
-					files: myAssignment.files.map((file) =>
-						this.fileService.getUrlFromDbFilePath(file)
-					)
-				}
-			);
-		} catch (e) {
-			throw new InternalServerErrorException();
-		}
-	}
-
-	async updateMyAssignment(
-		universityId: string,
-		userId: string,
-		id: string,
-		{ oldFiles, filesToDelete }: UpdateMyAssignmentInput,
-		newFiles: FileUpload[]
-	): Promise<UserAssignmentObject> {
-		try {
-			const updatedOldFiles = await this.deleteFiles(
-				oldFiles,
-				filesToDelete
-			);
-			const identificationExtraInfos = await this.prisma.activity.findUnique(
-				{
-					where: {
-						id_universityId: {
-							id,
-							universityId
-						}
-					},
-					select: {
-						sectionId: true,
-						section: {
-							select: {
-								courseId: true,
-								course: {
-									select: {
-										collegeId: true
-									}
-								}
-							}
-						}
-					}
-				}
-			);
-			if (!identificationExtraInfos) {
-				throw new Error(this.NOT_FOUND);
-			}
-			const createdNewFiles = await this.fileService.createUserActivityFiles(
-				{
-					universityId,
-					userId,
-					activityId: id,
-					sectionId: identificationExtraInfos.sectionId,
-					courseId: identificationExtraInfos.section.courseId,
-					collegeId: identificationExtraInfos.section.course.collegeId
-				},
-				newFiles
-			);
-			const files = [
-				...new Set([...updatedOldFiles, ...createdNewFiles])
-			];
-			const userAssignment = await this.prisma.userAssignment.upsert({
-				where: {
-					userId_assignmentId: {
-						userId,
-						assignmentId: id
-					}
-				},
-				update: {
-					files
-				},
-				create: {
-					files,
-					userId,
-					assignmentId: id
-				}
-			});
-
-			return {
-				...userAssignment,
-				files: userAssignment.files.map((file) =>
-					this.fileService.getUrlFromDbFilePath(file)
-				)
-			};
-		} catch (e) {
-			if (e.message === this.NOT_FOUND) {
-				throw new NotFoundException();
-			}
-
-			throw new InternalServerErrorException();
-		}
-	}
-
-	async getUserAssignments(id: string): Promise<UserAssignmentObject[]> {
-		try {
-			const userAssignments = await this.prisma.userAssignment.findMany({
-				where: {
-					assignmentId: id
-				}
-			});
-
-			return userAssignments.map(({ files, ...userAssignment }) => ({
-				...userAssignment,
-				files: files.map((file) =>
-					this.fileService.getUrlFromDbFilePath(file)
-				)
-			}));
-		} catch (e) {
 			throw new InternalServerErrorException();
 		}
 	}
