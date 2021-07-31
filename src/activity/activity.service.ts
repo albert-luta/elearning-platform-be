@@ -554,7 +554,14 @@ export class ActivityService {
 				}
 			});
 
-			return myAssignment;
+			return (
+				myAssignment && {
+					...myAssignment,
+					files: myAssignment.files.map((file) =>
+						this.fileService.getUrlFromDbFilePath(file)
+					)
+				}
+			);
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}
@@ -650,7 +657,12 @@ export class ActivityService {
 				}
 			});
 
-			return userAssignments;
+			return userAssignments.map(({ files, ...userAssignment }) => ({
+				...userAssignment,
+				files: files.map((file) =>
+					this.fileService.getUrlFromDbFilePath(file)
+				)
+			}));
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}
