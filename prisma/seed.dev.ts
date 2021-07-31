@@ -10,6 +10,7 @@ import { colleges } from './seed/dev/colleges';
 import { courses } from './seed/dev/courses';
 import { sections } from './seed/dev/sections';
 import { universities } from './seed/dev/universities';
+import { userAssignment } from './seed/dev/userAssignment';
 import { users } from './seed/dev/users';
 import { expand } from './seed/dev/utills';
 import { roles } from './seed/shared/roles';
@@ -153,4 +154,17 @@ export const seedDev = async (prisma: PrismaClient) => {
 			}))
 		})
 	]);
+
+	const createdAssignments = await prisma.assignment.findMany();
+	await prisma.userAssignment.createMany({
+		data: expand(
+			createdUsers,
+			createdAssignments,
+			({ id: userId }, { activityId: assignmentId }) => ({
+				userId,
+				assignmentId,
+				...userAssignment
+			})
+		)
+	});
 };
