@@ -222,7 +222,7 @@ export class ActivityService {
 			},
 			data: {
 				...baseActivityFields,
-				files: [...updatedOldFiles, ...createdNewFiles]
+				files: [...new Set([...updatedOldFiles, ...createdNewFiles])]
 			}
 		});
 
@@ -616,7 +616,9 @@ export class ActivityService {
 				},
 				newFiles
 			);
-			const files = [...updatedOldFiles, ...createdNewFiles];
+			const files = [
+				...new Set([...updatedOldFiles, ...createdNewFiles])
+			];
 			const userAssignment = await this.prisma.userAssignment.upsert({
 				where: {
 					userId_assignmentId: {
