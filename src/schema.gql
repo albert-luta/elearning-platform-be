@@ -200,7 +200,7 @@ type Query {
   me: UserObject!
   myAssignment(id: String!): UserAssignmentObject
   sections(courseId: String!): [SectionObject!]!
-  userAssignments(id: String!): [UserAssignmentObject!]!
+  userAssignments(assignmentId: String!): [UserAssignmentObject!]!
 }
 
 type Quiz {

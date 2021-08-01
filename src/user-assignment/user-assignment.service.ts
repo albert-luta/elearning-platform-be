@@ -137,11 +137,13 @@ export class UserAssignmentService {
 	// TODO: Don't change the updatedAt date
 	// updateUserAssignment()
 
-	async getUserAssignments(id: string): Promise<UserAssignmentReturnType[]> {
+	async getUserAssignments(
+		assignmentId: string
+	): Promise<UserAssignmentReturnType[]> {
 		try {
 			const userAssignments = await this.prisma.userAssignment.findMany({
 				where: {
-					assignmentId: id
+					assignmentId
 				}
 			});
 

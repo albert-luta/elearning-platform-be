@@ -54,9 +54,9 @@ export class UserAssignmentResolver {
 	@Scopes('read:user-assignments')
 	@Query(() => [UserAssignmentObject])
 	userAssignments(
-		@Args('id') id: string
+		@Args('assignmentId') assignmentId: string
 	): Promise<UserAssignmentReturnType[]> {
-		return this.userAssignmentService.getUserAssignments(id);
+		return this.userAssignmentService.getUserAssignments(assignmentId);
 	}
 
 	@ResolveField()
