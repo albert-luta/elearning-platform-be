@@ -51,6 +51,9 @@ const teacherScopes: Prisma.ScopeCreateManyInput[] = [
 		name: 'delete:activity'
 	},
 	{
+		name: 'read:user-assignment'
+	},
+	{
 		name: 'read:user-assignments'
 	}
 ];

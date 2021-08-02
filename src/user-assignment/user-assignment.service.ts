@@ -137,6 +137,29 @@ export class UserAssignmentService {
 	// TODO: Don't change the updatedAt date
 	// updateUserAssignment()
 
+	async getUserAssignment(
+		id: string
+	): Promise<UserAssignmentReturnType | null> {
+		try {
+			const userAssignment = await this.prisma.userAssignment.findUnique({
+				where: {
+					id
+				}
+			});
+
+			return (
+				userAssignment && {
+					...userAssignment,
+					files: userAssignment.files.map((file) =>
+						this.fileService.getUrlFromDbFilePath(file)
+					)
+				}
+			);
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
 	async getUserAssignments(
 		assignmentId: string
 	): Promise<UserAssignmentReturnType[]> {

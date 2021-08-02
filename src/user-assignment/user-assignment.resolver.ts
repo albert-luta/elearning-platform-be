@@ -51,6 +51,14 @@ export class UserAssignmentResolver {
 		);
 	}
 
+	@Scopes('read:user-assignment')
+	@Query(() => UserAssignmentObject, { nullable: true })
+	userAssignment(
+		@Args('id') id: string
+	): Promise<UserAssignmentReturnType | null> {
+		return this.userAssignmentService.getUserAssignment(id);
+	}
+
 	@Scopes('read:user-assignments')
 	@Query(() => [UserAssignmentObject])
 	userAssignments(
