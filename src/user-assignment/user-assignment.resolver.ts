@@ -15,6 +15,7 @@ import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { User } from 'src/user/decorators/user.decorator';
 import { UserReturnType } from 'src/user/user.types';
+import { UpdateUserAssignmentInput } from './dto/update-user-assignment.input';
 import { UserAssignmentService } from './user-assignment.service';
 
 @Resolver(() => UserAssignmentObject)
@@ -57,6 +58,15 @@ export class UserAssignmentResolver {
 		@Args('id') id: string
 	): Promise<UserAssignmentReturnType | null> {
 		return this.userAssignmentService.getUserAssignment(id);
+	}
+
+	@Scopes('update:user-assignment')
+	@Mutation(() => UserAssignmentObject)
+	updateUserAssignment(
+		@Args('id') id: string,
+		@Args('data') data: UpdateUserAssignmentInput
+	): Promise<UserAssignmentReturnType> {
+		return this.userAssignmentService.updateUserAssignment(id, data);
 	}
 
 	@Scopes('read:user-assignments')

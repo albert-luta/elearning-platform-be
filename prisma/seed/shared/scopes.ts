@@ -54,6 +54,9 @@ const teacherScopes: Prisma.ScopeCreateManyInput[] = [
 		name: 'read:user-assignment'
 	},
 	{
+		name: 'update:user-assignment'
+	},
+	{
 		name: 'read:user-assignments'
 	}
 ];

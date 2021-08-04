@@ -11,6 +11,7 @@ import { ActivityUtilsService } from 'src/activity/services/activity-utils.servi
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { UserReturnType } from 'src/user/user.types';
+import { UpdateUserAssignmentInput } from './dto/update-user-assignment.input';
 
 @Injectable()
 export class UserAssignmentService {
@@ -134,9 +135,6 @@ export class UserAssignmentService {
 		}
 	}
 
-	// TODO: Don't change the updatedAt date
-	// updateUserAssignment()
-
 	async getUserAssignment(
 		id: string
 	): Promise<UserAssignmentReturnType | null> {
@@ -156,6 +154,28 @@ export class UserAssignmentService {
 				}
 			);
 		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async updateUserAssignment(
+		id: string,
+		data: UpdateUserAssignmentInput
+	): Promise<UserAssignmentReturnType> {
+		try {
+			const userAssignment = await this.prisma.userAssignment.update({
+				where: {
+					id
+				},
+				data
+			});
+
+			return userAssignment;
+		} catch (e) {
+			if (e.code === 'P2025') {
+				throw new NotFoundException();
+			}
+
 			throw new InternalServerErrorException();
 		}
 	}

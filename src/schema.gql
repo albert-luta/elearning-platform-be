@@ -192,6 +192,7 @@ type Mutation {
   updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateSection(data: CreateSectionInput!, id: String!): SectionObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
+  updateUserAssignment(data: UpdateUserAssignmentInput!, id: String!): UserAssignmentObject!
 }
 
 type Query {
@@ -341,6 +342,11 @@ input UpdateResourceInput {
   name: String!
   oldFiles: [String!]!
   sectionId: String!
+}
+
+input UpdateUserAssignmentInput {
+  grade: Float
+  updatedAt: DateTime!
 }
 
 """The `Upload` scalar type represents a file upload."""
