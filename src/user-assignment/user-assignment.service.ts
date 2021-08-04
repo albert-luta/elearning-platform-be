@@ -12,6 +12,8 @@ import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { UserReturnType } from 'src/user/user.types';
 import { UpdateUserAssignmentInput } from './dto/update-user-assignment.input';
+import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
+import { MyBadRequestError } from 'src/general/error-handling/errors/my-bad-request.error';
 
 @Injectable()
 export class UserAssignmentService {
@@ -158,11 +160,39 @@ export class UserAssignmentService {
 		}
 	}
 
+	private readonly MAX_GRADE_EXCEEDED = 'MAX_GRADE_EXCEEDED';
 	async updateUserAssignment(
 		id: string,
 		data: UpdateUserAssignmentInput
 	): Promise<UserAssignmentReturnType> {
 		try {
+			const oldUserAssignment = await this.prisma.userAssignment.findUnique(
+				{
+					where: {
+						id
+					},
+					select: {
+						assignment: {
+							select: {
+								maxGrade: true
+							}
+						}
+					}
+				}
+			);
+			if (!oldUserAssignment) {
+				throw new Error(this.NOT_FOUND);
+			}
+			if (
+				data.grade != null &&
+				data.grade > oldUserAssignment.assignment.maxGrade
+			) {
+				throw new MyBadRequestError({
+					grade:
+						'Max grade allowed is ' +
+						oldUserAssignment.assignment.maxGrade
+				});
+			}
 			const userAssignment = await this.prisma.userAssignment.update({
 				where: {
 					id
@@ -172,8 +202,10 @@ export class UserAssignmentService {
 
 			return userAssignment;
 		} catch (e) {
-			if (e.code === 'P2025') {
+			if (e.message === this.NOT_FOUND || e.code === 'P2025') {
 				throw new NotFoundException();
+			} else if (e instanceof MyBadRequestError) {
+				throw new MyBadRequestException(e.data);
 			}
 
 			throw new InternalServerErrorException();
