@@ -5,8 +5,7 @@ import {
 	NotFoundException
 } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload';
-import { UserAssignmentReturnType } from 'src/activity/activity.types';
-import { UpdateMyAssignmentInput } from 'src/activity/dto/update-my-assignment.input';
+import { UpdateMyAssignmentInput } from 'src/user-assignment/dto/update-my-assignment.input';
 import { ActivityUtilsService } from 'src/activity/services/activity-utils.service';
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
@@ -14,6 +13,7 @@ import { UserReturnType } from 'src/user/user.types';
 import { UpdateUserAssignmentInput } from './dto/update-user-assignment.input';
 import { MyBadRequestException } from 'src/general/error-handling/exceptions/my-bad-request.exception';
 import { MyBadRequestError } from 'src/general/error-handling/errors/my-bad-request.error';
+import { UserAssignmentReturnType } from './user-assignment.types';
 
 @Injectable()
 export class UserAssignmentService {

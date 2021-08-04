@@ -7,9 +7,8 @@ import {
 	Resolver
 } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { UserAssignmentReturnType } from 'src/activity/activity.types';
-import { UpdateMyAssignmentInput } from 'src/activity/dto/update-my-assignment.input';
-import { UserAssignmentObject } from 'src/activity/dto/user-assignment.object';
+import { UpdateMyAssignmentInput } from 'src/user-assignment/dto/update-my-assignment.input';
+import { UserAssignmentObject } from 'src/user-assignment/dto/user-assignment.object';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
@@ -17,6 +16,7 @@ import { User } from 'src/user/decorators/user.decorator';
 import { UserReturnType } from 'src/user/user.types';
 import { UpdateUserAssignmentInput } from './dto/update-user-assignment.input';
 import { UserAssignmentService } from './user-assignment.service';
+import { UserAssignmentReturnType } from './user-assignment.types';
 
 @Resolver(() => UserAssignmentObject)
 export class UserAssignmentResolver {
