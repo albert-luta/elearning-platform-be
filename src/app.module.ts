@@ -17,6 +17,7 @@ import { CourseModule } from './course/course.module';
 import { SectionModule } from './section/section.module';
 import { ActivityModule } from './activity/activity.module';
 import { UserAssignmentModule } from './user-assignment/user-assignment.module';
+import { QuestionBankModule } from './question-bank/question-bank.module';
 
 @Module({
 	imports: [
@@ -33,7 +34,8 @@ import { UserAssignmentModule } from './user-assignment/user-assignment.module';
 		CourseModule,
 		SectionModule,
 		ActivityModule,
-		UserAssignmentModule
+		UserAssignmentModule,
+		QuestionBankModule
 	],
 	providers: [
 		{

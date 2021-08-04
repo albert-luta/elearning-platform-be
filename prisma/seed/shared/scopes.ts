@@ -58,6 +58,9 @@ const teacherScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'read:user-assignments'
+	},
+	{
+		name: 'read:question-bank'
 	}
 ];
 const adminScopes: Prisma.ScopeCreateManyInput[] = [

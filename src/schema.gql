@@ -200,6 +200,7 @@ type Query {
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
   myAssignment(id: String!): UserAssignmentObject
+  questionBank: [QuestionCategoryObject!]!
   sections(courseId: String!): [SectionObject!]!
   userAssignment(id: String!): UserAssignmentObject
   userAssignments(assignmentId: String!): [UserAssignmentObject!]!
@@ -224,12 +225,31 @@ type QuestionAnswer {
   text: String!
 }
 
+type QuestionAnswerObject {
+  id: ID!
+  text: String!
+}
+
 type QuestionCategory {
   id: ID!
   name: String!
   questions: [Question!]
   universityUser: UniversityUser!
   universityUserId: String!
+}
+
+type QuestionCategoryObject {
+  id: ID!
+  name: String!
+  questions: [QuestionObject!]!
+}
+
+type QuestionObject {
+  answers: [QuestionAnswerObject!]!
+  id: ID!
+  name: String!
+  text: String!
+  type: QuestionType!
 }
 
 enum QuestionType {
