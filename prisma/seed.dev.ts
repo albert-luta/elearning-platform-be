@@ -8,6 +8,8 @@ import {
 } from './seed/dev/activities';
 import { colleges } from './seed/dev/colleges';
 import { courses } from './seed/dev/courses';
+import { questionCategories } from './seed/dev/questionCategories';
+import { questions } from './seed/dev/questions';
 import { sections } from './seed/dev/sections';
 import { universities } from './seed/dev/universities';
 import { userAssignment } from './seed/dev/userAssignment';
@@ -167,4 +169,30 @@ export const seedDev = async (prisma: PrismaClient) => {
 			})
 		)
 	});
+
+	await prisma.questionCategory.createMany({
+		data: expand(
+			createdUniversityUsers,
+			questionCategories,
+			({ id }, questionCategory) => ({
+				...questionCategory,
+				universityUserId: id
+			})
+		)
+	});
+
+	const createdQuestionCategories = await prisma.questionCategory.findMany();
+	await Promise.all(
+		expand(createdQuestionCategories, questions, (category, question) => ({
+			category,
+			question
+		})).map(({ category: { id }, question }) =>
+			prisma.question.create({
+				data: {
+					...question,
+					questionCategoryId: id
+				}
+			})
+		)
+	);
 };
