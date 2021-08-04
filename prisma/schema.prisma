@@ -161,7 +161,8 @@ model UniversityUser {
     user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     role       Role       @relation(fields: [roleId], references: [id])
 
-    collegeUsers CollegeUser[]
+    collegeUsers       CollegeUser[]
+    questionCategories QuestionCategory[]
 
     @@unique([universityId, userId])
 }
@@ -216,4 +217,46 @@ model UserAssignment {
     assignment Assignment @relation(fields: [assignmentId], references: [activityId], onDelete: Cascade)
 
     @@unique([userId, assignmentId])
+}
+
+model QuestionCategory {
+    id               String @id @default(cuid())
+    universityUserId String
+    name             String
+
+    universityUser UniversityUser @relation(fields: [universityUserId], references: [id], onDelete: Cascade)
+
+    questions Question[]
+
+    @@unique([universityUserId, name])
+}
+
+enum QuestionType {
+    SINGLE_CHOICE
+    MULTIPLE_CHOICE
+    NUMERICAL
+}
+
+model Question {
+    id                 String       @id @default(cuid())
+    questionCategoryId String
+    name               String
+    text               String
+    type               QuestionType
+    createdAt          DateTime     @default(now())
+
+    questionCategory QuestionCategory @relation(fields: [questionCategoryId], references: [id], onDelete: Cascade)
+
+    questionAnswers QuestionAnswer[]
+}
+
+model QuestionAnswer {
+    id         String @id @default(cuid())
+    questionId String
+    text       String
+    fraction   Float
+
+    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+    @@unique([questionId, text])
 }

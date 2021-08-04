@@ -205,6 +205,39 @@ type Query {
   userAssignments(assignmentId: String!): [UserAssignmentObject!]!
 }
 
+type Question {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  questionAnswers: [QuestionAnswer!]
+  questionCategory: QuestionCategory!
+  questionCategoryId: String!
+  text: String!
+  type: QuestionType!
+}
+
+type QuestionAnswer {
+  fraction: Float!
+  id: ID!
+  question: Question!
+  questionId: String!
+  text: String!
+}
+
+type QuestionCategory {
+  id: ID!
+  name: String!
+  questions: [Question!]
+  universityUser: UniversityUser!
+  universityUserId: String!
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  NUMERICAL
+  SINGLE_CHOICE
+}
+
 type Quiz {
   activity: Activity!
   activityId: ID!
@@ -305,6 +338,7 @@ type UniversityObject {
 type UniversityUser {
   collegeUsers: [CollegeUser!]
   id: ID!
+  questionCategories: [QuestionCategory!]
   role: Role!
   roleId: String!
   university: University!
