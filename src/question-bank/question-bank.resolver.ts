@@ -14,7 +14,7 @@ import { User } from 'src/user/decorators/user.decorator';
 import { CreateQuestionCategoryInput } from './dto/create-question-category.input';
 import { QuestionCategoryObject } from './dto/question-category.object';
 import { UpdateQuestionCategoryInput } from './dto/update-question-category.input';
-import { QuestionLoader } from './loaders/question.loader';
+import { QuestionLoader } from '../question/question.loader';
 import { QuestionBankService } from './question-bank.service';
 import {
 	QuestionCategoryReturnType,

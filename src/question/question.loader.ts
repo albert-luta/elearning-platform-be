@@ -2,7 +2,7 @@ import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { QuestionType } from 'src/generated/prisma-nestjs-graphql/prisma/question-type.enum';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { QuestionReturnType } from '../question-bank.types';
+import { QuestionReturnType } from '../question-bank/question-bank.types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class QuestionLoader {

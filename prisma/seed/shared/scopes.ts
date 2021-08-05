@@ -70,6 +70,15 @@ const teacherScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'delete:question-category'
+	},
+	{
+		name: 'create:question'
+	},
+	{
+		name: 'update:question'
+	},
+	{
+		name: 'delete:question'
 	}
 ];
 const adminScopes: Prisma.ScopeCreateManyInput[] = [

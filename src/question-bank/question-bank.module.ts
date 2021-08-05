@@ -1,17 +1,10 @@
 import { Module } from '@nestjs/common';
 import { QuestionBankService } from './question-bank.service';
 import { QuestionBankResolver } from './question-bank.resolver';
-import { QuestionResolver } from './resolvers/question.resolver';
-import { QuestionLoader } from './loaders/question.loader';
-import { QuestionAnswerLoader } from './loaders/question-answer.loader';
+import { QuestionModule } from 'src/question/question.module';
 
 @Module({
-	providers: [
-		QuestionBankResolver,
-		QuestionBankService,
-		QuestionResolver,
-		QuestionLoader,
-		QuestionAnswerLoader
-	]
+	providers: [QuestionBankResolver, QuestionBankService],
+	imports: [QuestionModule]
 })
 export class QuestionBankModule {}

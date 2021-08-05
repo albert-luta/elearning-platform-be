@@ -113,6 +113,11 @@ type CourseUser {
   id: ID!
 }
 
+input CreateAnswerInput {
+  fraction: Float!
+  text: String!
+}
+
 input CreateAssignmentInput {
   deadline: DateTime!
   description: String!
@@ -132,6 +137,13 @@ input CreateCourseInput {
 
 input CreateQuestionCategoryInput {
   name: String!
+}
+
+input CreateQuestionInput {
+  answers: [CreateAnswerInput!]!
+  name: String!
+  text: String!
+  type: QuestionType!
 }
 
 input CreateQuizInput {
@@ -174,6 +186,7 @@ type Mutation {
   createAssignment(data: CreateAssignmentInput!, files: [Upload!]!): BaseActivityInterface!
   createCollege(data: CreateCollegeInput!): CollegeObject!
   createCourse(data: CreateCourseInput!): CourseObject!
+  createQuestion(data: CreateQuestionInput!, questionCategoryId: String!): QuestionObject!
   createQuestionCategory(data: CreateQuestionCategoryInput!): QuestionCategoryObject!
   createQuiz(data: CreateQuizInput!, files: [Upload!]!): BaseActivityInterface!
   createResource(data: CreateResourceInput!, files: [Upload!]!): BaseActivityInterface!
@@ -182,6 +195,7 @@ type Mutation {
   deleteActivity(id: String!, type: ActivityType!): BaseActivityInterface!
   deleteCollege(id: String!): CollegeObject!
   deleteCourse(id: String!): CourseObject!
+  deleteQuestion(id: String!): QuestionObject!
   deleteQuestionCategory(id: String!): QuestionCategoryObject!
   deleteSection(id: String!): SectionObject!
   deleteUniversity(id: String!): UniversityObject!
@@ -194,6 +208,7 @@ type Mutation {
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
   updateMyAssignment(data: UpdateMyAssignmentInput!, id: String!, newFiles: [Upload!]!): UserAssignmentObject!
+  updateQuestion(data: UpdateQuestionInput!, id: String!): QuestionObject!
   updateQuestionCategory(data: UpdateQuestionCategoryInput!, id: String!): QuestionCategoryObject!
   updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
   updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
@@ -374,6 +389,11 @@ type UniversityUser {
   userId: String!
 }
 
+input UpdateAnswerInput {
+  fraction: Float!
+  text: String!
+}
+
 input UpdateAssignmentInput {
   deadline: DateTime!
   description: String!
@@ -391,6 +411,13 @@ input UpdateMyAssignmentInput {
 
 input UpdateQuestionCategoryInput {
   name: String!
+}
+
+input UpdateQuestionInput {
+  answers: [UpdateAnswerInput!]!
+  name: String!
+  text: String!
+  type: QuestionType!
 }
 
 input UpdateQuizInput {
