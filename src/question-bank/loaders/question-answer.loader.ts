@@ -26,7 +26,7 @@ export class QuestionAnswerLoader {
 				{}
 			);
 
-			return ids.map((id) => questionAnswersMap[id]);
+			return ids.map((id) => questionAnswersMap[id] ?? []);
 		}
 	);
 }

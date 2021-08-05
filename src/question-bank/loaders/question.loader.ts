@@ -33,7 +33,7 @@ export class QuestionLoader {
 				{}
 			);
 
-			return ids.map((id) => questionsMap[id]);
+			return ids.map((id) => questionsMap[id] ?? []);
 		}
 	);
 }
