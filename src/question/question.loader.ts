@@ -15,6 +15,9 @@ export class QuestionLoader {
 					questionCategoryId: {
 						in: [...ids]
 					}
+				},
+				orderBy: {
+					createdAt: 'asc'
 				}
 			});
 			const questionsMap = questions.reduce<
