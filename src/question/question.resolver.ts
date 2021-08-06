@@ -8,7 +8,6 @@ import {
 	Resolver
 } from '@nestjs/graphql';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
-import { QuestionType } from 'src/generated/prisma-nestjs-graphql/prisma/question-type.enum';
 import { QuestionAnswerLoader } from './loaders/question-answer.loader';
 import { QuestionObject } from './dto/question.object';
 import { QuestionReturnType } from 'src/question-bank/question-bank.types';
@@ -52,9 +51,7 @@ export class QuestionResolver {
 		@Parent() question: QuestionReturnType
 	): Promise<QuestionAnswerObject[]> {
 		try {
-			return question.type === QuestionType.NUMERICAL
-				? Promise.resolve([])
-				: this.questionAnswerLoader.byQuestionId.load(question.id);
+			return this.questionAnswerLoader.byQuestionId.load(question.id);
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}

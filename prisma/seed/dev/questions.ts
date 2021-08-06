@@ -65,20 +65,5 @@ export const questions: SeedDev<
 				]
 			}
 		}
-	},
-	{
-		name: 'Operatie aritmetica simpla',
-		text: 'Care este rezultatul urmatoarei operatii: 5 + 5 * 5?',
-		type: QuestionType.NUMERICAL,
-		questionAnswers: {
-			createMany: {
-				data: [
-					{
-						text: '30',
-						fraction: 1
-					}
-				]
-			}
-		}
 	}
 ];
