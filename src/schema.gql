@@ -248,6 +248,7 @@ type QuestionAnswer {
 }
 
 type QuestionAnswerObject {
+  fraction: Float!
   id: ID!
   text: String!
 }
@@ -276,7 +277,6 @@ type QuestionObject {
 
 enum QuestionType {
   MULTIPLE_CHOICE
-  NUMERICAL
   SINGLE_CHOICE
 }
 
