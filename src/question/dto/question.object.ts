@@ -7,7 +7,8 @@ export class QuestionObject extends OmitType(Question, [
 	'questionAnswers',
 	'questionCategory',
 	'questionCategoryId',
-	'createdAt'
+	'createdAt',
+	'quizQuestions'
 ] as const) {
 	@Field(() => [QuestionAnswerObject])
 	answers: QuestionAnswerObject[];

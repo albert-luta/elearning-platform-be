@@ -39,4 +39,25 @@ export class QuestionLoader {
 			return ids.map((id) => questionsMap[id] ?? []);
 		}
 	);
+
+	readonly byId = new DataLoader<string, QuestionReturnType>(async (ids) => {
+		const questions = await this.prisma.question.findMany({
+			where: {
+				id: {
+					in: [...ids]
+				}
+			}
+		});
+		const questionsMap = questions.reduce<
+			Record<string, QuestionReturnType>
+		>(
+			(acc, curr) => ({
+				...acc,
+				[curr.id]: { ...curr, type: curr.type as QuestionType }
+			}),
+			{}
+		);
+
+		return ids.map((id) => questionsMap[id]);
+	});
 }

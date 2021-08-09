@@ -8,7 +8,7 @@ import { FileUpload } from 'graphql-upload';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { ActivityReturnType } from './activity.types';
+import { ActivityReturnType, QuizReturnType } from './activity.types';
 import { CreateBaseActivityInput } from './dto/create-base-activity.input';
 import { CreateAssignmentInput } from './dto/create-assignment.input';
 import { CreateQuizInput } from './dto/create-quiz.input';
@@ -18,6 +18,8 @@ import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateBaseActivityInput } from './dto/update-base-activity.input';
 import { ActivityUtilsService } from './services/activity-utils.service';
+import { ResourceObject } from './dto/resource.object';
+import { AssignmentObject } from './dto/assignment.object';
 
 @Injectable()
 export class ActivityService {
@@ -277,7 +279,7 @@ export class ActivityService {
 		universityId: string,
 		data: CreateResourceInput,
 		files: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<ResourceObject> {
 		try {
 			const {
 				createBaseActivityFields,
@@ -318,7 +320,7 @@ export class ActivityService {
 		id: string,
 		data: UpdateResourceInput,
 		newFiles: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<ResourceObject> {
 		try {
 			const {
 				updateBaseActivityFields,
@@ -360,7 +362,7 @@ export class ActivityService {
 		universityId: string,
 		data: CreateAssignmentInput,
 		files: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<AssignmentObject> {
 		try {
 			const {
 				createBaseActivityFields,
@@ -402,7 +404,7 @@ export class ActivityService {
 		id: string,
 		data: UpdateAssignmentInput,
 		newFiles: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<AssignmentObject> {
 		try {
 			const {
 				updateBaseActivityFields,
@@ -444,7 +446,7 @@ export class ActivityService {
 		universityId: string,
 		data: CreateQuizInput,
 		files: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<QuizReturnType> {
 		try {
 			const {
 				createBaseActivityFields,
@@ -485,7 +487,7 @@ export class ActivityService {
 		id: string,
 		data: UpdateQuizInput,
 		newFiles: FileUpload[]
-	): Promise<ActivityReturnType> {
+	): Promise<QuizReturnType> {
 		try {
 			const {
 				updateBaseActivityFields,

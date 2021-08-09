@@ -30,4 +30,12 @@ export const assignmentActivity: SpecificActivity<Prisma.AssignmentCreateManyInp
 	deadline: new Date(),
 	maxGrade: 30
 };
-export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {};
+const HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
+export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {
+	visible: true,
+	shuffleQuestions: true,
+	shuffleAnswers: true,
+	timeOpen: new Date(Date.now() + HOUR_IN_MILLISECONDS),
+	timeClose: new Date(Date.now() + HOUR_IN_MILLISECONDS * 2),
+	timeLimit: HOUR_IN_MILLISECONDS * 1.5
+};

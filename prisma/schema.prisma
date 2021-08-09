@@ -142,13 +142,35 @@ model Assignment {
 }
 
 model Quiz {
-    activityId   String @id
-    universityId String
+    activityId       String   @id
+    universityId     String
+    visible          Boolean
+    shuffleQuestions Boolean
+    shuffleAnswers   Boolean
+    timeOpen         DateTime
+    timeClose        DateTime
+    // Time limit in ms
+    timeLimit        Int
 
     activity   Activity   @relation(fields: [activityId], references: [id], onDelete: Cascade)
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
+    quizQuestions QuizQuestion[]
+
     @@unique([activityId, universityId])
+}
+
+model QuizQuestion {
+    id         String @id @default(cuid())
+    quizId     String
+    questionId String
+    maxGrade   Float
+    order      Int
+
+    quiz     Quiz     @relation(fields: [quizId], references: [activityId], onDelete: Cascade)
+    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+    @@unique([quizId, questionId])
 }
 
 model UniversityUser {
@@ -247,6 +269,7 @@ model Question {
     questionCategory QuestionCategory @relation(fields: [questionCategoryId], references: [id], onDelete: Cascade)
 
     questionAnswers QuestionAnswer[]
+    quizQuestions   QuizQuestion[]
 }
 
 model QuestionAnswer {

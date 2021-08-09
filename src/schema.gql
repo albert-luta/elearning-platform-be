@@ -149,7 +149,20 @@ input CreateQuestionInput {
 input CreateQuizInput {
   description: String!
   name: String!
+  questions: [CreateQuizQuestionInput!]!
   sectionId: String!
+  shuffleAnswers: Boolean!
+  shuffleQuestions: Boolean!
+  timeClose: DateTime!
+  timeLimit: Int!
+  timeOpen: DateTime!
+  visible: Boolean!
+}
+
+input CreateQuizQuestionInput {
+  maxGrade: Float!
+  order: Int!
+  questionId: String!
 }
 
 input CreateResourceInput {
@@ -183,13 +196,13 @@ input LoginUserInput {
 }
 
 type Mutation {
-  createAssignment(data: CreateAssignmentInput!, files: [Upload!]!): BaseActivityInterface!
+  createAssignment(data: CreateAssignmentInput!, files: [Upload!]!): AssignmentObject!
   createCollege(data: CreateCollegeInput!): CollegeObject!
   createCourse(data: CreateCourseInput!): CourseObject!
   createQuestion(data: CreateQuestionInput!, questionCategoryId: String!): QuestionObject!
   createQuestionCategory(data: CreateQuestionCategoryInput!): QuestionCategoryObject!
-  createQuiz(data: CreateQuizInput!, files: [Upload!]!): BaseActivityInterface!
-  createResource(data: CreateResourceInput!, files: [Upload!]!): BaseActivityInterface!
+  createQuiz(data: CreateQuizInput!, files: [Upload!]!): QuizObject!
+  createResource(data: CreateResourceInput!, files: [Upload!]!): ResourceObject!
   createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
   deleteActivity(id: String!, type: ActivityType!): BaseActivityInterface!
@@ -204,14 +217,14 @@ type Mutation {
   logout: Authentication
   refreshTokens: Authentication!
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
-  updateAssignment(data: UpdateAssignmentInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
+  updateAssignment(data: UpdateAssignmentInput!, id: String!, newFiles: [Upload!]!): AssignmentObject!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
   updateMyAssignment(data: UpdateMyAssignmentInput!, id: String!, newFiles: [Upload!]!): UserAssignmentObject!
   updateQuestion(data: UpdateQuestionInput!, id: String!): QuestionObject!
   updateQuestionCategory(data: UpdateQuestionCategoryInput!, id: String!): QuestionCategoryObject!
-  updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
-  updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): BaseActivityInterface!
+  updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): QuizObject!
+  updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): ResourceObject!
   updateSection(data: CreateSectionInput!, id: String!): SectionObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
   updateUserAssignment(data: UpdateUserAssignmentInput!, id: String!): UserAssignmentObject!
@@ -235,6 +248,7 @@ type Question {
   questionAnswers: [QuestionAnswer!]
   questionCategory: QuestionCategory!
   questionCategoryId: String!
+  quizQuestions: [QuizQuestion!]
   text: String!
   type: QuestionType!
 }
@@ -283,8 +297,15 @@ enum QuestionType {
 type Quiz {
   activity: Activity!
   activityId: ID!
+  quizQuestions: [QuizQuestion!]
+  shuffleAnswers: Boolean!
+  shuffleQuestions: Boolean!
+  timeClose: DateTime!
+  timeLimit: Int!
+  timeOpen: DateTime!
   university: University!
   universityId: String!
+  visible: Boolean!
 }
 
 type QuizObject implements BaseActivityInterface {
@@ -293,9 +314,35 @@ type QuizObject implements BaseActivityInterface {
   files: [String!]!
   id: String!
   name: String!
+  quizQuestions: [QuizQuestionObject!]!
   sectionId: String!
+  shuffleAnswers: Boolean!
+  shuffleQuestions: Boolean!
+  timeClose: DateTime!
+  timeLimit: Int!
+  timeOpen: DateTime!
   type: String!
   universityId: String!
+  visible: Boolean!
+}
+
+type QuizQuestion {
+  id: ID!
+  maxGrade: Float!
+  order: Int!
+  question: Question!
+  questionId: String!
+  quiz: Quiz!
+  quizId: String!
+}
+
+type QuizQuestionObject {
+  id: ID!
+  maxGrade: Float!
+  order: Int!
+  question: QuestionObject!
+  questionId: String!
+  quizId: String!
 }
 
 input RegisterUserInput {
@@ -425,7 +472,14 @@ input UpdateQuizInput {
   filesToDelete: [String!]!
   name: String!
   oldFiles: [String!]!
+  questions: [CreateQuizQuestionInput!]!
   sectionId: String!
+  shuffleAnswers: Boolean!
+  shuffleQuestions: Boolean!
+  timeClose: DateTime!
+  timeLimit: Int!
+  timeOpen: DateTime!
+  visible: Boolean!
 }
 
 input UpdateResourceInput {
