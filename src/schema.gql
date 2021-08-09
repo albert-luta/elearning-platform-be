@@ -115,6 +115,7 @@ type CourseUser {
 
 input CreateAnswerInput {
   fraction: Float!
+  order: Int!
   text: String!
 }
 
@@ -256,6 +257,7 @@ type Question {
 type QuestionAnswer {
   fraction: Float!
   id: ID!
+  order: Int!
   question: Question!
   questionId: String!
   text: String!
@@ -264,6 +266,7 @@ type QuestionAnswer {
 type QuestionAnswerObject {
   fraction: Float!
   id: ID!
+  order: Int!
   text: String!
 }
 
@@ -438,6 +441,7 @@ type UniversityUser {
 
 input UpdateAnswerInput {
   fraction: Float!
+  order: Int!
   text: String!
 }
 

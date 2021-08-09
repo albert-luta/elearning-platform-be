@@ -14,6 +14,9 @@ export class QuestionAnswerLoader {
 					questionId: {
 						in: [...ids]
 					}
+				},
+				orderBy: {
+					order: 'asc'
 				}
 			});
 			const questionAnswersMap = questionAnswers.reduce<

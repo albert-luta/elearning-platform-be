@@ -277,6 +277,7 @@ model QuestionAnswer {
     questionId String
     text       String
     fraction   Float
+    order      Int
 
     question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
