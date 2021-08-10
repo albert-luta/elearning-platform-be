@@ -157,7 +157,6 @@ input CreateQuizInput {
   timeClose: DateTime!
   timeLimit: Int!
   timeOpen: DateTime!
-  visible: Boolean!
 }
 
 input CreateQuizQuestionInput {
@@ -483,7 +482,6 @@ input UpdateQuizInput {
   timeClose: DateTime!
   timeLimit: Int!
   timeOpen: DateTime!
-  visible: Boolean!
 }
 
 input UpdateResourceInput {

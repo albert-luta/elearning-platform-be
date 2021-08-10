@@ -5,8 +5,8 @@ import { CreateQuizQuestionInput } from './create-quiz-question.input';
 
 @InputType()
 export class CreateQuizInput extends CreateBaseActivityInput {
-	@Field()
-	visible: boolean;
+	// @Field()
+	// visible: boolean;
 
 	@Field()
 	shuffleQuestions: boolean;

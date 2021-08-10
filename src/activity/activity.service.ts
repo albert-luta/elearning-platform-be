@@ -458,11 +458,22 @@ export class ActivityService {
 				createBaseActivityFields,
 				files
 			);
+			const {
+				questions,
+				...specificActivityFields
+			} = createSpecificActivityFields;
 			const specificActivity = await this.prisma.quiz.create({
 				data: {
-					...createSpecificActivityFields,
+					...specificActivityFields,
+					// TODO: uncomment visible from quiz input
+					visible: true,
 					activityId: baseActivity.id,
-					universityId
+					universityId,
+					quizQuestions: {
+						createMany: {
+							data: questions
+						}
+					}
 				}
 			});
 
@@ -499,15 +510,39 @@ export class ActivityService {
 				updateBaseActivityFields,
 				newFiles
 			);
-			const specificActivity = await this.prisma.quiz.update({
-				where: {
-					activityId_universityId: {
-						activityId: id,
-						universityId
+			const {
+				questions,
+				...specificActivityFields
+			} = updateSpecificActivityFields;
+			const quizIdentification = {
+				activityId_universityId: {
+					activityId: id,
+					universityId
+				}
+			};
+			await this.prisma.$transaction([
+				this.prisma.quiz.update({
+					where: quizIdentification,
+					data: specificActivityFields
+				}),
+				this.prisma.quizQuestion.deleteMany({
+					where: {
+						quizId: id
 					}
-				},
-				data: updateSpecificActivityFields
+				}),
+				this.prisma.quizQuestion.createMany({
+					data: questions.map((question) => ({
+						...question,
+						quizId: id
+					}))
+				})
+			]);
+			const specificActivity = await this.prisma.quiz.findUnique({
+				where: quizIdentification
 			});
+			if (!specificActivity) {
+				throw new Error(this.NOT_FOUND);
+			}
 
 			return {
 				...baseActivity,
