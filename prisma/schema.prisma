@@ -156,6 +156,7 @@ model Quiz {
     university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
 
     quizQuestions QuizQuestion[]
+    userQuizes    UserQuiz[]
 
     @@unique([activityId, universityId])
 }
@@ -169,6 +170,8 @@ model QuizQuestion {
 
     quiz     Quiz     @relation(fields: [quizId], references: [activityId], onDelete: Cascade)
     question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+    userQuizQuestions UserQuizQuestion[]
 
     @@unique([quizId, questionId])
 }
@@ -225,6 +228,7 @@ model User {
 
     userAssignments UserAssignment[]
     universityUsers UniversityUser[]
+    userQuizes      UserQuiz[]
 }
 
 model UserAssignment {
@@ -239,6 +243,46 @@ model UserAssignment {
     assignment Assignment @relation(fields: [assignmentId], references: [activityId], onDelete: Cascade)
 
     @@unique([userId, assignmentId])
+}
+
+model UserQuiz {
+    id         String    @id @default(cuid())
+    userId     String
+    quizId     String
+    timeStart  DateTime
+    timeFinish DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    quiz Quiz @relation(fields: [quizId], references: [activityId], onDelete: Cascade)
+
+    userQuizQuestions UserQuizQuestion[]
+
+    @@unique([userId, quizId])
+}
+
+model UserQuizQuestion {
+    id             String @id @default(cuid())
+    userQuizId     String
+    quizQuestionId String
+    grade          Float?
+
+    userQuiz     UserQuiz     @relation(fields: [userQuizId], references: [id], onDelete: Cascade)
+    quizQuestion QuizQuestion @relation(fields: [quizQuestionId], references: [id], onDelete: Cascade)
+
+    userQuestionAnswers UserQuestionAnswer[]
+
+    @@unique([userQuizId, quizQuestionId])
+}
+
+model UserQuestionAnswer {
+    id                 String @id @default(cuid())
+    userQuizQuestionId String
+    questionAnswerId   String
+
+    userQuizQuestion UserQuizQuestion @relation(fields: [userQuizQuestionId], references: [id], onDelete: Cascade)
+    questionAnswer   QuestionAnswer   @relation(fields: [questionAnswerId], references: [id], onDelete: Cascade)
+
+    @@unique([userQuizQuestionId, questionAnswerId])
 }
 
 model QuestionCategory {
@@ -280,6 +324,8 @@ model QuestionAnswer {
     order      Int
 
     question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+    userQuestionAnswers UserQuestionAnswer[]
 
     @@unique([questionId, text])
 }

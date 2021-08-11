@@ -133,6 +133,6 @@ export class ActivityResolver {
 // TODO: sort quiz tries by userName and createdAt
 // TODO: let teachers and admins create infinite quiz tries
 
-// TODO: user-quiz query should shuffle if necessary(questions/answers)
+// TODO: attempt/query quiz should shuffle if necessary(questions/answers)
 
 // TODO: show only visible quizes to students

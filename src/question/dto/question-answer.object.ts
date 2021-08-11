@@ -4,5 +4,6 @@ import { QuestionAnswer } from 'src/generated/prisma-nestjs-graphql/question-ans
 @ObjectType()
 export class QuestionAnswerObject extends OmitType(QuestionAnswer, [
 	'question',
-	'questionId'
+	'questionId',
+	'userQuestionAnswers'
 ] as const) {}
