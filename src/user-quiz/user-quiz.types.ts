@@ -1,0 +1,8 @@
+import { UserQuizQuestionObject } from './dto/user-quiz-question.object';
+import { UserQuizObject } from './dto/user-quiz.object';
+
+export type UserQuizReturnType = Omit<UserQuizObject, 'questions'>;
+export type UserQuizQuestionReturnType = Omit<
+	UserQuizQuestionObject,
+	'question' | 'pickedAnswers'
+>;

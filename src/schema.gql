@@ -202,6 +202,7 @@ type Mutation {
   createQuestion(data: CreateQuestionInput!, questionCategoryId: String!): QuestionObject!
   createQuestionCategory(data: CreateQuestionCategoryInput!): QuestionCategoryObject!
   createQuiz(data: CreateQuizInput!, files: [Upload!]!): QuizObject!
+  createQuizAttempt(quizId: String!): UserQuizObject!
   createResource(data: CreateResourceInput!, files: [Upload!]!): ResourceObject!
   createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
@@ -235,6 +236,7 @@ type Query {
   colleges(universityId: String!): [CollegeObject!]!
   me: UserObject!
   myAssignment(id: String!): UserAssignmentObject
+  myQuiz(quizId: String!): UserQuizObject
   questionBank: [QuestionCategoryObject!]!
   sections(courseId: String!): [SectionObject!]!
   userAssignment(id: String!): UserAssignmentObject
@@ -260,6 +262,7 @@ type QuestionAnswer {
   question: Question!
   questionId: String!
   text: String!
+  userQuestionAnswers: [UserQuestionAnswer!]
 }
 
 type QuestionAnswerObject {
@@ -307,6 +310,7 @@ type Quiz {
   timeOpen: DateTime!
   university: University!
   universityId: String!
+  userQuizes: [UserQuiz!]
   visible: Boolean!
 }
 
@@ -336,6 +340,7 @@ type QuizQuestion {
   questionId: String!
   quiz: Quiz!
   quizId: String!
+  userQuizQuestions: [UserQuizQuestion!]
 }
 
 type QuizQuestionObject {
@@ -512,6 +517,7 @@ type User {
   password: String!
   universityUsers: [UniversityUser!]
   userAssignments: [UserAssignment!]
+  userQuizes: [UserQuiz!]
 }
 
 type UserAssignment {
@@ -545,4 +551,57 @@ type UserObject {
   groupedByRoleUniversities: [GroupedByRoleUniversitiesObject!]!
   id: ID!
   lastName: String!
+}
+
+type UserQuestionAnswer {
+  id: ID!
+  questionAnswer: QuestionAnswer!
+  questionAnswerId: String!
+  userQuizQuestion: UserQuizQuestion!
+  userQuizQuestionId: String!
+}
+
+type UserQuestionAnswerObject {
+  id: ID!
+  questionAnswerId: String!
+  userQuizQuestionId: String!
+}
+
+type UserQuiz {
+  id: ID!
+  quiz: Quiz!
+  quizId: String!
+  timeFinish: DateTime
+  timeStart: DateTime!
+  user: User!
+  userId: String!
+  userQuizQuestions: [UserQuizQuestion!]
+}
+
+type UserQuizObject {
+  id: ID!
+  questions: [UserQuizQuestionObject!]!
+  quizId: String!
+  timeFinish: DateTime
+  timeStart: DateTime!
+  userId: String!
+}
+
+type UserQuizQuestion {
+  grade: Float
+  id: ID!
+  quizQuestion: QuizQuestion!
+  quizQuestionId: String!
+  userQuestionAnswers: [UserQuestionAnswer!]
+  userQuiz: UserQuiz!
+  userQuizId: String!
+}
+
+type UserQuizQuestionObject {
+  grade: Float
+  id: ID!
+  pickedAnswers: [UserQuestionAnswerObject!]!
+  question: QuestionObject!
+  quizQuestionId: String!
+  userQuizId: String!
 }

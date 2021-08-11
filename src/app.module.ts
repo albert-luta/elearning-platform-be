@@ -19,6 +19,7 @@ import { ActivityModule } from './activity/activity.module';
 import { UserAssignmentModule } from './user-assignment/user-assignment.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { QuestionModule } from './question/question.module';
+import { UserQuizModule } from './user-quiz/user-quiz.module';
 
 @Module({
 	imports: [
@@ -37,7 +38,8 @@ import { QuestionModule } from './question/question.module';
 		ActivityModule,
 		UserAssignmentModule,
 		QuestionBankModule,
-		QuestionModule
+		QuestionModule,
+		UserQuizModule
 	],
 	providers: [
 		{

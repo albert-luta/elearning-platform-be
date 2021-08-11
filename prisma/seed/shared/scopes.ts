@@ -16,6 +16,12 @@ const studentScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'update:my-assignment'
+	},
+	{
+		name: 'read:my-quiz-attempt'
+	},
+	{
+		name: 'create:my-quiz-attempt'
 	}
 ];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [
