@@ -10,6 +10,7 @@ import {
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { User } from 'src/user/decorators/user.decorator';
+import { UserReturnType } from 'src/user/user.types';
 import { UserQuizObject } from './dto/user-quiz.object';
 import { UserQuizQuestionLoader } from './loaders/user-quiz-question.loader';
 import { UserQuizService } from './user-quiz.service';
@@ -43,6 +44,23 @@ export class UserQuizResolver {
 		return this.userQuizService.createQuizAttempt(user.id, quizId);
 	}
 
+	@Scopes('read:user-quiz-attempt')
+	@Query(() => UserQuizObject)
+	userQuizAttempt(
+		@Args('userId') userId: string,
+		@Args('quizId') quizId: string
+	): Promise<UserQuizReturnType> {
+		return this.userQuizService.getUserQuizAttempt(userId, quizId);
+	}
+
+	@Scopes('read:user-quiz-attempts')
+	@Query(() => [UserQuizObject])
+	userQuizAttempts(
+		@Args('quizId') quizId: string
+	): Promise<UserQuizReturnType[]> {
+		return this.userQuizService.getUserQuizAttempts(quizId);
+	}
+
 	@ResolveField()
 	questions(
 		@Parent() userQuiz: UserQuizReturnType
@@ -52,5 +70,10 @@ export class UserQuizResolver {
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}
+	}
+
+	@ResolveField()
+	user(@Parent() userQuiz: UserQuizReturnType): Promise<UserReturnType> {
+		return this.userQuizService.getUser(userQuiz.userId);
 	}
 }

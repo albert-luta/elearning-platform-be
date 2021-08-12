@@ -13,6 +13,7 @@ import { questions } from './seed/dev/questions';
 import { sections } from './seed/dev/sections';
 import { universities } from './seed/dev/universities';
 import { userAssignment } from './seed/dev/userAssignment';
+import { userQuiz } from './seed/dev/userQuiz';
 import { users } from './seed/dev/users';
 import { expand } from './seed/dev/utills';
 import { roles } from './seed/shared/roles';
@@ -195,4 +196,80 @@ export const seedDev = async (prisma: PrismaClient) => {
 			})
 		)
 	);
+
+	// Lazy implementation
+	const createdQuizes = await prisma.quiz.findMany();
+	const createdQuestions = await prisma.question.findMany({
+		take: 15
+	});
+	await prisma.quizQuestion.createMany({
+		data: expand(createdQuizes, createdQuestions, (quiz, question) => ({
+			quizId: quiz.activityId,
+			questionId: question.id,
+			order: 0, // Doesn't matter
+			maxGrade: Math.floor(Math.random() * 16) // 0 - 15
+		}))
+	});
+
+	const createdCompleteQuizes = await prisma.quiz.findMany({
+		include: {
+			quizQuestions: true
+		}
+	});
+	await Promise.all(
+		expand(createdUsers, createdCompleteQuizes, (user, quiz) => ({
+			user,
+			quiz
+		})).map(({ user, quiz }) =>
+			prisma.userQuiz.create({
+				data: {
+					userId: user.id,
+					quizId: quiz.activityId,
+					...userQuiz,
+					userQuizQuestions: {
+						createMany: {
+							data: quiz.quizQuestions.map(({ id }) => ({
+								quizQuestionId: id
+							}))
+						}
+					}
+				}
+			})
+		)
+	);
+
+	const createdUserQuizQuestions = await prisma.userQuizQuestion.findMany({
+		select: {
+			id: true,
+			quizQuestion: {
+				select: {
+					question: {
+						select: {
+							questionAnswers: {
+								select: {
+									id: true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+	await prisma.userQuestionAnswer.createMany({
+		data: createdUserQuizQuestions.map(
+			({
+				id,
+				quizQuestion: {
+					question: { questionAnswers }
+				}
+			}) => ({
+				userQuizQuestionId: id,
+				questionAnswerId:
+					questionAnswers[
+						Math.floor(Math.random() * questionAnswers.length)
+					].id
+			})
+		)
+	});
 };

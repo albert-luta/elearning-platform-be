@@ -241,6 +241,8 @@ type Query {
   sections(courseId: String!): [SectionObject!]!
   userAssignment(id: String!): UserAssignmentObject
   userAssignments(assignmentId: String!): [UserAssignmentObject!]!
+  userQuizAttempt(quizId: String!, userId: String!): UserQuizObject!
+  userQuizAttempts(quizId: String!): [UserQuizObject!]!
 }
 
 type Question {
@@ -584,6 +586,7 @@ type UserQuizObject {
   quizId: String!
   timeFinish: DateTime
   timeStart: DateTime!
+  user: UserObject!
   userId: String!
 }
 

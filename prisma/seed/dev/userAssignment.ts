@@ -1,8 +1,9 @@
 import { UserAssignment } from '.prisma/client';
+import { SeedDev } from './utills';
 
 export const userAssignment: Omit<
-	UserAssignment,
-	'id' | 'userId' | 'assignmentId' | 'updatedAt'
+	SeedDev<UserAssignment>,
+	'userId' | 'assignmentId' | 'updatedAt'
 > = {
 	grade: 15,
 	files: [

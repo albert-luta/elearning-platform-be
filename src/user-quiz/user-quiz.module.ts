@@ -5,6 +5,7 @@ import { UserQuizQuestionLoader } from './loaders/user-quiz-question.loader';
 import { UserQuizQuestionResolver } from './resolvers/user-quiz-question.resolver';
 import { UserQuestionAnswerLoader } from './loaders/user-question-answer.loader';
 import { QuestionModule } from 'src/question/question.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
 	providers: [
@@ -14,6 +15,6 @@ import { QuestionModule } from 'src/question/question.module';
 		UserQuizQuestionResolver,
 		UserQuestionAnswerLoader
 	],
-	imports: [QuestionModule]
+	imports: [QuestionModule, UserModule]
 })
 export class UserQuizModule {}
