@@ -218,11 +218,13 @@ type Mutation {
   logout: Authentication
   refreshTokens: Authentication!
   register(avatar: Upload, user: RegisterUserInput!): Authentication!
+  submitMyQuiz(data: SubmitMyQuizInput!, id: String!): UserQuizObject!
   updateAssignment(data: UpdateAssignmentInput!, id: String!, newFiles: [Upload!]!): AssignmentObject!
   updateCollege(data: CreateCollegeInput!, id: String!): CollegeObject!
   updateCourse(data: CreateCourseInput!, id: String!): CourseObject!
   updateMyAssignment(data: UpdateMyAssignmentInput!, id: String!, newFiles: [Upload!]!): UserAssignmentObject!
   updateQuestion(data: UpdateQuestionInput!, id: String!): QuestionObject!
+  updateQuestionAnswers(answers: [String!]!, userQuizQuestionId: String!): UserQuizQuestionObject!
   updateQuestionCategory(data: UpdateQuestionCategoryInput!, id: String!): QuestionCategoryObject!
   updateQuiz(data: UpdateQuizInput!, id: String!, newFiles: [Upload!]!): QuizObject!
   updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): ResourceObject!
@@ -411,6 +413,15 @@ type SectionObject {
   id: ID!
   name: String!
   universityId: String!
+}
+
+input SubmitMyQuizInput {
+  questions: [SubmitMyQuizQuestionInput!]!
+}
+
+input SubmitMyQuizQuestionInput {
+  answers: [String!]!
+  userQuizQuestionId: String!
 }
 
 type University {

@@ -11,6 +11,7 @@ import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { User } from 'src/user/decorators/user.decorator';
 import { UserReturnType } from 'src/user/user.types';
+import { SubmitMyQuizInput } from './dto/submit-my-quiz.input';
 import { UserQuizObject } from './dto/user-quiz.object';
 import { UserQuizQuestionLoader } from './loaders/user-quiz-question.loader';
 import { UserQuizService } from './user-quiz.service';
@@ -59,6 +60,15 @@ export class UserQuizResolver {
 		@Args('quizId') quizId: string
 	): Promise<UserQuizReturnType[]> {
 		return this.userQuizService.getUserQuizAttempts(quizId);
+	}
+
+	@Scopes('update:submit-my-quiz')
+	@Mutation(() => UserQuizObject)
+	submitMyQuiz(
+		@Args('id') id: string,
+		@Args('data') data: SubmitMyQuizInput
+	): Promise<UserQuizReturnType> {
+		return this.userQuizService.submitMyQuiz(id, data);
 	}
 
 	@ResolveField()

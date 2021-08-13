@@ -35,7 +35,7 @@ export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {
 	visible: true,
 	shuffleQuestions: true,
 	shuffleAnswers: true,
-	timeOpen: new Date(Date.now() + HOUR_IN_MILLISECONDS),
+	timeOpen: new Date(),
 	timeClose: new Date(Date.now() + HOUR_IN_MILLISECONDS * 2),
 	timeLimit: HOUR_IN_MILLISECONDS * 1.5
 };
