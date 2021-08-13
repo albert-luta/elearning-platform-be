@@ -127,10 +127,29 @@ export class UserQuizService {
 						userId,
 						quizId
 					}
+				},
+				include: {
+					quiz: true
 				}
 			});
 			if (!quizAttempt) {
 				throw new Error(this.NOT_FOUND);
+			}
+			if (
+				Date.now() > quizAttempt.quiz.timeClose.getTime() &&
+				quizAttempt.timeFinish == null
+			) {
+				const updatedMyQuiz = await this.prisma.userQuiz.update({
+					where: {
+						id: quizAttempt.id
+					},
+					data: {
+						timeFinish: new Date()
+					}
+				});
+				await this.gradeUserQuiz(quizAttempt.id);
+
+				return updatedMyQuiz;
 			}
 
 			return quizAttempt;
