@@ -85,8 +85,30 @@ export class UserQuizService {
 						userId,
 						quizId
 					}
+				},
+				include: {
+					quiz: true
 				}
 			});
+
+			if (!myQuiz) return null;
+
+			if (
+				Date.now() > myQuiz.quiz.timeClose.getTime() &&
+				myQuiz.timeFinish == null
+			) {
+				const updatedMyQuiz = await this.prisma.userQuiz.update({
+					where: {
+						id: myQuiz.id
+					},
+					data: {
+						timeFinish: new Date()
+					}
+				});
+				await this.gradeUserQuiz(myQuiz.id);
+
+				return updatedMyQuiz;
+			}
 
 			return myQuiz;
 		} catch (e) {
