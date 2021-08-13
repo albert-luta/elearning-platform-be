@@ -23,6 +23,7 @@ export const activities: SeedDev<
 		name: 'Quiz name',
 		type: ActivityType.QUIZ
 	}
+	// TODO: add forum type activity
 ];
 
 export const resourceActivity: SpecificActivity<Prisma.ResourceCreateManyInput> = {};

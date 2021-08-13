@@ -25,12 +25,14 @@ export class ActivityLoader {
 				resourcesIds,
 				assignmentsIds,
 				quizesIds,
+				forumsIds,
 				activitiesMap,
 				sectionActivitiesIdsMap
 			} = baseActivities.reduce<{
 				resourcesIds: string[];
 				assignmentsIds: string[];
 				quizesIds: string[];
+				forumsIds: string[];
 				activitiesMap: Record<string, ActivityReturnType>;
 				sectionActivitiesIdsMap: Record<string, string[]>;
 			}>(
@@ -48,9 +50,14 @@ export class ActivityLoader {
 							};
 							break;
 						case ActivityType.QUIZ:
-						default:
 							idsToChange = {
 								quizesIds: [...acc.quizesIds, curr.id]
+							};
+							break;
+						case ActivityType.FORUM:
+						default:
+							idsToChange = {
+								forumsIds: [...acc.forumsIds, curr.id]
 							};
 					}
 
@@ -76,6 +83,7 @@ export class ActivityLoader {
 					resourcesIds: [],
 					assignmentsIds: [],
 					quizesIds: [],
+					forumsIds: [],
 					activitiesMap: {},
 					sectionActivitiesIdsMap: {}
 				}
@@ -100,6 +108,13 @@ export class ActivityLoader {
 					where: {
 						activityId: {
 							in: quizesIds
+						}
+					}
+				}),
+				this.prisma.forum.findMany({
+					where: {
+						activityId: {
+							in: forumsIds
 						}
 					}
 				})

@@ -43,6 +43,7 @@ model University {
     resources       Resource[]
     assignments     Assignment[]
     quizes          Quiz[]
+    forums          Forum[]
 }
 
 model College {
@@ -95,6 +96,7 @@ enum ActivityType {
     RESOURCE
     ASSIGNMENT
     QUIZ
+    FORUM
 }
 
 model Activity {
@@ -113,6 +115,7 @@ model Activity {
     resources   Resource[]
     assignments Assignment[]
     quizes      Quiz[]
+    forums      Forum[]
 
     @@unique([id, universityId])
 }
@@ -139,6 +142,31 @@ model Assignment {
     userAssignments UserAssignment[]
 
     @@unique([activityId, universityId])
+}
+
+model Forum {
+    activityId       String @id
+    universityId     String
+    universityUserId String
+
+    activity       Activity       @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    university     University     @relation(fields: [universityId], references: [id], onDelete: Cascade)
+    universityUser UniversityUser @relation(fields: [universityUserId], references: [id], onDelete: Cascade)
+
+    forumComments ForumComment[]
+
+    @@unique([activityId, universityId])
+}
+
+model ForumComment {
+    id               String   @id @default(cuid())
+    forumId          String
+    universityUserId String
+    createdAt        DateTime
+    text             String
+
+    forum          Forum          @relation(fields: [forumId], references: [activityId], onDelete: Cascade)
+    universityUser UniversityUser @relation(fields: [universityUserId], references: [id], onDelete: Cascade)
 }
 
 model Quiz {
@@ -188,6 +216,8 @@ model UniversityUser {
 
     collegeUsers       CollegeUser[]
     questionCategories QuestionCategory[]
+    forums             Forum[]
+    forumComments      ForumComment[]
 
     @@unique([universityId, userId])
 }

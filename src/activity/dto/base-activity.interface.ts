@@ -1,6 +1,7 @@
 import { Field, InterfaceType } from '@nestjs/graphql';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { AssignmentObject } from './assignment.object';
+import { ForumObject } from '../../forum/dto/forum.object';
 import { QuizObject } from './quiz.object';
 import { ResourceObject } from './resource.object';
 
@@ -13,6 +14,8 @@ import { ResourceObject } from './resource.object';
 				return AssignmentObject;
 			case ActivityType.QUIZ:
 				return QuizObject;
+			case ActivityType.FORUM:
+				return ForumObject;
 			default:
 				return null;
 		}

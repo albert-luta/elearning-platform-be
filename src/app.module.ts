@@ -20,6 +20,7 @@ import { UserAssignmentModule } from './user-assignment/user-assignment.module';
 import { QuestionBankModule } from './question-bank/question-bank.module';
 import { QuestionModule } from './question/question.module';
 import { UserQuizModule } from './user-quiz/user-quiz.module';
+import { ForumModule } from './forum/forum.module';
 
 @Module({
 	imports: [
@@ -39,7 +40,8 @@ import { UserQuizModule } from './user-quiz/user-quiz.module';
 		UserAssignmentModule,
 		QuestionBankModule,
 		QuestionModule,
-		UserQuizModule
+		UserQuizModule,
+		ForumModule
 	],
 	providers: [
 		{

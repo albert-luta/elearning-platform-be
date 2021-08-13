@@ -7,6 +7,7 @@ type Activity {
   createdAt: DateTime!
   description: String
   files: [String!]
+  forums: [Forum!]
   id: ID!
   name: String!
   quizes: [Quiz!]
@@ -20,6 +21,7 @@ type Activity {
 
 enum ActivityType {
   ASSIGNMENT
+  FORUM
   QUIZ
   RESOURCE
 }
@@ -184,6 +186,39 @@ input CreateUniversityInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Forum {
+  activity: Activity!
+  activityId: ID!
+  forumComments: [ForumComment!]
+  university: University!
+  universityId: String!
+  universityUser: UniversityUser!
+  universityUserId: String!
+}
+
+type ForumComment {
+  createdAt: DateTime!
+  forum: Forum!
+  forumId: String!
+  id: ID!
+  text: String!
+  universityUser: UniversityUser!
+  universityUserId: String!
+}
+
+type ForumObject implements BaseActivityInterface {
+  createdAt: DateTime!
+  description: String
+  files: [String!]!
+  id: String!
+  name: String!
+  sectionId: String!
+  type: String!
+  universityId: String!
+  universityUser: UniversityUserObject!
+  universityUserId: String!
+}
 
 type GroupedByRoleUniversitiesObject {
   role: String!
@@ -389,6 +424,11 @@ type Role {
   universityUsers: [UniversityUser!]
 }
 
+type RoleObject {
+  id: ID!
+  name: String!
+}
+
 type Scope {
   id: ID!
   name: String!
@@ -429,6 +469,7 @@ type University {
   assignments: [Assignment!]
   colleges: [College!]
   courses: [Course!]
+  forums: [Forum!]
   id: ID!
   logo: String
   name: String!
@@ -446,6 +487,8 @@ type UniversityObject {
 
 type UniversityUser {
   collegeUsers: [CollegeUser!]
+  forumComments: [ForumComment!]
+  forums: [Forum!]
   id: ID!
   questionCategories: [QuestionCategory!]
   role: Role!
@@ -453,6 +496,15 @@ type UniversityUser {
   university: University!
   universityId: String!
   user: User!
+  userId: String!
+}
+
+type UniversityUserObject {
+  id: ID!
+  role: RoleObject!
+  roleId: String!
+  universityId: String!
+  user: UserObject!
   userId: String!
 }
 

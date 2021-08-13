@@ -10,5 +10,6 @@ export class UniversityObject extends OmitType(University, [
 	'activities',
 	'resources',
 	'assignments',
-	'quizes'
+	'quizes',
+	'forums'
 ] as const) {}

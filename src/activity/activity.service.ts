@@ -1,4 +1,4 @@
-import { Activity, Assignment, Quiz, Resource } from '.prisma/client';
+import { Activity, Assignment, Quiz, Resource, Forum } from '.prisma/client';
 import {
 	Injectable,
 	InternalServerErrorException,
@@ -249,8 +249,13 @@ export class ActivityService {
 					);
 					break;
 				case ActivityType.QUIZ:
-				default:
 					specificActivity = await this.prisma.quiz.findUnique(
+						relatedActivity
+					);
+					break;
+				case ActivityType.FORUM:
+				default:
+					specificActivity = await this.prisma.forum.findUnique(
 						relatedActivity
 					);
 			}
@@ -574,7 +579,7 @@ export class ActivityService {
 					}
 				}
 			};
-			let specificActivity: Resource | Assignment | Quiz | null;
+			let specificActivity: Resource | Assignment | Quiz | Forum | null;
 			switch (type) {
 				case ActivityType.RESOURCE:
 					specificActivity = await this.prisma.resource.findUnique(
@@ -587,8 +592,13 @@ export class ActivityService {
 					);
 					break;
 				case ActivityType.QUIZ:
-				default:
 					specificActivity = await this.prisma.quiz.findUnique(
+						relatedActivity
+					);
+					break;
+				case ActivityType.FORUM:
+				default:
+					specificActivity = await this.prisma.forum.findUnique(
 						relatedActivity
 					);
 			}

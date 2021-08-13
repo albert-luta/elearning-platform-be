@@ -156,6 +156,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 				activityId: id
 			}))
 		})
+		// TODO: create forum activities
 	]);
 
 	const createdAssignments = await prisma.assignment.findMany();
