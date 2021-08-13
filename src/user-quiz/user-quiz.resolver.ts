@@ -47,11 +47,8 @@ export class UserQuizResolver {
 
 	@Scopes('read:user-quiz-attempt')
 	@Query(() => UserQuizObject)
-	userQuizAttempt(
-		@Args('userId') userId: string,
-		@Args('quizId') quizId: string
-	): Promise<UserQuizReturnType> {
-		return this.userQuizService.getUserQuizAttempt(userId, quizId);
+	userQuizAttempt(@Args('id') id: string): Promise<UserQuizReturnType> {
+		return this.userQuizService.getUserQuizAttempt(id);
 	}
 
 	@Scopes('read:user-quiz-attempts')
@@ -87,3 +84,5 @@ export class UserQuizResolver {
 		return this.userQuizService.getUser(userQuiz.userId);
 	}
 }
+
+// TODO: shuffle questions and answers

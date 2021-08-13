@@ -116,17 +116,11 @@ export class UserQuizService {
 		}
 	}
 
-	async getUserQuizAttempt(
-		userId: string,
-		quizId: string
-	): Promise<UserQuizReturnType> {
+	async getUserQuizAttempt(id: string): Promise<UserQuizReturnType> {
 		try {
 			const quizAttempt = await this.prisma.userQuiz.findUnique({
 				where: {
-					userId_quizId: {
-						userId,
-						quizId
-					}
+					id
 				},
 				include: {
 					quiz: true
