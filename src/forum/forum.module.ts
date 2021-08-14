@@ -5,6 +5,7 @@ import { UniversityUserResolver } from './resolvers/university-user.resolver';
 import { UniversityUserLoader } from './loaders/university-user.loader';
 import { RoleLoader } from './loaders/role.loader';
 import { UserModule } from 'src/user/user.module';
+import { ActivityModule } from 'src/activity/activity.module';
 
 @Module({
 	providers: [
@@ -14,6 +15,6 @@ import { UserModule } from 'src/user/user.module';
 		UniversityUserLoader,
 		RoleLoader
 	],
-	imports: [UserModule]
+	imports: [UserModule, ActivityModule]
 })
 export class ForumModule {}

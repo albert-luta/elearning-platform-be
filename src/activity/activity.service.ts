@@ -1,4 +1,4 @@
-import { Activity, Assignment, Quiz, Resource, Forum } from '.prisma/client';
+import { Assignment, Quiz, Resource, Forum } from '.prisma/client';
 import {
 	Injectable,
 	InternalServerErrorException,
@@ -9,14 +9,12 @@ import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activit
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
 import { ActivityReturnType, QuizReturnType } from './activity.types';
-import { CreateBaseActivityInput } from './dto/create-base-activity.input';
 import { CreateAssignmentInput } from './dto/create-assignment.input';
 import { CreateQuizInput } from './dto/create-quiz.input';
 import { CreateResourceInput } from './dto/create-resource.input';
 import { UpdateResourceInput } from './dto/update-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
-import { UpdateBaseActivityInput } from './dto/update-base-activity.input';
 import { ActivityUtilsService } from './services/activity-utils.service';
 import { ResourceObject } from './dto/resource.object';
 import { AssignmentObject } from './dto/assignment.object';
@@ -31,188 +29,6 @@ export class ActivityService {
 
 	private readonly NOT_FOUND = 'NOT_FOUND';
 	private readonly INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR';
-
-	private normalizeSpecificActivity<T extends Resource | Assignment | Quiz>(
-		specificActivity: T
-	): Omit<T, 'universityId' | 'activityId'> {
-		const {
-			universityId,
-			activityId,
-			...normalizedSpecificActivity
-		} = specificActivity;
-
-		return normalizedSpecificActivity;
-	}
-
-	private extractCreateActivityFields<
-		TData extends
-			| CreateResourceInput
-			| CreateAssignmentInput
-			| CreateQuizInput
-	>(
-		data: TData
-	): {
-		createBaseActivityFields: CreateBaseActivityInput;
-		createSpecificActivityFields: Omit<
-			TData,
-			keyof CreateBaseActivityInput
-		>;
-	} {
-		const {
-			sectionId,
-			name,
-			description,
-			...createSpecificActivityFields
-		} = data;
-
-		return {
-			createBaseActivityFields: { sectionId, name, description },
-			createSpecificActivityFields
-		};
-	}
-
-	private extractUpdateActivityFields<
-		TData extends
-			| UpdateResourceInput
-			| UpdateAssignmentInput
-			| UpdateQuizInput
-	>(
-		data: TData
-	): {
-		updateBaseActivityFields: UpdateBaseActivityInput;
-		updateSpecificActivityFields: Omit<
-			TData,
-			keyof UpdateBaseActivityInput
-		>;
-	} {
-		const {
-			sectionId,
-			name,
-			description,
-			oldFiles,
-			filesToDelete,
-			...updateSpecificActivityFields
-		} = data;
-
-		return {
-			updateBaseActivityFields: {
-				sectionId,
-				name,
-				description,
-				oldFiles,
-				filesToDelete
-			},
-			updateSpecificActivityFields
-		};
-	}
-
-	private async createActivityFiles(
-		universityId: string,
-		id: string,
-		baseActivityFields: CreateBaseActivityInput,
-		files: FileUpload[]
-	): Promise<string[]> {
-		const identificationExtraInfos = await this.prisma.section.findUnique({
-			where: {
-				id: baseActivityFields.sectionId
-			},
-			select: {
-				course: {
-					select: {
-						id: true,
-						college: {
-							select: {
-								id: true
-							}
-						}
-					}
-				}
-			}
-		});
-		if (!identificationExtraInfos) {
-			throw new Error(this.NOT_FOUND);
-		}
-		const createdFiles = await this.fileService.createBaseActivityFiles(
-			{
-				universityId,
-				activityId: id,
-				sectionId: baseActivityFields.sectionId,
-				courseId: identificationExtraInfos.course.id,
-				collegeId: identificationExtraInfos.course.college.id
-			},
-			files
-		);
-
-		return createdFiles;
-	}
-
-	private async createBaseActivity(
-		universityId: string,
-		type: ActivityType,
-		baseActivityFields: CreateBaseActivityInput,
-		files: FileUpload[]
-	): Promise<Activity> {
-		const baseActivity = await this.prisma.activity.create({
-			data: {
-				...baseActivityFields,
-				universityId,
-				type,
-				files: []
-			}
-		});
-		const createdFiles = await this.createActivityFiles(
-			universityId,
-			baseActivity.id,
-			baseActivityFields,
-			files
-		);
-		const baseActivityUpdated = await this.prisma.activity.update({
-			where: {
-				id: baseActivity.id
-			},
-			data: {
-				files: createdFiles
-			}
-		});
-
-		return baseActivityUpdated;
-	}
-
-	private async updateBaseActivity(
-		universityId: string,
-		id: string,
-		{
-			oldFiles,
-			filesToDelete,
-			...baseActivityFields
-		}: UpdateBaseActivityInput,
-		newFiles: FileUpload[]
-	): Promise<Activity> {
-		const updatedOldFiles = await this.activityUtilsService.deleteFiles(
-			oldFiles,
-			filesToDelete
-		);
-		const createdNewFiles = await this.createActivityFiles(
-			universityId,
-			id,
-			baseActivityFields,
-			newFiles
-		);
-		const baseActivity = await this.prisma.activity.update({
-			where: {
-				id_universityId: {
-					id,
-					universityId
-				}
-			},
-			data: {
-				...baseActivityFields,
-				files: [...new Set([...updatedOldFiles, ...createdNewFiles])]
-			}
-		});
-
-		return baseActivity;
-	}
 
 	async getActivity(
 		universityId: string,
@@ -236,7 +52,7 @@ export class ActivityService {
 					activityId: baseActivity.id
 				}
 			};
-			let specificActivity: Resource | Assignment | Quiz | null;
+			let specificActivity: Resource | Assignment | Quiz | Forum | null;
 			switch (baseActivity.type) {
 				case ActivityType.RESOURCE:
 					specificActivity = await this.prisma.resource.findUnique(
@@ -269,7 +85,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.message === this.NOT_FOUND) {
@@ -289,8 +107,8 @@ export class ActivityService {
 			const {
 				createBaseActivityFields,
 				createSpecificActivityFields
-			} = this.extractCreateActivityFields(data);
-			const baseActivity = await this.createBaseActivity(
+			} = this.activityUtilsService.extractCreateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.createBaseActivity(
 				universityId,
 				ActivityType.RESOURCE,
 				createBaseActivityFields,
@@ -309,7 +127,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.message === this.NOT_FOUND) {
@@ -330,8 +150,8 @@ export class ActivityService {
 			const {
 				updateBaseActivityFields,
 				updateSpecificActivityFields
-			} = this.extractUpdateActivityFields(data);
-			const baseActivity = await this.updateBaseActivity(
+			} = this.activityUtilsService.extractUpdateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.updateBaseActivity(
 				universityId,
 				id,
 				updateBaseActivityFields,
@@ -352,7 +172,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.code === 'P2025' || e.message === this.NOT_FOUND) {
@@ -372,8 +194,8 @@ export class ActivityService {
 			const {
 				createBaseActivityFields,
 				createSpecificActivityFields
-			} = this.extractCreateActivityFields(data);
-			const baseActivity = await this.createBaseActivity(
+			} = this.activityUtilsService.extractCreateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.createBaseActivity(
 				universityId,
 				ActivityType.ASSIGNMENT,
 				createBaseActivityFields,
@@ -392,10 +214,11 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
-			console.log(e);
 			if (e.message === this.NOT_FOUND) {
 				throw new NotFoundException();
 			}
@@ -414,8 +237,8 @@ export class ActivityService {
 			const {
 				updateBaseActivityFields,
 				updateSpecificActivityFields
-			} = this.extractUpdateActivityFields(data);
-			const baseActivity = await this.updateBaseActivity(
+			} = this.activityUtilsService.extractUpdateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.updateBaseActivity(
 				universityId,
 				id,
 				updateBaseActivityFields,
@@ -436,7 +259,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.code === 'P2025' || e.message === this.NOT_FOUND) {
@@ -456,8 +281,8 @@ export class ActivityService {
 			const {
 				createBaseActivityFields,
 				createSpecificActivityFields
-			} = this.extractCreateActivityFields(data);
-			const baseActivity = await this.createBaseActivity(
+			} = this.activityUtilsService.extractCreateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.createBaseActivity(
 				universityId,
 				ActivityType.QUIZ,
 				createBaseActivityFields,
@@ -487,7 +312,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.message === this.NOT_FOUND) {
@@ -508,8 +335,8 @@ export class ActivityService {
 			const {
 				updateBaseActivityFields,
 				updateSpecificActivityFields
-			} = this.extractUpdateActivityFields(data);
-			const baseActivity = await this.updateBaseActivity(
+			} = this.activityUtilsService.extractUpdateActivityFields(data);
+			const baseActivity = await this.activityUtilsService.updateBaseActivity(
 				universityId,
 				id,
 				updateBaseActivityFields,
@@ -554,7 +381,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.code === 'P2025' || e.message === this.NOT_FOUND) {
@@ -638,7 +467,9 @@ export class ActivityService {
 				files: baseActivity.files.map((file) =>
 					this.fileService.getUrlFromDbFilePath(file)
 				),
-				...this.normalizeSpecificActivity(specificActivity)
+				...this.activityUtilsService.normalizeSpecificActivity(
+					specificActivity
+				)
 			};
 		} catch (e) {
 			if (e.message === this.NOT_FOUND || e.code === 'P2025') {
