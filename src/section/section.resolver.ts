@@ -10,6 +10,7 @@ import {
 import { ActivityLoader } from 'src/activity/activity.loader';
 import { ActivityReturnType } from 'src/activity/activity.types';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
+import { FileService } from 'src/global/file/file.service';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { CreateSectionInput } from './dto/create-section.input';
 import { SectionObject } from './dto/section.object';
@@ -20,7 +21,8 @@ import { SectionReturnType } from './section.types';
 export class SectionResolver {
 	constructor(
 		private readonly sectionService: SectionService,
-		private readonly activityLoader: ActivityLoader
+		private readonly activityLoader: ActivityLoader,
+		private readonly fileService: FileService
 	) {}
 
 	@Scopes('read:sections')
@@ -30,11 +32,20 @@ export class SectionResolver {
 	}
 
 	@ResolveField()
-	activities(
+	async activities(
 		@Parent() section: SectionReturnType
 	): Promise<ActivityReturnType[]> {
 		try {
-			return this.activityLoader.bySectionId.load(section.id);
+			const activities = await this.activityLoader.bySectionId.load(
+				section.id
+			);
+
+			return activities.map(({ files, ...activity }) => ({
+				...activity,
+				files: files.map((file) =>
+					this.fileService.getUrlFromDbFilePath(file)
+				)
+			}));
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}
