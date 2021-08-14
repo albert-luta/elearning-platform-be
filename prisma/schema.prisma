@@ -162,7 +162,7 @@ model ForumComment {
     id               String   @id @default(cuid())
     forumId          String
     universityUserId String
-    createdAt        DateTime
+    createdAt        DateTime @default(now())
     text             String
 
     forum          Forum          @relation(fields: [forumId], references: [activityId], onDelete: Cascade)

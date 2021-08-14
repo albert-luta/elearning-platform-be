@@ -138,6 +138,10 @@ input CreateCourseInput {
   name: String!
 }
 
+input CreateForumCommentInput {
+  text: String!
+}
+
 input CreateForumInput {
   description: String!
   name: String!
@@ -213,6 +217,15 @@ type ForumComment {
   universityUserId: String!
 }
 
+type ForumCommentObject {
+  createdAt: DateTime!
+  forumId: String!
+  id: ID!
+  text: String!
+  universityUser: UniversityUserObject!
+  universityUserId: String!
+}
+
 type ForumObject implements BaseActivityInterface {
   createdAt: DateTime!
   description: String
@@ -241,6 +254,7 @@ type Mutation {
   createCollege(data: CreateCollegeInput!): CollegeObject!
   createCourse(data: CreateCourseInput!): CourseObject!
   createForum(data: CreateForumInput!, files: [Upload!]!): ForumObject!
+  createForumComment(data: CreateForumCommentInput!, forumId: String!): ForumCommentObject!
   createQuestion(data: CreateQuestionInput!, questionCategoryId: String!): QuestionObject!
   createQuestionCategory(data: CreateQuestionCategoryInput!): QuestionCategoryObject!
   createQuiz(data: CreateQuizInput!, files: [Upload!]!): QuizObject!
@@ -279,6 +293,7 @@ type Mutation {
 type Query {
   activity(id: String!): BaseActivityInterface!
   colleges(universityId: String!): [CollegeObject!]!
+  forumComments(forumId: String!): [ForumCommentObject!]!
   me: UserObject!
   myAssignment(id: String!): UserAssignmentObject
   myQuiz(quizId: String!): UserQuizObject

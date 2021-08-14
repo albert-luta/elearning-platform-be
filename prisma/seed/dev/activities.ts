@@ -22,8 +22,11 @@ export const activities: SeedDev<
 	{
 		name: 'Quiz name',
 		type: ActivityType.QUIZ
+	},
+	{
+		name: 'Forum name',
+		type: ActivityType.FORUM
 	}
-	// TODO: add forum type activity
 ];
 
 export const resourceActivity: SpecificActivity<Prisma.ResourceCreateManyInput> = {};
@@ -40,3 +43,6 @@ export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {
 	timeClose: new Date(Date.now() + HOUR_IN_MILLISECONDS * 2),
 	timeLimit: HOUR_IN_MILLISECONDS * 1.5
 };
+export const forumActivity: SpecificActivity<
+	Omit<Prisma.ForumCreateManyInput, 'universityUserId'>
+> = {};

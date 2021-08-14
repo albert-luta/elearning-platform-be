@@ -6,12 +6,14 @@ import { UniversityUserLoader } from './loaders/university-user.loader';
 import { RoleLoader } from './loaders/role.loader';
 import { UserModule } from 'src/user/user.module';
 import { ActivityModule } from 'src/activity/activity.module';
+import { ForumCommentResolver } from './resolvers/forum-comment.resolver';
 
 @Module({
 	providers: [
 		ForumResolver,
 		ForumService,
 		UniversityUserResolver,
+		ForumCommentResolver,
 		UniversityUserLoader,
 		RoleLoader
 	],

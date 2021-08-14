@@ -28,6 +28,12 @@ const studentScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'update:submit-my-quiz'
+	},
+	{
+		name: 'read:forum-comments'
+	},
+	{
+		name: 'create:forum-comment'
 	}
 ];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [

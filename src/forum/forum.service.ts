@@ -8,9 +8,10 @@ import { ActivityUtilsService } from 'src/activity/services/activity-utils.servi
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
+import { CreateForumCommentInput } from './dto/create-forum-comment.input';
 import { CreateForumInput } from './dto/create-forum.input';
 import { UpdateForumInput } from './dto/update-forum.input';
-import { ForumReturnType } from './forum.types';
+import { ForumCommentReturnType, ForumReturnType } from './forum.types';
 
 @Injectable()
 export class ForumService {
@@ -130,6 +131,55 @@ export class ForumService {
 				throw new NotFoundException();
 			}
 
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async getForumComments(forumId: string): Promise<ForumCommentReturnType[]> {
+		try {
+			const forumComments = await this.prisma.forumComment.findMany({
+				where: {
+					forumId
+				},
+				orderBy: {
+					createdAt: 'asc'
+				}
+			});
+
+			return forumComments;
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	async createForumComment(
+		universityId: string,
+		userId: string,
+		forumId: string,
+		data: CreateForumCommentInput
+	): Promise<ForumCommentReturnType> {
+		try {
+			const forumComment = await this.prisma.forumComment.create({
+				data: {
+					...data,
+					forum: {
+						connect: {
+							activityId: forumId
+						}
+					},
+					universityUser: {
+						connect: {
+							universityId_userId: {
+								userId,
+								universityId
+							}
+						}
+					}
+				}
+			});
+
+			return forumComment;
+		} catch (e) {
 			throw new InternalServerErrorException();
 		}
 	}

@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { FileService } from 'src/global/file/file.service';
 import { UserLoader } from 'src/user/user.loader';
 import { UserReturnType } from 'src/user/user.types';
 import { RoleObject } from '../dto/role.object';
@@ -11,15 +12,23 @@ import { RoleLoader } from '../loaders/role.loader';
 export class UniversityUserResolver {
 	constructor(
 		private readonly userLoader: UserLoader,
-		private readonly roleLoader: RoleLoader
+		private readonly roleLoader: RoleLoader,
+		private readonly fileService: FileService
 	) {}
 
 	@ResolveField()
-	user(
+	async user(
 		@Parent() universityUser: UniversityUserReturnType
 	): Promise<UserReturnType> {
 		try {
-			return this.userLoader.byId.load(universityUser.userId);
+			const { avatar, ...user } = await this.userLoader.byId.load(
+				universityUser.userId
+			);
+
+			return {
+				...user,
+				avatar: avatar && this.fileService.getUrlFromDbFilePath(avatar)
+			};
 		} catch (e) {
 			throw new InternalServerErrorException();
 		}

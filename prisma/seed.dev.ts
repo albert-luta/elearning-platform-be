@@ -3,11 +3,13 @@ import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/acti
 import {
 	activities,
 	assignmentActivity,
+	forumActivity,
 	quizActivity,
 	resourceActivity
 } from './seed/dev/activities';
 import { colleges } from './seed/dev/colleges';
 import { courses } from './seed/dev/courses';
+import { forumComments } from './seed/dev/forumComments';
 import { questionCategories } from './seed/dev/questionCategories';
 import { questions } from './seed/dev/questions';
 import { sections } from './seed/dev/sections';
@@ -128,11 +130,13 @@ export const seedDev = async (prisma: PrismaClient) => {
 	const [
 		createdResourceActivities,
 		createdAssignmentActivities,
-		createdQuizActivities
+		createdQuizActivities,
+		createdForumActivities
 	] = await Promise.all([
 		prisma.activity.findMany({ where: { type: ActivityType.RESOURCE } }),
 		prisma.activity.findMany({ where: { type: ActivityType.ASSIGNMENT } }),
-		prisma.activity.findMany({ where: { type: ActivityType.QUIZ } })
+		prisma.activity.findMany({ where: { type: ActivityType.QUIZ } }),
+		prisma.activity.findMany({ where: { type: ActivityType.FORUM } })
 	]);
 	await Promise.all([
 		prisma.resource.createMany({
@@ -155,9 +159,29 @@ export const seedDev = async (prisma: PrismaClient) => {
 				universityId,
 				activityId: id
 			}))
+		}),
+		prisma.forum.createMany({
+			data: createdForumActivities.map(({ universityId, id }) => ({
+				...forumActivity,
+				universityId,
+				activityId: id,
+				universityUserId: createdUniversityUsers[0].id
+			}))
 		})
-		// TODO: create forum activities
 	]);
+
+	const createdForums = await prisma.forum.findMany();
+	await prisma.forumComment.createMany({
+		data: expand(
+			createdForums,
+			forumComments,
+			({ activityId: forumId }, comment) => ({
+				...comment,
+				forumId,
+				universityUserId: createdUniversityUsers[1].id
+			})
+		)
+	});
 
 	const createdAssignments = await prisma.assignment.findMany();
 	await prisma.userAssignment.createMany({
