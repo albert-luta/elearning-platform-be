@@ -4,6 +4,8 @@ import { AssignmentObject } from './assignment.object';
 import { ForumObject } from '../../forum/dto/forum.object';
 import { QuizObject } from './quiz.object';
 import { ResourceObject } from './resource.object';
+import { CollegeObject } from 'src/college/dto/college.object';
+import { CourseObject } from 'src/course/dto/course.object';
 
 @InterfaceType({
 	resolveType(activity) {
@@ -45,4 +47,10 @@ export abstract class BaseActivityInterface {
 
 	@Field(() => [String])
 	files: string[];
+
+	@Field(() => CollegeObject)
+	college: CollegeObject;
+
+	@Field(() => CourseObject)
+	course: CourseObject;
 }

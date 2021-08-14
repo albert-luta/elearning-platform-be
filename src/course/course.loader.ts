@@ -41,4 +41,29 @@ export class CourseLoader {
 			return ids.map((id) => coursesMap[id] ?? []);
 		}
 	);
+
+	readonly byActivityId = new DataLoader<string, CourseObject>(
+		async (ids) => {
+			const activities = await this.prisma.activity.findMany({
+				where: {
+					id: {
+						in: [...ids]
+					}
+				},
+				include: {
+					section: {
+						include: {
+							course: true
+						}
+					}
+				}
+			});
+			const coursesMap = activities.reduce<Record<string, CourseObject>>(
+				(acc, curr) => ({ ...acc, [curr.id]: curr.section.course }),
+				{}
+			);
+
+			return ids.map((id) => coursesMap[id]);
+		}
+	);
 }

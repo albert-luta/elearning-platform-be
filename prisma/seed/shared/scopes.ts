@@ -34,6 +34,9 @@ const studentScopes: Prisma.ScopeCreateManyInput[] = [
 	},
 	{
 		name: 'create:forum-comment'
+	},
+	{
+		name: 'read:upcoming-activities'
 	}
 ];
 const teacherScopes: Prisma.ScopeCreateManyInput[] = [

@@ -1,4 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { CollegeObject } from 'src/college/dto/college.object';
+import { CourseObject } from 'src/course/dto/course.object';
 import { BaseActivityInterface } from '../../activity/dto/base-activity.interface';
 import { UniversityUserObject } from './university-user.object';
 
@@ -14,6 +16,8 @@ export class ForumObject implements BaseActivityInterface {
 	description: string | null;
 	files: Array<string>;
 	type: string;
+	college: CollegeObject;
+	course: CourseObject;
 
 	@Field()
 	universityUserId: string;

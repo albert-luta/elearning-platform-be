@@ -1,4 +1,4 @@
-import { Assignment, Quiz, Resource, Forum } from '.prisma/client';
+import { Assignment, Quiz, Resource, Forum, Activity } from '.prisma/client';
 import {
 	Injectable,
 	InternalServerErrorException,
@@ -8,7 +8,12 @@ import { FileUpload } from 'graphql-upload';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { FileService } from 'src/global/file/file.service';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { ActivityReturnType, QuizReturnType } from './activity.types';
+import {
+	ActivityReturnType,
+	AssignmentReturnType,
+	QuizReturnType,
+	ResourceReturnType
+} from './activity.types';
 import { CreateAssignmentInput } from './dto/create-assignment.input';
 import { CreateQuizInput } from './dto/create-quiz.input';
 import { CreateResourceInput } from './dto/create-resource.input';
@@ -16,8 +21,6 @@ import { UpdateResourceInput } from './dto/update-resource.input';
 import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { ActivityUtilsService } from './services/activity-utils.service';
-import { ResourceObject } from './dto/resource.object';
-import { AssignmentObject } from './dto/assignment.object';
 
 @Injectable()
 export class ActivityService {
@@ -102,7 +105,7 @@ export class ActivityService {
 		universityId: string,
 		data: CreateResourceInput,
 		files: FileUpload[]
-	): Promise<ResourceObject> {
+	): Promise<ResourceReturnType> {
 		try {
 			const {
 				createBaseActivityFields,
@@ -145,7 +148,7 @@ export class ActivityService {
 		id: string,
 		data: UpdateResourceInput,
 		newFiles: FileUpload[]
-	): Promise<ResourceObject> {
+	): Promise<ResourceReturnType> {
 		try {
 			const {
 				updateBaseActivityFields,
@@ -189,7 +192,7 @@ export class ActivityService {
 		universityId: string,
 		data: CreateAssignmentInput,
 		files: FileUpload[]
-	): Promise<AssignmentObject> {
+	): Promise<AssignmentReturnType> {
 		try {
 			const {
 				createBaseActivityFields,
@@ -232,7 +235,7 @@ export class ActivityService {
 		id: string,
 		data: UpdateAssignmentInput,
 		newFiles: FileUpload[]
-	): Promise<AssignmentObject> {
+	): Promise<AssignmentReturnType> {
 		try {
 			const {
 				updateBaseActivityFields,
@@ -477,6 +480,85 @@ export class ActivityService {
 			}
 
 			throw new InternalServerErrorException();
+		}
+	}
+
+	async getUpcomingActivities(
+		universityId: string,
+		userId: string
+	): Promise<ActivityReturnType[]> {
+		try {
+			const identification = {
+				activity: {
+					section: {
+						course: {
+							courseUsers: {
+								some: {
+									collegeUser: {
+										universityUser: {
+											universityId,
+											userId
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+
+			const [upcomingAssignments, upcomingQuizes] = await Promise.all([
+				this.prisma.assignment.findMany({
+					where: {
+						deadline: {
+							gt: new Date()
+						},
+						...identification
+					},
+					include: {
+						activity: true
+					}
+				}),
+				this.prisma.quiz.findMany({
+					where: {
+						timeOpen: {
+							gt: new Date()
+						},
+						...identification
+					},
+					include: {
+						activity: true
+					}
+				})
+			]);
+
+			const sortedActivities = [
+				...upcomingAssignments,
+				...upcomingQuizes
+			].sort(
+				(a, b) =>
+					this.getActivityCompareNumber(a) -
+					this.getActivityCompareNumber(b)
+			);
+
+			return sortedActivities.map(
+				({ activity, ...specificActivity }) => ({
+					...activity,
+					...specificActivity
+				})
+			);
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	private getActivityCompareNumber(
+		specificActivity: (Assignment | Quiz) & { activity: Activity }
+	): number {
+		if (specificActivity.activity.type === ActivityType.ASSIGNMENT) {
+			return (specificActivity as Assignment).deadline.getTime();
+		} else {
+			return (specificActivity as Quiz).timeOpen.getTime();
 		}
 	}
 }

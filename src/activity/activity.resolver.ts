@@ -1,10 +1,29 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InternalServerErrorException } from '@nestjs/common';
+import {
+	Args,
+	Mutation,
+	Parent,
+	Query,
+	ResolveField,
+	Resolver
+} from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
+import { CollegeLoader } from 'src/college/college.loader';
+import { CollegeReturnType } from 'src/college/college.types';
+import { CourseLoader } from 'src/course/course.loader';
+import { CourseReturnType } from 'src/course/course.types';
 import { ActivityType } from 'src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
+import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { ActivityService } from './activity.service';
-import { ActivityReturnType, QuizReturnType } from './activity.types';
+import {
+	ActivityReturnType,
+	AssignmentReturnType,
+	QuizReturnType,
+	ResourceReturnType
+} from './activity.types';
 import { AssignmentObject } from './dto/assignment.object';
 import { BaseActivityInterface } from './dto/base-activity.interface';
 import { CreateAssignmentInput } from './dto/create-assignment.input';
@@ -16,9 +35,13 @@ import { UpdateAssignmentInput } from './dto/update-assignment.input';
 import { UpdateQuizInput } from './dto/update-quiz.input';
 import { UpdateResourceInput } from './dto/update-resource.input';
 
-@Resolver()
+@Resolver(() => BaseActivityInterface)
 export class ActivityResolver {
-	constructor(private readonly activityService: ActivityService) {}
+	constructor(
+		private readonly activityService: ActivityService,
+		private readonly collegeLoader: CollegeLoader,
+		private readonly courseLoader: CourseLoader
+	) {}
 
 	@Scopes('read:activity')
 	@Query(() => BaseActivityInterface)
@@ -36,7 +59,7 @@ export class ActivityResolver {
 		@Args('data') data: CreateResourceInput,
 		@Args('files', { type: () => [GraphQLUpload] })
 		files: FileUpload[]
-	): Promise<ResourceObject> {
+	): Promise<ResourceReturnType> {
 		return this.activityService.createResource(universityId, data, files);
 	}
 
@@ -48,7 +71,7 @@ export class ActivityResolver {
 		@Args('data') data: UpdateResourceInput,
 		@Args('newFiles', { type: () => [GraphQLUpload] })
 		newFiles: FileUpload[]
-	): Promise<ResourceObject> {
+	): Promise<ResourceReturnType> {
 		return this.activityService.updateResource(
 			universityId,
 			id,
@@ -64,7 +87,7 @@ export class ActivityResolver {
 		@Args('data') data: CreateAssignmentInput,
 		@Args('files', { type: () => [GraphQLUpload] })
 		files: FileUpload[]
-	): Promise<AssignmentObject> {
+	): Promise<AssignmentReturnType> {
 		return this.activityService.createAssignment(universityId, data, files);
 	}
 
@@ -76,7 +99,7 @@ export class ActivityResolver {
 		@Args('data') data: UpdateAssignmentInput,
 		@Args('newFiles', { type: () => [GraphQLUpload] })
 		newFiles: FileUpload[]
-	): Promise<AssignmentObject> {
+	): Promise<AssignmentReturnType> {
 		return this.activityService.updateAssignment(
 			universityId,
 			id,
@@ -121,6 +144,38 @@ export class ActivityResolver {
 		@Args('type', { type: () => ActivityType }) type: ActivityType
 	): Promise<ActivityReturnType> {
 		return this.activityService.deleteActivity(universityId, id, type);
+	}
+
+	@Scopes('read:upcoming-activities')
+	@Query(() => [BaseActivityInterface])
+	upcomingActivities(
+		@UniversityId() universityId: string,
+		@User() user: UserType
+	): Promise<ActivityReturnType[]> {
+		return this.activityService.getUpcomingActivities(
+			universityId,
+			user.id
+		);
+	}
+
+	@ResolveField()
+	college(
+		@Parent() activity: ActivityReturnType
+	): Promise<CollegeReturnType> {
+		try {
+			return this.collegeLoader.byActivityId.load(activity.id);
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
+	}
+
+	@ResolveField()
+	course(@Parent() activity: ActivityReturnType): Promise<CourseReturnType> {
+		try {
+			return this.courseLoader.byActivityId.load(activity.id);
+		} catch (e) {
+			throw new InternalServerErrorException();
+		}
 	}
 }
 

@@ -37,6 +37,8 @@ type Assignment {
 }
 
 type AssignmentObject implements BaseActivityInterface {
+  college: CollegeObject!
+  course: CourseObject!
   createdAt: DateTime!
   deadline: DateTime!
   description: String
@@ -54,6 +56,8 @@ type Authentication {
 }
 
 interface BaseActivityInterface {
+  college: CollegeObject!
+  course: CourseObject!
   createdAt: DateTime!
   description: String
   files: [String!]!
@@ -227,6 +231,8 @@ type ForumCommentObject {
 }
 
 type ForumObject implements BaseActivityInterface {
+  college: CollegeObject!
+  course: CourseObject!
   createdAt: DateTime!
   description: String
   files: [String!]!
@@ -299,6 +305,7 @@ type Query {
   myQuiz(quizId: String!): UserQuizObject
   questionBank: [QuestionCategoryObject!]!
   sections(courseId: String!): [SectionObject!]!
+  upcomingActivities: [BaseActivityInterface!]!
   userAssignment(id: String!): UserAssignmentObject
   userAssignments(assignmentId: String!): [UserAssignmentObject!]!
   userQuizAttempt(id: String!): UserQuizObject!
@@ -377,6 +384,8 @@ type Quiz {
 }
 
 type QuizObject implements BaseActivityInterface {
+  college: CollegeObject!
+  course: CourseObject!
   createdAt: DateTime!
   description: String
   files: [String!]!
@@ -430,6 +439,8 @@ type Resource {
 }
 
 type ResourceObject implements BaseActivityInterface {
+  college: CollegeObject!
+  course: CourseObject!
   createdAt: DateTime!
   description: String
   files: [String!]!

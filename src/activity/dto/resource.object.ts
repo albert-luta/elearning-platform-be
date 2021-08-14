@@ -1,4 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
+import { CollegeObject } from 'src/college/dto/college.object';
+import { CourseObject } from 'src/course/dto/course.object';
 import { BaseActivityInterface } from './base-activity.interface';
 
 @ObjectType({
@@ -13,4 +15,6 @@ export class ResourceObject implements BaseActivityInterface {
 	description: string | null;
 	files: Array<string>;
 	type: string;
+	college: CollegeObject;
+	course: CourseObject;
 }
