@@ -1,13 +1,13 @@
 import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { CourseObject } from './dto/course.object';
+import { CourseReturnType } from './course.types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CourseLoader {
 	constructor(private readonly prisma: PrismaService) {}
 
-	readonly byCollegeId = new DataLoader<string, CourseObject[]>(
+	readonly byCollegeId = new DataLoader<string, CourseReturnType[]>(
 		async (ids) => {
 			const courses = await this.prisma.course.findMany({
 				where: {
@@ -28,21 +28,20 @@ export class CourseLoader {
 					name: 'asc'
 				}
 			});
-			const coursesMap = courses.reduce<Record<string, CourseObject[]>>(
-				(acc, curr) => {
-					return {
-						...acc,
-						[curr.collegeId]: [...(acc[curr.collegeId] ?? []), curr]
-					};
-				},
-				{}
-			);
+			const coursesMap = courses.reduce<
+				Record<string, CourseReturnType[]>
+			>((acc, curr) => {
+				return {
+					...acc,
+					[curr.collegeId]: [...(acc[curr.collegeId] ?? []), curr]
+				};
+			}, {});
 
 			return ids.map((id) => coursesMap[id] ?? []);
 		}
 	);
 
-	readonly byActivityId = new DataLoader<string, CourseObject>(
+	readonly byActivityId = new DataLoader<string, CourseReturnType>(
 		async (ids) => {
 			const activities = await this.prisma.activity.findMany({
 				where: {
@@ -58,10 +57,9 @@ export class CourseLoader {
 					}
 				}
 			});
-			const coursesMap = activities.reduce<Record<string, CourseObject>>(
-				(acc, curr) => ({ ...acc, [curr.id]: curr.section.course }),
-				{}
-			);
+			const coursesMap = activities.reduce<
+				Record<string, CourseReturnType>
+			>((acc, curr) => ({ ...acc, [curr.id]: curr.section.course }), {});
 
 			return ids.map((id) => coursesMap[id]);
 		}

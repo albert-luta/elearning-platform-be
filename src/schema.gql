@@ -19,6 +19,14 @@ type Activity {
   universityId: String!
 }
 
+type ActivityGradeObject {
+  activityId: String!
+  activityName: String!
+  activityType: ActivityType!
+  grade: Float
+  maxGrade: Float!
+}
+
 enum ActivityType {
   ASSIGNMENT
   FORUM
@@ -105,6 +113,7 @@ type Course {
 }
 
 type CourseObject {
+  activitiesGrade: [ActivityGradeObject!]!
   collegeId: String!
   id: ID!
   name: String!
