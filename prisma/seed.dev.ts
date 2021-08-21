@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { UserRole } from '../src/auth/auth.types';
 import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import {
 	activities,
@@ -50,8 +51,17 @@ export const seedDev = async (prisma: PrismaClient) => {
 			userId: user.id,
 			universityId: university.id,
 			roleId:
-				createdRoles.find(({ name }) => name === university.name)?.id ??
-				createdRoles[0].id
+				createdRoles.find((role) => {
+					if (university.name.includes('Bucuresti')) {
+						return role.name === UserRole.ADMIN;
+					}
+
+					if (university.name.includes('Cluj')) {
+						return role.name === UserRole.TEACHER;
+					}
+
+					return role.name === UserRole.STUDENT;
+				})?.id ?? createdRoles[0].id
 		}))
 	});
 
