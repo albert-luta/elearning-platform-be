@@ -113,7 +113,6 @@ export const seedDev = async (prisma: PrismaClient) => {
 		)
 	});
 
-	// TODO: create better activities
 	const createdSections = await prisma.section.findMany();
 	await prisma.activity.createMany({
 		data: expand(
