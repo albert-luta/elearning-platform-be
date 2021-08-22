@@ -5,12 +5,13 @@ export const forumComments: SeedDev<
 	Omit<Prisma.ForumCommentCreateManyInput, 'forumId' | 'universityUserId'>
 >[] = [
 	{
-		text: 'First forum comment'
+		text:
+			'Mie personal, mi-ar placea sa avem un exemplu de exercitiu rezolvat'
 	},
 	{
-		text: 'Some forum comment again'
+		text: 'Mai multe exercitii practice ar fi interesant'
 	},
 	{
-		text: 'Hello, what is going on'
+		text: 'Si eu sunt de acord cu exemplul de exercitiu rezolvat'
 	}
 ];

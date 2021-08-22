@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UniversityUser } from '@prisma/client';
+import { UserRole } from '../src/auth/auth.types';
 import { generateRandomInt } from '../src/general/utils/generate-random-int';
 import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import {
@@ -137,6 +138,26 @@ export const seedDev = async (prisma: PrismaClient) => {
 		prisma.activity.findMany({ where: { type: ActivityType.QUIZ } }),
 		prisma.activity.findMany({ where: { type: ActivityType.FORUM } })
 	]);
+
+	// const adminRoleId = createdRoles.find(({ name }) => name === UserRole.ADMIN)
+	// 	?.id;
+	// const teacherRoleId = createdRoles.find(
+	// 	({ name }) => name === UserRole.TEACHER
+	// )?.id;
+	const studentRoleId = createdRoles.find(
+		({ name }) => name === UserRole.STUDENT
+	)?.id;
+
+	const createdUniversityUsersGroupedByUniversityId = createdUniversityUsers.reduce<
+		Record<string, UniversityUser[]>
+	>(
+		(acc, curr) => ({
+			...acc,
+			[curr.universityId]: [...(acc[curr.universityId] ?? []), curr]
+		}),
+		{}
+	);
+
 	await Promise.all([
 		prisma.resource.createMany({
 			data: createdResourceActivities.map(({ universityId, id }) => ({
@@ -164,8 +185,11 @@ export const seedDev = async (prisma: PrismaClient) => {
 				...forumActivity,
 				universityId,
 				activityId: id,
-				// TODO: randomize from admins/teachers of the university
-				universityUserId: createdUniversityUsers[0].id
+				universityUserId:
+					createdUniversityUsersGroupedByUniversityId[
+						universityId
+					].find(({ roleId }) => roleId !== studentRoleId)?.id ??
+					createdUniversityUsers[0].id
 			}))
 		})
 	]);
@@ -175,11 +199,18 @@ export const seedDev = async (prisma: PrismaClient) => {
 		data: expand(
 			createdForums,
 			forumComments,
-			({ activityId: forumId }, comment) => ({
+			({ activityId: forumId, universityId }, comment) => ({
 				...comment,
 				forumId,
-				// TODO: randomize picked unviersity users for comments
-				universityUserId: createdUniversityUsers[1].id
+				universityUserId:
+					createdUniversityUsersGroupedByUniversityId[universityId][
+						generateRandomInt(
+							0,
+							createdUniversityUsersGroupedByUniversityId[
+								universityId
+							].length
+						)
+					].id ?? createdUniversityUsers[1].id
 			})
 		)
 	});
