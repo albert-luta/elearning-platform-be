@@ -25,11 +25,6 @@ export const questions: SeedDev<
 						order: 1
 					},
 					{
-						text: 'Python nu accepta mosteniri',
-						fraction: 0,
-						order: 2
-					},
-					{
 						text:
 							'In Python o clasa copil poate mosteni de la mai multe clase parinte',
 						fraction: 0,
@@ -48,7 +43,7 @@ export const questions: SeedDev<
 				data: [
 					{
 						text:
-							'Fiecare nod al unei liste dublu inlantuite are nevoie de 2 pointeri',
+							'Fiecare nod al unei liste dublu inlantuite se foloseste de 2 pointeri',
 						fraction: 0.5,
 						order: 0
 					},
@@ -69,6 +64,11 @@ export const questions: SeedDev<
 							'Inserarea unui element intr-o lista se face in O(1) timp',
 						fraction: 0,
 						order: 3
+					},
+					{
+						text: 'Hash map-urile au timp de cautare O(n)',
+						fraction: 0,
+						order: 4
 					}
 				]
 			}

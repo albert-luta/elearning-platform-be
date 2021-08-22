@@ -5,7 +5,7 @@ export const questionCategories: SeedDev<
 	Omit<Prisma.QuestionCategoryCreateManyInput, 'universityUserId'>
 >[] = [
 	{
-		name: 'Programare obiect orientata'
+		name: 'Programare Obiect-Orientata'
 	},
 	{
 		name: 'Structuri de date si algoritmi'
