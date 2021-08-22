@@ -7,9 +7,6 @@ export const userAssignment: Omit<
 > = {
 	grade: 15,
 	files: [
-		'_development/user-assignments/files/Luta_Albert-Lucian_Cerere-Inscriere.pdf',
-		'_development/user-assignments/files/Luta_Albert-Lucian_Chestionar-Angajabilitate.pdf',
-		'_development/user-assignments/files/Luta_Albert-Lucian_Declaratie-Originalitate.pdf',
-		'_development/user-assignments/files/format licenta Mihai.docx'
+		'_development/user-assignment/IonPopescu_414A_Oscilatii-Mecanice.pdf'
 	]
 };
