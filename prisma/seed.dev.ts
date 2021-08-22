@@ -264,7 +264,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 			quizId: quiz.activityId,
 			questionId: question.id,
 			order: 0, // Doesn't matter
-			maxGrade: Math.floor(Math.random() * 16) // 0 - 15
+			maxGrade: generateRandomInt(0, 15 + 1) // 0 - 15
 		}))
 	});
 
@@ -324,7 +324,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 				userQuizQuestionId: id,
 				questionAnswerId:
 					questionAnswers[
-						Math.floor(Math.random() * questionAnswers.length)
+						generateRandomInt(0, questionAnswers.length)
 					].id
 			})
 		)
