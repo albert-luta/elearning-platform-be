@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { UserRole } from '../src/auth/auth.types';
+import { generateRandomInt } from '../src/general/utils/generate-random-int';
 import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import {
 	activities,
@@ -50,18 +50,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 		data: expand(createdUsers, createdUniversities, (user, university) => ({
 			userId: user.id,
 			universityId: university.id,
-			roleId:
-				createdRoles.find((role) => {
-					if (university.name.includes('Bucuresti')) {
-						return role.name === UserRole.ADMIN;
-					}
-
-					if (university.name.includes('Cluj')) {
-						return role.name === UserRole.TEACHER;
-					}
-
-					return role.name === UserRole.STUDENT;
-				})?.id ?? createdRoles[0].id
+			roleId: createdRoles[generateRandomInt(0, createdRoles.length)].id
 		}))
 	});
 
@@ -124,6 +113,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 		)
 	});
 
+	// TODO: create better activities
 	const createdSections = await prisma.section.findMany();
 	await prisma.activity.createMany({
 		data: expand(
@@ -175,6 +165,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 				...forumActivity,
 				universityId,
 				activityId: id,
+				// TODO: randomize from admins/teachers of the university
 				universityUserId: createdUniversityUsers[0].id
 			}))
 		})
@@ -188,6 +179,7 @@ export const seedDev = async (prisma: PrismaClient) => {
 			({ activityId: forumId }, comment) => ({
 				...comment,
 				forumId,
+				// TODO: randomize picked unviersity users for comments
 				universityUserId: createdUniversityUsers[1].id
 			})
 		)

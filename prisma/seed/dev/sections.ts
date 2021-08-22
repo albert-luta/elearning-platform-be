@@ -5,12 +5,12 @@ export const sections: SeedDev<
 	Omit<Prisma.SectionCreateManyInput, 'courseId' | 'createdAt'>
 >[] = [
 	{
-		name: 'Course'
+		name: 'Curs'
 	},
 	{
 		name: 'Seminar'
 	},
 	{
-		name: 'Laboratory'
+		name: 'Laborator'
 	}
 ];

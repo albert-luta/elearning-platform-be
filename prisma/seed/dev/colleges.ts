@@ -3,21 +3,22 @@ import { SeedDev } from './utills';
 
 export const colleges: SeedDev<Prisma.CollegeCreateManyInput>[] = [
 	{
-		name: 'Electronica'
+		name:
+			'Facultatea de Electronică, Telecomunicații și Tehnologia Informației'
 	},
 	{
-		name: 'Automatica'
+		name: 'Facultatea de Automatică și Calculatoare'
 	},
 	{
-		name: 'Electrica'
+		name: 'Facultatea de Inginerie Electrică'
 	},
 	{
-		name: 'Mecanica'
+		name: 'Facultatea de Energetică'
 	},
 	{
-		name: 'Inginerie spatiala'
+		name: 'Facultatea de Inginerie Mecanică și Mecatronică'
 	},
 	{
-		name: 'Antreprenoriat si Ingineria afacerilor'
+		name: 'Facultatea de Inginerie Aerospațială'
 	}
 ];

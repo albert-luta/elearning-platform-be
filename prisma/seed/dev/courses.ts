@@ -5,15 +5,21 @@ export const courses: SeedDev<
 	Omit<Prisma.CourseCreateManyInput, 'collegeId'>
 >[] = [
 	{
-		name: 'Programare Obiect Orientata'
+		name: 'A1-S1: Programarea calculatoarelor'
 	},
 	{
-		name: 'Programarea calculatoarelor'
+		name: 'A1-S2: Structuri de date si algoritmi'
 	},
 	{
-		name: 'Programare distribuita'
+		name: 'A2-S1: Programare Obiect-Orientata'
 	},
 	{
-		name: 'Tehnici de programare pentru internet'
+		name: 'A3-S2: Tehnici de Optimizare'
+	},
+	{
+		name: 'A3-S2: Tehnologii de programare in Internet'
+	},
+	{
+		name: 'A4-S2: Calcul paralel'
 	}
 ];
