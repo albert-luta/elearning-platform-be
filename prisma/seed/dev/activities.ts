@@ -2,6 +2,9 @@ import { Prisma } from '.prisma/client';
 import { ActivityType } from '../../../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
 import { SeedDev } from './utills';
 
+const HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
+const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS;
+
 type SpecificActivity<T extends { activityId: string }> = Omit<
 	SeedDev<T>,
 	'activityId'
@@ -55,10 +58,9 @@ export const activities: SeedDev<
 
 export const resourceActivity: SpecificActivity<Prisma.ResourceCreateManyInput> = {};
 export const assignmentActivity: SpecificActivity<Prisma.AssignmentCreateManyInput> = {
-	deadline: new Date(),
+	deadline: new Date(Date.now() + DAY_IN_MILLISECONDS),
 	maxGrade: 30
 };
-const HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
 export const quizActivity: SpecificActivity<Prisma.QuizCreateManyInput> = {
 	visible: true,
 	shuffleQuestions: true,
