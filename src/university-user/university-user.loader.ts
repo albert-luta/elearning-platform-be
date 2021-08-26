@@ -1,7 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { PrismaService } from 'src/global/prisma/prisma.service';
-import { UniversityUserReturnType } from '../forum.types';
+import { UniversityUserReturnType } from './university-user.types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UniversityUserLoader {

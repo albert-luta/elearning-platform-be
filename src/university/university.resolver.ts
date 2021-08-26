@@ -48,3 +48,5 @@ export class UniversityResolver {
 		return this.universityService.deleteUniversity(user.id, id);
 	}
 }
+
+// TODO: add update university old logo

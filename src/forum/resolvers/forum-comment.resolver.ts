@@ -14,11 +14,9 @@ import { User } from 'src/user/decorators/user.decorator';
 import { CreateForumCommentInput } from '../dto/create-forum-comment.input';
 import { ForumCommentObject } from '../dto/forum-comment.object';
 import { ForumService } from '../forum.service';
-import {
-	ForumCommentReturnType,
-	UniversityUserReturnType
-} from '../forum.types';
-import { UniversityUserLoader } from '../loaders/university-user.loader';
+import { ForumCommentReturnType } from '../forum.types';
+import { UniversityUserLoader } from '../../university-user/university-user.loader';
+import { UniversityUserReturnType } from 'src/university-user/university-user.types';
 
 @Resolver(() => ForumCommentObject)
 export class ForumCommentResolver {

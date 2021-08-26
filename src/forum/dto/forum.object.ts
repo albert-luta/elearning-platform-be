@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { CollegeObject } from 'src/college/dto/college.object';
 import { CourseObject } from 'src/course/dto/course.object';
 import { BaseActivityInterface } from '../../activity/dto/base-activity.interface';
-import { UniversityUserObject } from './university-user.object';
+import { UniversityUserObject } from '../../university-user/dto/university-user.object';
 
 @ObjectType({
 	implements: () => [BaseActivityInterface]

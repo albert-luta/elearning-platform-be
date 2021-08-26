@@ -21,6 +21,7 @@ import { QuestionBankModule } from './question-bank/question-bank.module';
 import { QuestionModule } from './question/question.module';
 import { UserQuizModule } from './user-quiz/user-quiz.module';
 import { ForumModule } from './forum/forum.module';
+import { UniversityUserModule } from './university-user/university-user.module';
 
 @Module({
 	imports: [
@@ -41,7 +42,8 @@ import { ForumModule } from './forum/forum.module';
 		QuestionBankModule,
 		QuestionModule,
 		UserQuizModule,
-		ForumModule
+		ForumModule,
+		UniversityUserModule
 	],
 	providers: [
 		{

@@ -9,14 +9,15 @@ import {
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { ForumObject } from 'src/forum/dto/forum.object';
-import { UniversityUserLoader } from 'src/forum/loaders/university-user.loader';
+import { UniversityUserLoader } from 'src/university-user/university-user.loader';
 import { UniversityId } from 'src/university/decorators/university-id.decorator';
 import { CreateForumInput } from './dto/create-forum.input';
-import { ForumReturnType, UniversityUserReturnType } from './forum.types';
+import { ForumReturnType } from './forum.types';
 import { ForumService } from './forum.service';
 import { User } from 'src/user/decorators/user.decorator';
 import { UserType } from 'src/my-graphql/my-graphql.types';
 import { UpdateForumInput } from './dto/update-forum.input';
+import { UniversityUserReturnType } from 'src/university-user/university-user.types';
 
 @Resolver(() => ForumObject)
 export class ForumResolver {

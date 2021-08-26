@@ -1,5 +1,6 @@
 import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 import { UniversityUser } from 'src/generated/prisma-nestjs-graphql/university-user/university-user.model';
+import { CollegeUserObject } from 'src/university-user/dto/college-user.object';
 import { UserObject } from 'src/user/dto/user.object';
 import { RoleObject } from './role.object';
 
@@ -18,4 +19,7 @@ export class UniversityUserObject extends OmitType(UniversityUser, [
 
 	@Field(() => RoleObject)
 	role: RoleObject;
+
+	@Field(() => [CollegeUserObject])
+	collegesEnrolledAt: CollegeUserObject[];
 }

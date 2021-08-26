@@ -40,4 +40,23 @@ export class CollegeLoader {
 			return ids.map((id) => collegesMap[id]);
 		}
 	);
+
+	readonly byId = new DataLoader<string, CollegeReturnType>(async (ids) => {
+		const colleges = await this.prisma.college.findMany({
+			where: {
+				id: {
+					in: [...ids]
+				}
+			}
+		});
+		const collegesMap = colleges.reduce<Record<string, CollegeReturnType>>(
+			(acc, curr) => ({
+				...acc,
+				[curr.id]: curr
+			}),
+			{}
+		);
+
+		return ids.map((id) => collegesMap[id]);
+	});
 }

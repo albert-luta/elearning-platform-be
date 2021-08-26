@@ -101,6 +101,14 @@ type CollegeUser {
   universityUserId: String!
 }
 
+type CollegeUserObject {
+  college: CollegeObject!
+  collegeId: String!
+  coursesEnrolledAt: [CourseUserObject!]!
+  id: ID!
+  universityUserId: String!
+}
+
 type Course {
   college: College!
   collegeId: String!
@@ -124,6 +132,13 @@ type CourseUser {
   collegeUser: CollegeUser!
   collegeUserId: String!
   course: Course!
+  courseId: String!
+  id: ID!
+}
+
+type CourseUserObject {
+  collegeUserId: String!
+  course: CourseObject!
   courseId: String!
   id: ID!
 }
@@ -314,6 +329,7 @@ type Query {
   myQuiz(quizId: String!): UserQuizObject
   questionBank: [QuestionCategoryObject!]!
   sections(courseId: String!): [SectionObject!]!
+  universityUsers(universityId: String!): [UniversityUserObject!]!
   upcomingActivities: [BaseActivityInterface!]!
   userAssignment(id: String!): UserAssignmentObject
   userAssignments(assignmentId: String!): [UserAssignmentObject!]!
@@ -543,6 +559,7 @@ type UniversityUser {
 }
 
 type UniversityUserObject {
+  collegesEnrolledAt: [CollegeUserObject!]!
   id: ID!
   role: RoleObject!
   roleId: String!
