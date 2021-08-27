@@ -2,7 +2,14 @@ import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { UniversityUserObject } from 'src/university-user/dto/university-user.object';
 import { UniversityUserService } from './university-user.service';
 import { InternalServerErrorException } from '@nestjs/common';
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+	Args,
+	Mutation,
+	Parent,
+	Query,
+	ResolveField,
+	Resolver
+} from '@nestjs/graphql';
 import { FileService } from 'src/global/file/file.service';
 import { UserLoader } from 'src/user/user.loader';
 import { UserReturnType } from 'src/user/user.types';
@@ -13,6 +20,11 @@ import {
 import { RoleLoader } from './loaders/role.loader';
 import { RoleObject } from './dto/role.object';
 import { CollegeUserLoader } from './loaders/college-user.loader';
+import { CreateUniversityUserInput } from './dto/create-university-user.input';
+import { UniversityId } from 'src/university/decorators/university-id.decorator';
+import { User } from 'src/user/decorators/user.decorator';
+import { UserType } from 'src/my-graphql/my-graphql.types';
+import { UpdateUniversityUserInput } from './dto/update-university-user.input';
 
 @Resolver(() => UniversityUserObject)
 export class UniversityUserResolver {
@@ -24,6 +36,14 @@ export class UniversityUserResolver {
 		private readonly collegeUserLoader: CollegeUserLoader
 	) {}
 
+	@Scopes('read:university-user')
+	@Query(() => UniversityUserObject, { nullable: true })
+	universityUser(
+		@Args('id') id: string
+	): Promise<UniversityUserReturnType | null> {
+		return this.universityUserService.getUniversityUser(id);
+	}
+
 	@Scopes('read:university-users')
 	@Query(() => [UniversityUserObject])
 	universityUsers(
@@ -32,15 +52,36 @@ export class UniversityUserResolver {
 		return this.universityUserService.getUniversityUsers(universityId);
 	}
 
-	// createUniversityUser
-	// updateUniversityUser
-	// deleteUniversityUser
-	//
-	// resolve type
-	// collegesEnrolledAt
-	// coursesEnrolledAt
-	// course
-	// college
+	@Scopes('create:university-user')
+	@Mutation(() => UniversityUserObject)
+	createUniversityUser(
+		@User() user: UserType,
+		@UniversityId() universityId: string,
+		@Args('data') data: CreateUniversityUserInput
+	): Promise<UniversityUserReturnType> {
+		return this.universityUserService.createUniversityUser(
+			universityId,
+			user.id,
+			data
+		);
+	}
+
+	@Scopes('update:university-user')
+	@Mutation(() => UniversityUserObject)
+	updateUniversityUser(
+		@Args('id') id: string,
+		@Args('data') data: UpdateUniversityUserInput
+	): Promise<UniversityUserReturnType> {
+		return this.universityUserService.updateUniversityUser(id, data);
+	}
+
+	@Scopes('delete:university-user')
+	@Mutation(() => UniversityUserObject)
+	deleteUniversityUser(
+		@Args('id') id: string
+	): Promise<UniversityUserReturnType> {
+		return this.universityUserService.deleteUniversityUser(id);
+	}
 
 	@ResolveField()
 	async user(

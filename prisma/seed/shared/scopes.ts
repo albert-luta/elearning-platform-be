@@ -135,7 +135,22 @@ const adminScopes: Prisma.ScopeCreateManyInput[] = [
 		name: 'delete:course'
 	},
 	{
+		name: 'read:roles'
+	},
+	{
+		name: 'read:university-user'
+	},
+	{
 		name: 'read:university-users'
+	},
+	{
+		name: 'create:university-user'
+	},
+	{
+		name: 'update:university-user'
+	},
+	{
+		name: 'delete:university-user'
 	}
 ];
 

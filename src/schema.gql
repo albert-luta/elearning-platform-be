@@ -92,6 +92,11 @@ type CollegeObject {
   universityId: String!
 }
 
+input CollegeToEnrollAtInput {
+  coursesToEnrollAt: [CourseToEnrollAtInput!]!
+  id: String!
+}
+
 type CollegeUser {
   college: College!
   collegeId: String!
@@ -126,6 +131,10 @@ type CourseObject {
   id: ID!
   name: String!
   universityId: String!
+}
+
+input CourseToEnrollAtInput {
+  id: String!
 }
 
 type CourseUser {
@@ -220,6 +229,12 @@ input CreateUniversityInput {
   name: String!
 }
 
+input CreateUniversityUserInput {
+  collegesToEnrollAt: [CollegeToEnrollAtInput!]!
+  roleId: String!
+  userEmail: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -292,6 +307,7 @@ type Mutation {
   createResource(data: CreateResourceInput!, files: [Upload!]!): ResourceObject!
   createSection(data: CreateSectionInput!): SectionObject!
   createUniversity(data: CreateUniversityInput!, logo: Upload): UniversityObject!
+  createUniversityUser(data: CreateUniversityUserInput!): UniversityUserObject!
   deleteActivity(id: String!, type: ActivityType!): BaseActivityInterface!
   deleteCollege(id: String!): CollegeObject!
   deleteCourse(id: String!): CourseObject!
@@ -299,6 +315,7 @@ type Mutation {
   deleteQuestionCategory(id: String!): QuestionCategoryObject!
   deleteSection(id: String!): SectionObject!
   deleteUniversity(id: String!): UniversityObject!
+  deleteUniversityUser(id: String!): UniversityUserObject!
   leaveUniversity(id: String!): UniversityObject!
   login(user: LoginUserInput!): Authentication!
   logout: Authentication
@@ -317,6 +334,7 @@ type Mutation {
   updateResource(data: UpdateResourceInput!, id: String!, newFiles: [Upload!]!): ResourceObject!
   updateSection(data: CreateSectionInput!, id: String!): SectionObject!
   updateUniversity(data: CreateUniversityInput!, id: String!, logo: Upload): UniversityObject!
+  updateUniversityUser(data: UpdateUniversityUserInput!, id: String!): UniversityUserObject!
   updateUserAssignment(data: UpdateUserAssignmentInput!, id: String!): UserAssignmentObject!
 }
 
@@ -328,7 +346,9 @@ type Query {
   myAssignment(id: String!): UserAssignmentObject
   myQuiz(quizId: String!): UserQuizObject
   questionBank: [QuestionCategoryObject!]!
+  roles: [RoleObject!]!
   sections(courseId: String!): [SectionObject!]!
+  universityUser(id: String!): UniversityUserObject
   universityUsers(universityId: String!): [UniversityUserObject!]!
   upcomingActivities: [BaseActivityInterface!]!
   userAssignment(id: String!): UserAssignmentObject
@@ -628,6 +648,11 @@ input UpdateResourceInput {
   name: String!
   oldFiles: [String!]!
   sectionId: String!
+}
+
+input UpdateUniversityUserInput {
+  collegesToEnrollAt: [CollegeToEnrollAtInput!]!
+  roleId: String!
 }
 
 input UpdateUserAssignmentInput {

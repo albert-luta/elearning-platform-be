@@ -10,6 +10,7 @@ import { CollegeUserResolver } from './resolvers/college-user.resolver';
 import { CourseUserLoader } from './loaders/course-user.loader';
 import { CourseModule } from 'src/course/course.module';
 import { CourseUserResolver } from './resolvers/course-user.resolver';
+import { RoleResolver } from './resolvers/role.resolver';
 
 @Module({
 	providers: [
@@ -20,7 +21,8 @@ import { CourseUserResolver } from './resolvers/course-user.resolver';
 		CollegeUserLoader,
 		CollegeUserResolver,
 		CourseUserLoader,
-		CourseUserResolver
+		CourseUserResolver,
+		RoleResolver
 	],
 	exports: [UniversityUserLoader],
 	imports: [UserModule, CollegeModule, CourseModule]
