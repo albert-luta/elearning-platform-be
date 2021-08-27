@@ -151,3 +151,5 @@ export class CollegeService {
 		}
 	}
 }
+
+// TODO: when creating a new college, enroll the admins

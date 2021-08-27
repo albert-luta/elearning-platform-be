@@ -134,3 +134,5 @@ export class CourseService {
 		}
 	}
 }
+
+// TODO: when creating a new course, enroll the admins
