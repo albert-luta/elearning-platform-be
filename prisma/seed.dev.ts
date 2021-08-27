@@ -1,4 +1,10 @@
-import { PrismaClient, UniversityUser } from '@prisma/client';
+import {
+	College,
+	CollegeUser,
+	Course,
+	PrismaClient,
+	UniversityUser
+} from '@prisma/client';
 import { UserRole } from '../src/auth/auth.types';
 import { generateRandomInt } from '../src/general/utils/generate-random-int';
 import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
@@ -61,21 +67,8 @@ export const seedDev = async (prisma: PrismaClient) => {
 			universityId: id
 		}))
 	});
-	const [createdUniversityUsers, createdColleges] = await Promise.all([
-		prisma.universityUser.findMany(),
-		prisma.college.findMany()
-	]);
-	await prisma.collegeUser.createMany({
-		data: expand(
-			createdUniversityUsers,
-			createdColleges,
-			({ id: universityUserId }, { id: collegeId }) => ({
-				universityUserId,
-				collegeId
-			})
-		)
-	});
 
+	const createdColleges = await prisma.college.findMany();
 	await prisma.course.createMany({
 		data: expand(
 			createdColleges,
@@ -87,20 +80,77 @@ export const seedDev = async (prisma: PrismaClient) => {
 			})
 		)
 	});
+
+	const createdUniversityUsers = await prisma.universityUser.findMany();
+	const createdUniversityUsersGroupedByUniversityId = createdUniversityUsers.reduce<
+		Record<string, UniversityUser[]>
+	>(
+		(acc, curr) => ({
+			...acc,
+			[curr.universityId]: [...(acc[curr.universityId] ?? []), curr]
+		}),
+		{}
+	);
+	const createdCollegesGroupedByUniversityId = createdColleges.reduce<
+		Record<string, College[]>
+	>(
+		(acc, curr) => ({
+			...acc,
+			[curr.universityId]: [...(acc[curr.universityId] ?? []), curr]
+		}),
+		{}
+	);
+	await Promise.all(
+		createdUniversities.map(({ id }) =>
+			prisma.collegeUser.createMany({
+				data: expand(
+					createdUniversityUsersGroupedByUniversityId[id],
+					createdCollegesGroupedByUniversityId[id],
+					({ id: universityUserId }, { id: collegeId }) => ({
+						universityUserId,
+						collegeId
+					})
+				)
+			})
+		)
+	);
+
 	const [createdCollegeUsers, createdCourses] = await Promise.all([
 		prisma.collegeUser.findMany(),
 		prisma.course.findMany()
 	]);
-	await prisma.courseUser.createMany({
-		data: expand(
-			createdCollegeUsers,
-			createdCourses,
-			({ id: collegeUserId }, { id: courseId }) => ({
-				collegeUserId,
-				courseId
+	const createdCollegeUsersGroupedByCollegeId = createdCollegeUsers.reduce<
+		Record<string, CollegeUser[]>
+	>(
+		(acc, curr) => ({
+			...acc,
+			[curr.collegeId]: [...(acc[curr.collegeId] ?? []), curr]
+		}),
+		{}
+	);
+	const createdCoursesGroupedByCollegeId = createdCourses.reduce<
+		Record<string, Course[]>
+	>(
+		(acc, curr) => ({
+			...acc,
+			[curr.collegeId]: [...(acc[curr.collegeId] ?? []), curr]
+		}),
+		{}
+	);
+	await Promise.all(
+		createdColleges.map(({ id }) =>
+			prisma.courseUser.createMany({
+				data: expand(
+					createdCollegeUsersGroupedByCollegeId[id],
+					createdCoursesGroupedByCollegeId[id],
+					({ id: collegeUserId }, { id: courseId }) => ({
+						collegeUserId,
+						courseId
+					})
+				)
 			})
 		)
-	});
+	);
 
 	await prisma.section.createMany({
 		data: expand(
@@ -147,16 +197,6 @@ export const seedDev = async (prisma: PrismaClient) => {
 	const studentRoleId = createdRoles.find(
 		({ name }) => name === UserRole.STUDENT
 	)?.id;
-
-	const createdUniversityUsersGroupedByUniversityId = createdUniversityUsers.reduce<
-		Record<string, UniversityUser[]>
-	>(
-		(acc, curr) => ({
-			...acc,
-			[curr.universityId]: [...(acc[curr.universityId] ?? []), curr]
-		}),
-		{}
-	);
 
 	await Promise.all([
 		prisma.resource.createMany({
