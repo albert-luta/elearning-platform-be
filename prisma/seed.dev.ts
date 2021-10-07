@@ -5,6 +5,7 @@ import {
 	PrismaClient,
 	UniversityUser
 } from '@prisma/client';
+import { QuestionType } from '../src/generated/prisma-nestjs-graphql/prisma/question-type.enum';
 import { UserRole } from '../src/auth/auth.types';
 import { generateRandomInt } from '../src/general/utils/generate-random-int';
 import { ActivityType } from '../src/generated/prisma-nestjs-graphql/prisma/activity-type.enum';
@@ -296,16 +297,33 @@ export const seedDev = async (prisma: PrismaClient) => {
 
 	// Lazy implementation
 	const createdQuizes = await prisma.quiz.findMany();
-	const createdQuestions = await prisma.question.findMany({
-		take: 15
+	const createdSingleChoiceQuestions = await prisma.question.findMany({
+		take: 10,
+		where: {
+			type: QuestionType.SINGLE_CHOICE
+		}
 	});
+	const createdMultipleChoiceQuestions = await prisma.question.findMany({
+		take: 10,
+		where: {
+			type: QuestionType.MULTIPLE_CHOICE
+		}
+	});
+
 	await prisma.quizQuestion.createMany({
-		data: expand(createdQuizes, createdQuestions, (quiz, question) => ({
-			quizId: quiz.activityId,
-			questionId: question.id,
-			order: 0, // Doesn't matter
-			maxGrade: generateRandomInt(0, 15 + 1) // 0 - 15
-		}))
+		data: expand(
+			createdQuizes,
+			[
+				...createdSingleChoiceQuestions,
+				...createdMultipleChoiceQuestions
+			],
+			(quiz, question) => ({
+				quizId: quiz.activityId,
+				questionId: question.id,
+				order: 0, // Doesn't matter
+				maxGrade: generateRandomInt(0, 15 + 1) // 0 - 15
+			})
+		)
 	});
 
 	const createdCompleteQuizes = await prisma.quiz.findMany({
